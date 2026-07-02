@@ -1,0 +1,84 @@
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-sm" style="width: 400px; border-radius: 10px;">
+    <div class="card-body p-4 text-center">
+      <img src="/images/logo.svg" alt="TaskWhite Logo" style="height: 64px; width: 64px; object-fit: cover; border-radius: 14px;" class="mb-3 shadow-sm">
+      <div class="d-flex justify-content-center mb-4">
+        <h3 class="card-title text-center mb-0 brand-text" style="font-size: 2.25rem;">Task<span class="white-part">White</span></h3>
+      </div>
+      
+      <div id="status" class="alert alert-info py-2">
+        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+        Verifying your magic link...
+      </div>
+      
+      <div class="alert alert-danger py-2" id="errorDiv" style="display: none;"></div>
+      
+      <a href="/login" class="btn btn-outline-secondary w-100 mt-3" id="retryBtn" style="display: none;">Return to Login</a>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = <%- firebaseConfig || '{}' %>;
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  
+  const statusDiv = document.getElementById('status');
+  const errorDiv = document.getElementById('errorDiv');
+  const retryBtn = document.getElementById('retryBtn');
+
+  async function verifySession() {
+    try {
+      if (!isSignInWithEmailLink(auth, window.location.href)) {
+        throw new Error('Invalid magic link URL.');
+      }
+      
+      let email = window.localStorage.getItem('emailForSignIn');
+      if (!email) {
+        email = window.prompt('Please provide your email for confirmation');
+      }
+      
+      const result = await signInWithEmailLink(auth, email, window.location.href);
+      
+      // Clear email from storage
+      window.localStorage.removeItem('emailForSignIn');
+      
+      const user = result.user;
+      
+      // Send session to our backend for routing and local session sync
+      statusDiv.innerHTML = '<div class="spinner-border spinner-border-sm me-2" role="status"></div> Finalizing workspace...';
+      
+      const res = await fetch('/api/auth/post-login-routing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: user.email, 
+          name: user.displayName || '', 
+          firebaseUserId: user.uid 
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        // Success! Redirect to dashboard
+        window.location.href = '/dashboard';
+      } else {
+        throw new Error(data.error || 'Failed to setup workspace routing.');
+      }
+      
+    } catch (err) {
+      console.error(err);
+      statusDiv.style.display = 'none';
+      errorDiv.innerText = err.message || 'Verification failed. Link may be expired.';
+      errorDiv.style.display = 'block';
+      retryBtn.style.display = 'block';
+    }
+  }
+
+  // Start verification on load
+  verifySession();
+</script>

@@ -1,0 +1,193 @@
+<style>
+  body {
+    background: var(--bg-color);
+  }
+  .hero-section {
+    padding: 100px 0 60px 0;
+    text-align: center;
+  }
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+    color: var(--text-color);
+  }
+  .hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+  }
+  .mobile-mockup {
+    margin-top: 60px;
+    border-radius: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 8px solid var(--text-color);
+    max-width: 350px;
+    height: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    background: var(--bg-color);
+    overflow: hidden;
+    position: relative;
+    text-align: left;
+  }
+  .mobile-mockup-header {
+    padding: 20px;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .mobile-mockup-body {
+    padding: 15px;
+  }
+  .mockup-task {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 15px;
+  }
+  .feature-box {
+    padding: 40px 30px;
+    border-radius: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    height: 100%;
+    transition: transform 0.2s;
+  }
+  .feature-box:hover {
+    transform: translateY(-5px);
+  }
+  .feature-icon {
+    font-size: 2.5rem;
+    color: var(--text-color);
+    margin-bottom: 20px;
+  }
+  .cta-section {
+    padding: 80px 0;
+    background: var(--text-color);
+    color: var(--bg-color);
+    text-align: center;
+    border-radius: 20px;
+    margin: 60px 0;
+  }
+</style>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light py-3 border-bottom" style="background: var(--card-bg);">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center fw-bold" href="/">
+      <img src="/images/logo.svg" alt="TaskWhite" width="32" height="32" class="me-2" style="border-radius: 8px;">
+      TaskWhite
+    </a>
+    <div class="ms-auto">
+      <a href="/login" class="btn btn-outline-dark me-2">Log In</a>
+      <a href="/login" class="btn btn-dark px-4">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <h1 class="hero-title">Task management, <span style="text-decoration: underline; text-decoration-color: #6c757d;">simplified.</span></h1>
+    <p class="hero-subtitle">A mobile-first, distraction-free environment to organize your workflow and track team productivity.</p>
+    <div>
+      <a href="/login" class="btn btn-dark btn-lg px-5 py-3 shadow-sm">Start for Free</a>
+    </div>
+    
+    <!-- Mobile App Mockup using HTML/CSS -->
+    <div class="mobile-mockup">
+      <div class="mobile-mockup-header">
+        <h5 class="mb-0 fw-bold">Dashboard</h5>
+        <i class="bi bi-funnel fs-5"></i>
+      </div>
+      <div class="mobile-mockup-body">
+        <div class="d-flex justify-content-between mb-3">
+          <small class="text-muted fw-bold">TODAY</small>
+          <small class="text-muted">3 Tasks</small>
+        </div>
+        
+        <div class="mockup-task">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge bg-danger rounded-pill">High</span>
+            <small class="text-muted">Reliance</small>
+          </div>
+          <h6 class="fw-bold mb-1">Finalize Contract</h6>
+          <small class="text-muted"><i class="bi bi-calendar me-1"></i> Today</small>
+        </div>
+        
+        <div class="mockup-task">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge bg-secondary rounded-pill">Normal</span>
+            <small class="text-muted">TCS</small>
+          </div>
+          <h6 class="fw-bold mb-1">Weekly Review</h6>
+          <small class="text-muted"><i class="bi bi-calendar me-1"></i> Tomorrow</small>
+        </div>
+
+        <div class="mockup-task" style="opacity: 0.5;">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge bg-success rounded-pill">Done</span>
+            <small class="text-muted">Internal</small>
+          </div>
+          <h6 class="fw-bold mb-1 text-decoration-line-through">Sync Meeting</h6>
+          <small class="text-muted"><i class="bi bi-calendar me-1"></i> Yesterday</small>
+        </div>
+      </div>
+      <!-- Add a subtle note to replace with real screenshot -->
+      <div class="position-absolute bottom-0 w-100 text-center pb-3">
+        <small class="text-muted" style="font-size: 0.65rem;">(Replace this mockup with a real mobile screenshot)</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-5 my-5">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Everything you need, nothing you don't</h2>
+      <p class="text-muted">Built for speed with a flawless mobile-first experience.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-box text-center">
+          <i class="bi bi-phone feature-icon"></i>
+          <h4 class="fw-bold">Mobile First</h4>
+          <p class="text-muted mb-0">Designed from the ground up to work beautifully on your phone. Manage your organization's tasks easily on the go.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box text-center">
+          <i class="bi bi-lightning-charge feature-icon"></i>
+          <h4 class="fw-bold">Ultra Simple</h4>
+          <p class="text-muted mb-0">No clutter, no steep learning curve. Just a clean, minimalist interface that gets out of your way so you can get work done.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-box text-center">
+          <i class="bi bi-funnel feature-icon"></i>
+          <h4 class="fw-bold">Smart Filters</h4>
+          <p class="text-muted mb-0">Toggle effortlessly between 'My View' and 'Org View', with native drawer filters to drill down exactly to what you need.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section shadow">
+    <h2 class="fw-bold mb-3" style="color: var(--bg-color);">Ready to streamline your workflow?</h2>
+    <p class="mb-4" style="color: var(--bg-color); opacity: 0.8;">Join thousands of teams already using TaskWhite.</p>
+    <a href="/login" class="btn btn-outline-light btn-lg px-5 fw-bold">Create your workspace</a>
+  </section>
+</div>
+
+<!-- Footer -->
+<footer class="py-4 text-center text-muted border-top">
+  <div class="container">
+    <small>&copy; <%= new Date().getFullYear() %> TaskWhite. Built on Appwrite Cloud.</small>
+  </div>
+</footer>

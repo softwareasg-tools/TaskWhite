@@ -1,0 +1,964 @@
+<% 
+  let activeFilterCount = 0;
+  if(query.time) activeFilterCount++;
+  if(query.client_id) activeFilterCount++;
+  if(query.user_id) activeFilterCount++;
+  if(query.task_type_id) activeFilterCount++;
+  if(query.tag) activeFilterCount++;
+%>
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+  <div class="d-flex flex-wrap align-items-end gap-3">
+    <div>
+      <div class="section-subtitle">OVERVIEW</div>
+      <h1 class="page-title mb-0">Dashboard</h1>
+    </div>
+    <div class="btn-group shadow-sm mb-1" style="height: fit-content;">
+      <button class="btn btn-sm btn-dark" id="btnListView" onclick="switchTaskView('list')"><i class="bi bi-list-ul"></i> List</button>
+      <button class="btn btn-sm btn-outline-secondary" id="btnCalendarView" onclick="switchTaskView('calendar')"><i class="bi bi-calendar3"></i> Calendar</button>
+    </div>
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <button class="btn btn-outline-secondary shadow-sm mb-1 position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas">
+      <i class="bi bi-funnel"></i> Filters
+      <% if (activeFilterCount > 0) { %>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary" style="font-size: 0.65rem;">
+          <%= activeFilterCount %>
+        </span>
+      <% } %>
+    </button>
+    <div class="btn-group shadow-sm mb-1" role="group">
+      <a href="?<%= new URLSearchParams({...query, view: 'org'}).toString() %>" class="btn btn-sm <%= !query.view || query.view === 'org' ? 'btn-dark' : 'btn-outline-secondary' %>">Org View</a>
+      <a href="?<%= new URLSearchParams({...query, view: 'my'}).toString() %>" class="btn btn-sm <%= query.view === 'my' ? 'btn-dark' : 'btn-outline-secondary' %>">My View</a>
+    </div>
+  </div>
+</div>
+
+<!-- Filter Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel">
+  <div class="offcanvas-header border-bottom">
+    <h5 class="offcanvas-title" id="filterOffcanvasLabel"><i class="bi bi-funnel text-primary"></i> Dashboard Filters</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <form id="filterForm" method="GET" action="/dashboard">
+      <% if (query.view) { %>
+        <input type="hidden" name="view" value="<%= query.view %>">
+      <% } %>
+      
+      <div class="mb-4">
+        <label class="form-label fw-bold text-muted small text-uppercase">Time Period</label>
+        <select name="time" class="form-select">
+          <option value="">All Time</option>
+          <option value="today" <%= query.time === 'today' ? 'selected' : '' %>>Today</option>
+        </select>
+      </div>
+      
+      <div class="mb-4">
+        <label class="form-label fw-bold text-muted small text-uppercase">Client</label>
+        <select name="client_id" class="form-select">
+          <option value="">All Clients</option>
+          <% clients.forEach(client => { %>
+            <option value="<%= client.id %>" <%= query.client_id == client.id ? 'selected' : '' %>><%= client.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      
+      <div class="mb-4">
+        <label class="form-label fw-bold text-muted small text-uppercase">Person</label>
+        <select name="user_id" class="form-select">
+          <option value="">All Persons</option>
+          <% users.forEach(user => { %>
+            <option value="<%= user.id %>" <%= query.user_id == user.id ? 'selected' : '' %>><%= user.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      
+      <div class="mb-4">
+        <label class="form-label fw-bold text-muted small text-uppercase">Task Type</label>
+        <select name="task_type_id" class="form-select">
+          <option value="">All Task Types</option>
+          <% taskTypes.forEach(type => { %>
+            <option value="<%= type.id %>" <%= query.task_type_id == type.id ? 'selected' : '' %>><%= type.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      
+      <div class="mb-4">
+        <label class="form-label fw-bold text-muted small text-uppercase">Tag</label>
+        <select name="tag" class="form-select">
+          <option value="">All Tags</option>
+          <% availableTags.forEach(tag => { %>
+            <option value="<%= tag %>" <%= query.tag === tag ? 'selected' : '' %>><%= tag %></option>
+          <% }) %>
+        </select>
+      </div>
+      
+      <div class="mt-5 pt-3 d-flex gap-2">
+        <a href="/dashboard<%= query.view ? '?view=' + query.view : '' %>" class="btn btn-light flex-grow-1 text-muted">Clear</a>
+        <button type="submit" class="btn btn-primary flex-grow-1">Apply Filters</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="row g-4 mb-4">
+  <div class="col-12 col-sm-6 col-xl">
+    <div class="card h-100">
+      <div class="card-header">Total Tasks</div>
+      <div class="card-body">
+        <div class="stat-value"><%= stats.totalTasks %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6 col-xl">
+    <div class="card h-100">
+      <div class="card-header">Assigned</div>
+      <div class="card-body">
+        <div class="stat-value" style="color: #f06a2f;"><%= stats.assigned %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6 col-xl">
+    <div class="card h-100">
+      <div class="card-header">In Progress</div>
+      <div class="card-body">
+        <div class="stat-value" style="color: #1a73e8;"><%= stats.inProgress %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6 col-xl">
+    <div class="card h-100">
+      <div class="card-header">Completed</div>
+      <div class="card-body">
+        <div class="stat-value" style="color: #1e8e3e;"><%= stats.completed %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6 col-xl">
+    <div class="card h-100">
+      <div class="card-header">Overdue</div>
+      <div class="card-body">
+        <div class="stat-value" style="color: #d93025;"><%= stats.overdue %></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="row g-4 mb-5">
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">Tasks by Status</div>
+      <div class="card-body d-flex justify-content-center align-items-center" style="height: 300px;">
+        <canvas id="statusChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">Tasks by Employee</div>
+      <div class="card-body" style="height: 300px;">
+        <canvas id="teamChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <div class="card h-100">
+      <div class="card-header">Tasks by Task Type</div>
+      <div class="card-body" style="height: 400px;">
+        <canvas id="typeChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tasks List (Combined View) -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 mt-5 gap-3">
+  <div>
+    <div class="section-subtitle">WORKSPACE</div>
+    <h1 class="page-title mb-0">Tasks</h1>
+  </div>
+  <div class="d-flex flex-wrap gap-2 align-items-center">
+    <div class="input-group" style="width: auto; flex-grow: 1; min-width: 200px;">
+      <span class="input-group-text border-end-0" style="background-color: var(--card-bg);"><i class="bi bi-search text-muted"></i></span>
+      <input type="text" id="dashboardSearch" class="form-control border-start-0 ps-0" placeholder="Search tasks..." style="background-color: var(--card-bg);">
+    </div>
+    <button type="button" class="btn btn-outline-secondary me-2 text-nowrap" onclick="exportExcel()"><i class="bi bi-file-earmark-excel"></i> Export Excel</button>
+    <button type="button" class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#newTaskModal"><i class="bi bi-plus"></i> New Task</button>
+  </div>
+</div>
+
+<div id="listView" class="card mb-5">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th onclick="sortTable(0)" style="cursor: pointer;">Client <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(1)" style="cursor: pointer;">Task <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(2)" style="cursor: pointer;">Assigned To <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(3)" style="cursor: pointer;">Due Date <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(4)" style="cursor: pointer;">Status <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% tasks.forEach(task => { %>
+            <tr class="dashboard-task-row" onclick="openTaskModal(<%= task.id %>)">
+              <td class="fw-bold"><%= task.Client ? task.Client.name : '-' %></td>
+              <td>
+                <div class="fw-medium text-dark"><%= task.TaskType ? task.TaskType.name : '-' %></div>
+                <% if (task.tags && task.tags.length > 0) { %>
+                  <div class="mt-1 d-flex gap-1 flex-wrap">
+                    <% task.tags.forEach(tag => { %>
+                      <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 0.65rem;"><%= tag %></span>
+                    <% }) %>
+                  </div>
+                <% } %>
+              </td>
+              <td><%= task.Assignee ? task.Assignee.name : '-' %></td>
+              <td><%= task.due_date %></td>
+              <td>
+                <% if (task.status === 'Completed') { %>
+                  <span class="badge badge-outline text-success border-success">Completed</span>
+                <% } else if (task.status === 'In Progress') { %>
+                  <span class="badge badge-outline text-primary border-primary">In Progress</span>
+                <% } else if (task.status === 'Overdue') { %>
+                  <span class="badge badge-outline text-danger border-danger">Overdue</span>
+                <% } else { %>
+                  <span class="badge badge-outline">Assigned</span>
+                <% } %>
+              </td>
+              <td class="text-end">
+                <i class="bi bi-pencil text-muted me-3"></i>
+                <i class="bi bi-trash text-danger" onclick="deleteTask(event, <%= task.id %>, '<%= (task.TaskType ? task.TaskType.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', '<%= (task.Client ? task.Client.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>')" style="cursor: pointer;"></i>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Calendar View -->
+<div id="calendarView" class="mb-5 d-none">
+  <div class="row g-4">
+    <!-- Calendar Grid -->
+    <div class="col-lg-8">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <button class="btn btn-sm btn-outline-secondary border-0" onclick="changeMonth(-1)"><i class="bi bi-chevron-left"></i></button>
+          <span id="calendarMonthYear" class="fw-bold fs-5 text-dark"></span>
+          <button class="btn btn-sm btn-outline-secondary border-0" onclick="changeMonth(1)"><i class="bi bi-chevron-right"></i></button>
+        </div>
+        <div class="card-body p-0">
+          <div class="calendar-grid-header d-flex text-center text-muted fw-bold small py-2 border-bottom" style="background-color: #fafafa;">
+            <div style="flex:1">SUN</div><div style="flex:1">MON</div><div style="flex:1">TUE</div><div style="flex:1">WED</div>
+            <div style="flex:1">THU</div><div style="flex:1">FRI</div><div style="flex:1">SAT</div>
+          </div>
+          <div id="calendarGrid" class="d-flex flex-wrap" style="border-left: 1px solid var(--border-color);">
+            <!-- Days injected via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Selected Day Details -->
+    <div class="col-lg-4">
+      <div class="card h-100" style="background-color: var(--card-bg);">
+        <div class="card-body">
+          <div class="text-uppercase text-muted fw-bold small mb-1" style="letter-spacing: 1px;">SELECTED</div>
+          <h4 id="selectedDayTitle" class="fw-bold mb-4">Select a day</h4>
+          <div id="selectedDayTasks" class="d-flex flex-column gap-3">
+            <!-- Tasks injected via JS -->
+            <div class="text-muted small">Click on a day in the calendar to view scheduled tasks.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .calendar-day {
+    flex: 0 0 calc(100% / 7);
+    min-height: 120px;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .calendar-day:hover {
+    background-color: rgba(0,0,0,0.02);
+  }
+  [data-bs-theme="dark"] .calendar-day:hover {
+    background-color: rgba(255,255,255,0.02);
+  }
+  .calendar-day.active-day {
+    background-color: var(--primary-blue-bg) !important;
+    border: 1px solid var(--primary-blue) !important;
+  }
+  .calendar-day.other-month {
+    opacity: 0.4;
+  }
+  .calendar-day-number {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .calendar-task-bar {
+    font-size: 0.65rem;
+    padding: 2px 4px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+  }
+</style>
+
+<!-- New Task Modal -->
+<div class="modal fade" id="newTaskModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="/tasks" method="POST" id="newTaskForm">
+        <div class="modal-header border-bottom-0">
+          <h5 class="modal-title fw-bold">Create Task</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <div id="addTaskError" class="alert alert-danger small py-2" style="display: none;"></div>
+
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="bulkAddTaskToggle" onchange="toggleBulkAddTask()">
+            <label class="form-check-label text-muted small fw-bold" for="bulkAddTaskToggle">BULK ADD MODE</label>
+          </div>
+
+          <div id="singleTaskMode">
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-bold">CLIENT</label>
+              <div class="dropdown">
+                <button class="form-select text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="clientSelectBtn">
+                  <span>No Client (Internal)</span>
+                </button>
+                <ul class="dropdown-menu w-100 shadow-sm border-0 py-2" style="max-height: 300px; overflow-y: auto;">
+                  <li><a class="dropdown-item py-2" href="#" onclick="selectDropdownOption('client', '', 'No Client (Internal)', event)">No Client (Internal)</a></li>
+                  <li>
+                    <a class="dropdown-item fw-bold text-primary py-2 d-flex align-items-center gap-2" style="background-color: #eff6ff;" href="#" onclick="handleInlineCreateCustom('client', event)">
+                      <i class="bi bi-plus-circle-fill"></i> Add New Client
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <% clients.forEach(client => { %>
+                    <li><a class="dropdown-item py-2 client-option" href="#" onclick="selectDropdownOption('client', '<%= client.id %>', '<%= client.name.replace(/\x27/g, '\\\'') %>', event)"><%= client.name %></a></li>
+                  <% }) %>
+                </ul>
+                <input type="hidden" name="client_id" id="client_id_input" value="">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-bold">TASK TYPE <span class="text-danger">*</span></label>
+              <div class="dropdown">
+                <button class="form-select text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="taskTypeSelectBtn">
+                  <span class="text-muted">Select Task Type...</span>
+                </button>
+                <ul class="dropdown-menu w-100 shadow-sm border-0 py-2" style="max-height: 300px; overflow-y: auto;">
+                  <li>
+                    <a class="dropdown-item fw-bold text-primary py-2 d-flex align-items-center gap-2" style="background-color: #eff6ff;" href="#" onclick="handleInlineCreateCustom('task_type', event)">
+                      <i class="bi bi-plus-circle-fill"></i> Add New Task Type
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <% taskTypes.forEach(type => { %>
+                    <li><a class="dropdown-item py-2 tasktype-option" href="#" onclick="selectDropdownOption('task_type', '<%= type.id %>', '<%= type.name.replace(/\x27/g, '\\\'') %>', event)"><%= type.name %></a></li>
+                  <% }) %>
+                </ul>
+                <input type="hidden" name="task_type_id" id="task_type_id_input" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-bold">ASSIGN TO</label>
+              <select name="assigned_user_id" id="assigned_user_id_input" class="form-select">
+                <option value="">Unassigned</option>
+                <% users.forEach(user => { %>
+                  <option value="<%= user.id %>"><%= user.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-bold">DUE DATE <span class="text-danger">*</span></label>
+              <input type="date" name="due_date" id="due_date_input" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-bold">TAGS</label>
+              <div id="tagInputContainer" class="form-control d-flex flex-wrap gap-1 align-items-center" style="min-height: 42px; cursor: text;" onclick="document.getElementById('tagInputField').focus()">
+                <input type="text" id="tagInputField" class="border-0 shadow-none p-0 flex-grow-1" style="outline: none; min-width: 100px;" placeholder="Type and press comma...">
+              </div>
+              <input type="hidden" name="tags" id="hiddenTagsInput">
+              <small class="text-muted" style="font-size: 0.7rem;">Press comma (,) or Enter to add a tag.</small>
+            </div>
+          </div>
+
+          <div id="bulkTaskMode" style="display: none;">
+            <div class="mb-3">
+              <label for="bulkTaskInput" class="form-label text-muted small fw-bold">TASKS (Task Type, Due Date, Client, Assignee) <span class="text-danger">*</span></label>
+              <textarea id="bulkTaskInput" class="form-control" rows="6" placeholder="Tax Return, 2026-12-31, Reliance Industries, John Doe&#10;Audit, 2026-11-15, Tata, Jane Smith"></textarea>
+              <small class="text-muted d-block mt-1">One task per line. Use exact names. Client and Assignee can be blank.</small>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-top-0">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-dark" onclick="submitAddTask(event)">Create Task(s)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Move to Recycle Bin Confirmation Modal -->
+<div class="modal fade" id="moveRecycleModal" tabindex="-1" aria-labelledby="moveRecycleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold" id="moveRecycleModalLabel" style="font-size: 1.25rem;">Move task to Recycle Bin?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-3">
+        <div id="moveTaskDetails" class="fw-bold mb-2" style="font-size: 1rem; color: #111;"></div>
+        <p class="text-muted small mb-0">The task will be moved to Recycle Bin where it can be restored.</p>
+      </div>
+      <div class="modal-footer border-top-0 pt-0 justify-content-end gap-2">
+        <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-dark px-3 py-2 fw-medium" style="border-radius: 8px;" onclick="proceedToConfirm()">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Are you absolutely sure? Confirmation Modal -->
+<div class="modal fade" id="confirmRecycleModal" tabindex="-1" aria-labelledby="confirmRecycleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold" id="confirmRecycleModalLabel" style="font-size: 1.25rem;">Are you absolutely sure?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-3">
+        <div id="confirmTaskDetails" class="fw-bold mb-2" style="font-size: 1rem; color: #111;"></div>
+        <p class="text-muted small mb-0">This is the final confirmation before sending the task to the Recycle Bin.</p>
+      </div>
+      <div class="modal-footer border-top-0 pt-0 justify-content-end gap-2">
+        <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn px-3 py-2 fw-medium text-white" style="background-color: #d93025; border-radius: 8px;" onclick="executeSoftDelete()">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let activeDeleteTaskId = null;
+  let moveModal = null;
+  let confirmModal = null;
+
+  function deleteTask(event, taskId, taskTypeName, clientName) {
+    event.stopPropagation();
+    activeDeleteTaskId = taskId;
+    
+    // Populate details in the modals
+    const displayText = `${taskTypeName} — ${clientName}`;
+    document.getElementById('moveTaskDetails').innerText = displayText;
+    document.getElementById('confirmTaskDetails').innerText = displayText;
+    
+    if (!moveModal) {
+      moveModal = new bootstrap.Modal(document.getElementById('moveRecycleModal'));
+    }
+    moveModal.show();
+  }
+
+  function proceedToConfirm() {
+    if (moveModal) {
+      moveModal.hide();
+    }
+    if (!confirmModal) {
+      confirmModal = new bootstrap.Modal(document.getElementById('confirmRecycleModal'));
+    }
+    confirmModal.show();
+  }
+
+  async function executeSoftDelete() {
+    if (!activeDeleteTaskId) return;
+    try {
+      const response = await fetch(`/tasks/${activeDeleteTaskId}`, { method: 'DELETE' });
+      if (response.ok) {
+        if (confirmModal) {
+          confirmModal.hide();
+        }
+        window.location.reload();
+      } else {
+        alert('Failed to delete task.');
+      }
+    } catch (err) {
+      alert('Error deleting task.');
+    }
+  }
+
+  function selectDropdownOption(type, id, name, event) {
+    if (event) event.preventDefault();
+    if (type === 'client') {
+      document.getElementById('client_id_input').value = id;
+      document.querySelector('#clientSelectBtn span').innerText = name;
+      document.querySelector('#clientSelectBtn span').classList.remove('text-muted');
+    } else if (type === 'task_type') {
+      document.getElementById('task_type_id_input').value = id;
+      document.querySelector('#taskTypeSelectBtn span').innerText = name;
+      document.querySelector('#taskTypeSelectBtn span').classList.remove('text-muted');
+    }
+  }
+
+  async function handleInlineCreateCustom(type, event) {
+    if (event) event.preventDefault();
+    let promptText = type === 'client' ? 'Enter new Client name:' : 'Enter new Task Type name:';
+    let url = type === 'client' ? '/api/clients' : '/api/task-types';
+    
+    let name = prompt(promptText);
+    if (!name || name.trim() === '') {
+      return;
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim() })
+      });
+      
+      if (!response.ok) throw new Error('Failed to create');
+      
+      const data = await response.json();
+      
+      // Auto-select the newly created item
+      selectDropdownOption(type, data.id, data.name, null);
+
+      // Dynamically add it to the dropdown list
+      const ul = type === 'client' 
+        ? document.querySelector('#clientSelectBtn').nextElementSibling 
+        : document.querySelector('#taskTypeSelectBtn').nextElementSibling;
+      
+      const li = document.createElement('li');
+      li.innerHTML = `<a class="dropdown-item py-2" href="#" onclick="selectDropdownOption('${type}', '${data.id}', '${data.name.replace(/\x27/g, '\\\'')}', event)">${data.name}</a>`;
+      ul.appendChild(li);
+
+    } catch (error) {
+      alert('Error creating item. Please try again.');
+    }
+  }
+
+  function exportExcel() {
+    const query = window.location.search;
+    window.location.href = '/tasks/export' + query;
+  }
+
+  function openTaskModal(taskId) {
+    alert('Opening inline edit modal for Task ID: ' + taskId);
+  }
+
+  let currentSortCol = -1;
+  let currentSortDir = 'asc';
+
+  function sortTable(n) {
+    const table = document.querySelector(".table");
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr.dashboard-task-row"));
+    
+    if (rows.length === 0) return;
+
+    if (currentSortCol === n) {
+      currentSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      currentSortCol = n;
+      currentSortDir = 'asc';
+    }
+
+    rows.sort((a, b) => {
+      const aText = a.cells[n].innerText.toLowerCase();
+      const bText = b.cells[n].innerText.toLowerCase();
+      
+      if (aText < bText) return currentSortDir === 'asc' ? -1 : 1;
+      if (aText > bText) return currentSortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    tbody.append(...rows);
+  }
+
+  // Reactive Search
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('dashboardSearch');
+    const rows = document.querySelectorAll('.dashboard-task-row');
+    
+    if (searchInput) {
+      searchInput.addEventListener('keyup', (e) => {
+        const term = e.target.value.toLowerCase();
+        rows.forEach(row => {
+          const text = row.innerText.toLowerCase();
+          if (text.includes(term)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+    
+    // Auto-open New Task Modal if ?action=new
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('action') === 'new') {
+      const newTaskModal = new bootstrap.Modal(document.getElementById('newTaskModal'));
+      newTaskModal.show();
+      // Remove param from URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    // Tag Input Logic
+    const tagInputField = document.getElementById('tagInputField');
+    const tagInputContainer = document.getElementById('tagInputContainer');
+    const hiddenTagsInput = document.getElementById('hiddenTagsInput');
+    let currentTags = [];
+
+    window.toggleBulkAddTask = function() {
+      const isBulk = document.getElementById('bulkAddTaskToggle').checked;
+      document.getElementById('singleTaskMode').style.display = isBulk ? 'none' : 'block';
+      document.getElementById('bulkTaskMode').style.display = isBulk ? 'block' : 'none';
+    };
+
+    window.submitAddTask = async function(e) {
+      e.preventDefault();
+      const isBulk = document.getElementById('bulkAddTaskToggle').checked;
+      const errorDiv = document.getElementById('addTaskError');
+      errorDiv.style.display = 'none';
+
+      if (isBulk) {
+        const bulkInput = document.getElementById('bulkTaskInput').value;
+        const lines = bulkInput.split('\\n').map(l => l.trim()).filter(l => l);
+        
+        if (lines.length === 0) {
+          errorDiv.innerText = 'Please enter at least one task.';
+          errorDiv.style.display = 'block';
+          return;
+        }
+
+        const tasks = [];
+        for (const line of lines) {
+          const parts = line.split(',');
+          if (parts.length < 2) {
+            errorDiv.innerText = 'Invalid format. Use "Task Type, Due Date, Client, Assignee".';
+            errorDiv.style.display = 'block';
+            return;
+          }
+          tasks.push({
+            task_type_name: parts[0] ? parts[0].trim() : '',
+            due_date: parts[1] ? parts[1].trim() : '',
+            client_name: parts[2] ? parts[2].trim() : '',
+            assignee_name: parts[3] ? parts[3].trim() : ''
+          });
+        }
+
+        try {
+          const response = await fetch('/tasks/bulk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tasks })
+          });
+          const data = await response.json();
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            errorDiv.innerText = data.error || 'Failed to add tasks.';
+            errorDiv.style.display = 'block';
+          }
+        } catch (err) {
+          console.error(err);
+          errorDiv.innerText = 'Server error. Please try again.';
+          errorDiv.style.display = 'block';
+        }
+
+      } else {
+        // Standard single submit
+        document.getElementById('newTaskForm').submit();
+      }
+    };
+
+    function renderTags() {
+      // Remove existing visual tags
+      tagInputContainer.querySelectorAll('.visual-tag').forEach(el => el.remove());
+      
+      // Add visual tags
+      currentTags.forEach((tag, index) => {
+        const span = document.createElement('span');
+        span.className = 'visual-tag badge bg-light text-dark border d-flex align-items-center gap-1 px-2 py-1';
+        span.innerHTML = `<span>${tag}</span> <i class="bi bi-x-circle-fill text-muted" style="cursor:pointer;" onclick="removeTag(${index})"></i>`;
+        tagInputContainer.insertBefore(span, tagInputField);
+      });
+      
+      hiddenTagsInput.value = JSON.stringify(currentTags);
+    }
+
+    window.removeTag = function(index) {
+      currentTags.splice(index, 1);
+      renderTags();
+    };
+
+    if (tagInputField) {
+      tagInputField.addEventListener('keydown', function(e) {
+        if (e.key === ',' || e.key === 'Enter') {
+          e.preventDefault();
+          const val = this.value.trim().replace(/,/g, '');
+          if (val && !currentTags.includes(val)) {
+            currentTags.push(val);
+            renderTags();
+          }
+          this.value = '';
+        } else if (e.key === 'Backspace' && this.value === '' && currentTags.length > 0) {
+          // Remove last tag if backspacing on empty input
+          currentTags.pop();
+          renderTags();
+        }
+      });
+    }
+  });
+
+  // Common chart options
+  Chart.defaults.font.family = "'Inter', sans-serif";
+  
+  // Make chart text color dynamic based on theme
+  const getChartColor = () => document.documentElement.getAttribute('data-bs-theme') === 'dark' ? '#94a3b8' : '#555';
+  Chart.defaults.color = getChartColor();
+  
+  // Listen for theme changes to update chart text colors if needed
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'data-bs-theme') {
+        Chart.defaults.color = getChartColor();
+        Chart.instances.forEach(chart => chart.update());
+      }
+    });
+  });
+  observer.observe(document.documentElement, { attributes: true });
+
+  // Status Chart
+  const statusCtx = document.getElementById('statusChart').getContext('2d');
+  new Chart(statusCtx, {
+    type: 'doughnut',
+    data: {
+      labels: <%- JSON.stringify(chartData.statusLabels) %>,
+      datasets: [{
+        data: <%- JSON.stringify(chartData.statusData) %>,
+        backgroundColor: ['#f06a2f', '#1a73e8', '#1e8e3e', '#d93025'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' }
+      },
+      cutout: '65%'
+    }
+  });
+
+  // Team Chart
+  const teamCtx = document.getElementById('teamChart').getContext('2d');
+  new Chart(teamCtx, {
+    type: 'bar',
+    data: {
+      labels: <%- JSON.stringify(chartData.teamLabels) %>,
+      datasets: [{
+        label: 'Tasks',
+        data: <%- JSON.stringify(chartData.teamData) %>,
+        backgroundColor: '#404347',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true } }
+    }
+  });
+
+  // Type Chart
+  const typeCtx = document.getElementById('typeChart').getContext('2d');
+  new Chart(typeCtx, {
+    type: 'bar',
+    data: {
+      labels: <%- JSON.stringify(chartData.typeLabels) %>,
+      datasets: [{
+        label: 'Tasks',
+        data: <%- JSON.stringify(chartData.typeData) %>,
+        backgroundColor: '#5f6368',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true } }
+    }
+  });
+
+  // Calendar Logic
+  const allTasks = <%- JSON.stringify(tasks) %>;
+  let currentMonth = new Date().getMonth();
+  let currentYear = new Date().getFullYear();
+  let selectedDateString = null;
+
+  function switchTaskView(view) {
+    const listBtn = document.getElementById('btnListView');
+    const calBtn = document.getElementById('btnCalendarView');
+    const listView = document.getElementById('listView');
+    const calView = document.getElementById('calendarView');
+    
+    if (view === 'list') {
+      listBtn.className = 'btn btn-sm btn-dark';
+      calBtn.className = 'btn btn-sm btn-outline-secondary';
+      listView.classList.remove('d-none');
+      calView.classList.add('d-none');
+    } else {
+      calBtn.className = 'btn btn-sm btn-dark';
+      listBtn.className = 'btn btn-sm btn-outline-secondary';
+      calView.classList.remove('d-none');
+      listView.classList.add('d-none');
+      renderCalendar();
+    }
+  }
+
+  function changeMonth(delta) {
+    currentMonth += delta;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    } else if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    document.getElementById('calendarMonthYear').innerText = `${monthNames[currentMonth]} ${currentYear}`;
+    
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
+    
+    const grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '';
+    
+    // Previous month padding
+    for (let i = 0; i < firstDay; i++) {
+      grid.appendChild(createDayCell(currentYear, currentMonth - 1, daysInPrevMonth - firstDay + i + 1, true));
+    }
+    
+    // Current month days
+    for (let i = 1; i <= daysInMonth; i++) {
+      grid.appendChild(createDayCell(currentYear, currentMonth, i, false));
+    }
+    
+    // Next month padding (to complete 42 cells grid if needed, or just fill the last row)
+    const totalCells = firstDay + daysInMonth;
+    const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+    for (let i = 1; i <= remainingCells; i++) {
+      grid.appendChild(createDayCell(currentYear, currentMonth + 1, i, true));
+    }
+  }
+
+  function createDayCell(year, month, day, isOtherMonth) {
+    // Handle month overflow/underflow internally for date string matching
+    let adjYear = year;
+    let adjMonth = month;
+    if (adjMonth < 0) { adjMonth = 11; adjYear--; }
+    else if (adjMonth > 11) { adjMonth = 0; adjYear++; }
+    
+    const dateStr = `${adjYear}-${String(adjMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    
+    const el = document.createElement('div');
+    el.className = `calendar-day ${isOtherMonth ? 'other-month' : ''}`;
+    if (selectedDateString === dateStr) el.classList.add('active-day');
+    
+    el.innerHTML = `<div class="calendar-day-number">${day}</div>`;
+    
+    // Find tasks for this day
+    const dayTasks = allTasks.filter(t => t.due_date === dateStr);
+    
+    // Display up to 3 task bars
+    dayTasks.slice(0, 3).forEach(t => {
+      let bgClass = 'bg-secondary text-white';
+      if (t.status === 'Completed') bgClass = 'bg-success text-white';
+      else if (t.status === 'Overdue') bgClass = 'bg-danger text-white';
+      else if (t.status === 'In Progress') bgClass = 'bg-primary text-white';
+      
+      const title = t.TaskType ? t.TaskType.name : 'Task';
+      el.innerHTML += `<div class="calendar-task-bar ${bgClass}">${title}</div>`;
+    });
+    
+    if (dayTasks.length > 3) {
+      el.innerHTML += `<div class="text-muted" style="font-size:0.65rem; font-weight:600;">+${dayTasks.length - 3} more</div>`;
+    }
+    
+    el.onclick = () => selectDay(dateStr, dayTasks);
+    return el;
+  }
+
+  function selectDay(dateStr, dayTasks) {
+    selectedDateString = dateStr;
+    renderCalendar(); // Refresh to show active state
+    
+    const dateObj = new Date(dateStr);
+    const options = { weekday: 'long', month: 'short', day: 'numeric' };
+    document.getElementById('selectedDayTitle').innerText = dateObj.toLocaleDateString('en-US', options);
+    
+    const container = document.getElementById('selectedDayTasks');
+    container.innerHTML = '';
+    
+    if (dayTasks.length === 0) {
+      container.innerHTML = `<div class="text-muted small">No tasks scheduled for this day.</div>`;
+      return;
+    }
+    
+    dayTasks.forEach(t => {
+      const typeName = t.TaskType ? t.TaskType.name : 'Unknown Task';
+      const clientName = t.Client ? t.Client.name : 'Internal';
+      const assigneeName = t.Assignee ? t.Assignee.name : 'Unassigned';
+      
+      let badgeClass = 'text-muted border-secondary';
+      if (t.status === 'Completed') badgeClass = 'text-success border-success';
+      else if (t.status === 'Overdue') badgeClass = 'text-danger border-danger';
+      else if (t.status === 'In Progress') badgeClass = 'text-primary border-primary';
+      
+      container.innerHTML += `
+        <div class="p-3 border rounded" style="background-color: var(--bg-color);">
+          <div class="d-flex justify-content-between align-items-start mb-1">
+            <h6 class="fw-bold mb-0">${typeName}</h6>
+            <span class="badge bg-transparent border ${badgeClass}" style="font-size: 0.65rem;">${t.status}</span>
+          </div>
+          <div class="text-muted small mb-2">${clientName} &middot; ${assigneeName}</div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-secondary py-0" style="font-size: 0.7rem;" onclick="openTaskModal(${t.id})">EDIT</button>
+          </div>
+        </div>
+      `;
+    });
+  }
+</script>

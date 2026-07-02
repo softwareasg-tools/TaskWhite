@@ -1,0 +1,71 @@
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-sm" style="width: 400px; border-radius: 10px;">
+    <div class="card-body p-4 text-center">
+      <img src="/images/logo.svg" alt="TaskWhite Logo" style="height: 64px; width: 64px; object-fit: cover; border-radius: 14px;" class="mb-3 shadow-sm">
+      <div class="d-flex justify-content-center mb-4">
+        <h3 class="card-title text-center mb-0 brand-text" style="font-size: 2.25rem;">Task<span class="white-part">White</span></h3>
+      </div>
+      <p class="text-center text-muted mb-4">Task Manager - Magic Link Login</p>
+      
+      <div class="alert alert-danger py-2" id="jsError" style="display: none;"></div>
+      <div class="alert alert-success py-2" id="jsSuccess" style="display: none;"></div>
+
+      <!-- Email Step for Magic URL -->
+      <div id="emailStep">
+        <div class="mb-3">
+          <label for="email" class="form-label text-muted">Email address</label>
+          <input type="email" class="form-control" id="email" placeholder="name@company.com" required>
+        </div>
+        <button type="button" class="btn btn-dark w-100 mb-3" onclick="requestMagicLink()" id="magicBtn">Send Magic Link</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  window.requestMagicLink = async function() {
+    const email = document.getElementById('email').value.trim();
+    const errorDiv = document.getElementById('jsError');
+    const successDiv = document.getElementById('jsSuccess');
+    const btn = document.getElementById('magicBtn');
+    
+    if (!email) {
+      errorDiv.innerText = 'Please enter an email address.';
+      errorDiv.style.display = 'block';
+      successDiv.style.display = 'none';
+      return;
+    }
+
+    try {
+      btn.disabled = true;
+      btn.innerText = 'Sending...';
+      
+      const res = await fetch('/api/auth/magic-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to send magic link');
+      }
+      
+      // Save the email locally so you don't need to ask the user for it again during verification
+      window.localStorage.setItem('emailForSignIn', email);
+      
+      errorDiv.style.display = 'none';
+      successDiv.innerText = 'Check your email for the beautiful magic link!';
+      successDiv.style.display = 'block';
+    } catch (err) {
+      console.error(err);
+      successDiv.style.display = 'none';
+      errorDiv.innerText = err.message || 'Failed to send magic link.';
+      errorDiv.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.innerText = 'Send Magic Link';
+    }
+  }
+</script>

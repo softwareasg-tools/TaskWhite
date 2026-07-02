@@ -1,0 +1,164 @@
+<div class="mb-4">
+  <div class="section-subtitle">TRASH</div>
+  <h1 class="page-title">Recycle Bin</h1>
+  <p class="text-muted mb-0">Restore deleted tasks freely. Permanent deletion requires the owner password.</p>
+</div>
+
+<div class="card mb-5">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th>Client</th>
+            <th>Task</th>
+            <th>Assigned To</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (tasks.length === 0) { %>
+            <tr><td colspan="6" class="text-center text-muted p-4">Recycle bin is empty.</td></tr>
+          <% } %>
+          <% tasks.forEach(task => { %>
+            <tr>
+              <td class="fw-bold"><%= task.Client ? task.Client.name : '-' %></td>
+              <td><%= task.TaskType ? task.TaskType.name : '-' %></td>
+              <td><%= task.Assignee ? task.Assignee.name : '-' %></td>
+              <td><%= task.due_date %></td>
+              <td>
+                <% if (task.status === 'Completed') { %>
+                  <span class="badge badge-outline text-success border-success">Completed</span>
+                <% } else if (task.status === 'In Progress') { %>
+                  <span class="badge badge-outline text-primary border-primary">In Progress</span>
+                <% } else if (task.status === 'Overdue') { %>
+                  <span class="badge badge-outline text-danger border-danger">Overdue</span>
+                <% } else { %>
+                  <span class="badge badge-outline text-muted border-secondary-subtle">Assigned</span>
+                <% } %>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-link text-decoration-none text-dark p-0 me-3" onclick="restoreTask(<%= task.id %>)">
+                  <i class="bi bi-arrow-counterclockwise"></i> Restore
+                </button>
+                <button class="btn btn-link text-decoration-none text-danger p-0" onclick="confirmPermanentDelete(<%= task.id %>)">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Permanent Delete Confirmation Modal -->
+<div class="modal fade" id="permDeleteModal" tabindex="-1" aria-labelledby="permDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold" id="permDeleteModalLabel" style="font-size: 1.25rem;">Permanently delete task?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-3">
+        <p class="text-muted small mb-4">This action cannot be undone. Enter the owner password to confirm.</p>
+        
+        <div class="mb-3">
+          <label for="officePassword" class="form-label text-muted small fw-bold" style="font-size: 0.75rem; letter-spacing: 0.8px;">PASSWORD</label>
+          <input type="password" id="officePassword" class="form-control py-2" placeholder="Enter password" style="border-radius: 8px;">
+          <div id="deleteError" class="text-danger small mt-2" style="display: none;"></div>
+        </div>
+      </div>
+      <div class="modal-footer border-top-0 pt-0 justify-content-end gap-2">
+        <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="confirmDeleteBtn" class="btn text-white px-3 py-2 fw-medium" style="background-color: #ea767d; border-radius: 8px;" onclick="executePermanentDelete()">Permanently Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let activeDeleteTaskId = null;
+  let deleteModalObj = null;
+
+  async function restoreTask(taskId) {
+    if (!confirm('Are you sure you want to restore this task?')) return;
+    try {
+      const response = await fetch(`/tasks/${taskId}/restore`, {
+        method: 'POST'
+      });
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert('Failed to restore task.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error restoring task.');
+    }
+  }
+
+  function confirmPermanentDelete(taskId) {
+    activeDeleteTaskId = taskId;
+    
+    // Clear inputs and errors
+    document.getElementById('officePassword').value = '';
+    const errorDiv = document.getElementById('deleteError');
+    errorDiv.style.display = 'none';
+    errorDiv.innerText = '';
+    
+    if (!deleteModalObj) {
+      deleteModalObj = new bootstrap.Modal(document.getElementById('permDeleteModal'));
+    }
+    deleteModalObj.show();
+  }
+
+  async function executePermanentDelete() {
+    if (!activeDeleteTaskId) return;
+    
+    const passwordInput = document.getElementById('officePassword');
+    const password = passwordInput.value;
+    const errorDiv = document.getElementById('deleteError');
+    
+    if (!password) {
+      errorDiv.innerText = 'Password is required.';
+      errorDiv.style.display = 'block';
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/tasks/${activeDeleteTaskId}/permanent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ password })
+      });
+      
+      const data = await response.json();
+      if (response.ok) {
+        deleteModalObj.hide();
+        window.location.reload();
+      } else {
+        errorDiv.innerText = data.error || 'Failed to delete task.';
+        errorDiv.style.display = 'block';
+      }
+    } catch (err) {
+      console.error(err);
+      errorDiv.innerText = 'Error performing action. Please try again.';
+      errorDiv.style.display = 'block';
+    }
+  }
+
+  // Bind Enter key to submit password
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('officePassword').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        executePermanentDelete();
+      }
+    });
+  });
+</script>

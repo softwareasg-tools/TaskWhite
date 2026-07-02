@@ -1,0 +1,40 @@
+<div class="mb-4">
+  <div class="section-subtitle">SETTINGS</div>
+  <h1 class="page-title">Workspace Settings</h1>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">Organization Details</div>
+      <div class="card-body">
+        <form>
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">ORGANIZATION NAME</label>
+            <input type="text" class="form-control" value="<%= org.name %>">
+          </div>
+          <button type="button" class="btn btn-dark">Update Name</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">Licensing & Billing</div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="form-label text-muted small fw-bold">CURRENT PLAN</label>
+          <p class="fs-5 mb-0"><span class="badge bg-dark text-white"><%= org.billing_plan %></span></p>
+        </div>
+        <div class="d-flex justify-content-between mb-2 text-muted small fw-bold">
+          <span>SEATS USED</span>
+          <span><%= usedSeats %> / <%= org.purchased_seats %></span>
+        </div>
+        <div class="progress mb-4" style="height: 10px; border-radius: 5px;">
+          <div class="progress-bar bg-success" role="progressbar" style="width: <%= (usedSeats / org.purchased_seats) * 100 %>%"></div>
+        </div>
+        <button class="btn btn-outline-secondary w-100">Manage Subscription</button>
+      </div>
+    </div>
+  </div>
+</div>

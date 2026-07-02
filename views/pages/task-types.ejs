@@ -1,0 +1,248 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <div class="section-subtitle">MASTER DATA</div>
+    <h1 class="page-title mb-0">Task Types</h1>
+  </div>
+  <div class="d-flex gap-3">
+    <div class="input-group">
+      <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+      <input type="text" id="taskTypeSearch" class="form-control border-start-0 ps-0" placeholder="Search task types...">
+    </div>
+    <button class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#addTaskTypeModal"><i class="bi bi-plus"></i> Add Task Type</button>
+  </div>
+</div>
+
+<div class="card" style="max-width: 600px;">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th onclick="sortTable(0)" style="cursor: pointer;">Task Name <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (taskTypes.length === 0) { %>
+            <tr><td colspan="2" class="text-center text-muted p-4">No task types found.</td></tr>
+          <% } %>
+          <% taskTypes.forEach(type => { %>
+            <tr class="task-type-row">
+              <td>
+                <i class="bi bi-tag text-muted me-2"></i>
+                <span class="fw-bold task-type-name"><%= type.name %></span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-link text-decoration-none text-danger p-0" onclick="confirmDeleteTaskType(<%= type.id %>, '<%= type.name.replace(/'/g, "\\'") %>')">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add Task Type Modal -->
+<div class="modal fade" id="addTaskTypeModal" tabindex="-1" aria-labelledby="addTaskTypeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+    <div class="modal-content">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold" id="addTaskTypeModalLabel">Add Task Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="addTaskTypeError" class="alert alert-danger small py-2" style="display: none;"></div>
+        
+        <div class="form-check form-switch mb-3">
+          <input class="form-check-input" type="checkbox" id="bulkAddTaskTypeToggle" onchange="toggleBulkAddTaskType()">
+          <label class="form-check-label text-muted small fw-bold" for="bulkAddTaskTypeToggle">BULK ADD MODE</label>
+        </div>
+
+        <div id="singleTaskTypeMode">
+          <div class="mb-3">
+            <label for="taskTypeNameInput" class="form-label text-muted small fw-bold">TASK TYPE NAME <span class="text-danger">*</span></label>
+            <input type="text" id="taskTypeNameInput" class="form-control" placeholder="e.g. Video Editing">
+          </div>
+        </div>
+
+        <div id="bulkTaskTypeMode" style="display: none;">
+          <div class="mb-3">
+            <label for="bulkTaskTypeInput" class="form-label text-muted small fw-bold">TASK TYPE NAMES (ONE PER LINE) <span class="text-danger">*</span></label>
+            <textarea id="bulkTaskTypeInput" class="form-control" rows="6" placeholder="Video Editing&#10;Logo Design&#10;Copywriting"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-top-0 pt-0">
+        <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-dark" onclick="submitAddTaskType()">Add Task Type(s)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Task Type Modal -->
+<div class="modal fade" id="deleteTaskTypeModal" tabindex="-1" aria-labelledby="deleteTaskTypeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+    <div class="modal-content">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold" id="deleteTaskTypeModalLabel">Delete Task Type?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-3">
+        <div id="deleteTaskTypeDetails" class="fw-bold mb-2" style="color: #111;"></div>
+        <p class="text-muted small mb-0">Are you sure you want to delete this task type? This will permanently affect tasks using it.</p>
+      </div>
+      <div class="modal-footer border-top-0 pt-0 justify-content-end gap-2">
+        <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger px-3 py-2 fw-medium text-white" style="border-radius: 8px;" onclick="executeDeleteTaskType()">Delete Task Type</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let activeDeleteTaskTypeId = null;
+  let deleteTaskTypeModalObj = null;
+  let addTaskTypeModalObj = null;
+
+  function confirmDeleteTaskType(id, name) {
+    activeDeleteTaskTypeId = id;
+    document.getElementById('deleteTaskTypeDetails').innerText = name;
+    if (!deleteTaskTypeModalObj) {
+      deleteTaskTypeModalObj = new bootstrap.Modal(document.getElementById('deleteTaskTypeModal'));
+    }
+    deleteTaskTypeModalObj.show();
+  }
+
+  async function executeDeleteTaskType() {
+    if (!activeDeleteTaskTypeId) return;
+    try {
+      const res = await fetch(`/task-types/${activeDeleteTaskTypeId}`, { method: 'DELETE' });
+      if (res.ok) {
+        deleteTaskTypeModalObj.hide();
+        window.location.reload();
+      } else {
+        alert('Failed to delete task type.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error deleting task type.');
+    }
+  }
+
+  function toggleBulkAddTaskType() {
+    const isBulk = document.getElementById('bulkAddTaskTypeToggle').checked;
+    document.getElementById('singleTaskTypeMode').style.display = isBulk ? 'none' : 'block';
+    document.getElementById('bulkTaskTypeMode').style.display = isBulk ? 'block' : 'none';
+  }
+
+  async function submitAddTaskType() {
+    const errorDiv = document.getElementById('addTaskTypeError');
+    const isBulk = document.getElementById('bulkAddTaskTypeToggle').checked;
+    
+    errorDiv.style.display = 'none';
+    
+    let payload = {};
+    let url = '';
+
+    if (isBulk) {
+      const bulkInput = document.getElementById('bulkTaskTypeInput').value;
+      const names = bulkInput.split('\\n').map(n => n.trim()).filter(n => n);
+      if (names.length === 0) {
+        errorDiv.innerText = 'Please enter at least one task type name.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      payload = { names };
+      url = '/api/task-types/bulk';
+    } else {
+      const name = document.getElementById('taskTypeNameInput').value.trim();
+      if (!name) {
+        errorDiv.innerText = 'Task type name is required.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      payload = { name };
+      url = '/api/task-types';
+    }
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      const data = await response.json();
+      if (response.ok) {
+        if (!addTaskTypeModalObj) {
+          addTaskTypeModalObj = bootstrap.Modal.getInstance(document.getElementById('addTaskTypeModal'));
+        }
+        addTaskTypeModalObj?.hide();
+        window.location.reload();
+      } else {
+        errorDiv.innerText = data.error || 'Failed to add task type(s).';
+        errorDiv.style.display = 'block';
+      }
+    } catch (err) {
+      console.error(err);
+      errorDiv.innerText = 'Server error. Please try again.';
+      errorDiv.style.display = 'block';
+    }
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    addTaskTypeModalObj = new bootstrap.Modal(document.getElementById('addTaskTypeModal'));
+    
+    // Reactive Search
+    const searchInput = document.getElementById('taskTypeSearch');
+    const rows = document.querySelectorAll('.task-type-row');
+    
+    if (searchInput) {
+      searchInput.addEventListener('keyup', (e) => {
+        const term = e.target.value.toLowerCase();
+        rows.forEach(row => {
+          const name = row.querySelector('.task-type-name').textContent.toLowerCase();
+          if (name.includes(term)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+  });
+
+  let currentSortCol = -1;
+  let currentSortDir = 'asc';
+  
+  function sortTable(n) {
+    const table = document.querySelector(".table");
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    
+    // Ignore if empty state
+    if (rows.length === 0 || rows[0].querySelector("td[colspan]")) return;
+
+    if (currentSortCol === n) {
+      currentSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      currentSortCol = n;
+      currentSortDir = 'asc';
+    }
+
+    rows.sort((a, b) => {
+      const aText = a.cells[n].innerText.toLowerCase();
+      const bText = b.cells[n].innerText.toLowerCase();
+      
+      if (aText < bText) return currentSortDir === 'asc' ? -1 : 1;
+      if (aText > bText) return currentSortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    tbody.append(...rows);
+  }
+</script>

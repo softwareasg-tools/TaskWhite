@@ -1,0 +1,40 @@
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-sm" style="width: 450px; border-radius: 10px;">
+    <div class="card-body p-4 text-center">
+      <img src="/images/logo.svg" alt="TaskWhite Logo" style="height: 64px; width: 64px; object-fit: cover; border-radius: 14px;" class="mb-3 shadow-sm">
+      <div class="d-flex justify-content-center mb-4 align-items-center">
+        <h3 class="card-title text-center mb-0 fw-bold me-2">Sign Up for</h3>
+        <div class="brand-text" style="font-size: 1.75rem;">Task<span class="white-part">White</span></div>
+      </div>
+      <p class="text-center text-muted mb-4">Create your workspace</p>
+      
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger py-2"><%= error %></div>
+      <% } %>
+
+      <form action="/signup" method="POST">
+        <div class="mb-3">
+          <label for="org_name" class="form-label text-muted">Organization Name</label>
+          <input type="text" class="form-control" id="org_name" name="org_name" required>
+        </div>
+        <div class="mb-3">
+          <label for="name" class="form-label text-muted">Your Name</label>
+          <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label text-muted">Email address</label>
+          <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="mb-4">
+          <label for="password" class="form-label text-muted">Password</label>
+          <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mb-3">Sign Up</button>
+      </form>
+      
+      <div class="text-center">
+        <small class="text-muted">Already have an account? <a href="/login" class="text-decoration-none">Sign in</a></small>
+      </div>
+    </div>
+  </div>
+</div>
