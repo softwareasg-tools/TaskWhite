@@ -530,3 +530,69 @@ h1.page-title {
 [data-bs-theme="dark"] .text-muted {
   color: var(--text-muted) !important;
 }
+
+/* Premium Landing Page Styles */
+.text-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.bg-gradient-modern {
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+}
+.glass-panel {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
+  border-radius: 16px;
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+.animate-float-delayed {
+  animation: float 6s ease-in-out 3s infinite;
+}
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+.screenshot-container {
+  position: relative;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.05);
+  overflow: hidden;
+  border: 6px solid #0f172a;
+  background: #0f172a;
+}
+.screenshot-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.feature-card-glow {
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  background: #fff;
+}
+.feature-card-glow::before {
+  content: "";
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #4f46e5, #ec4899, #f59e0b);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.feature-card-glow:hover {
+  transform: translateY(-8px);
+}
+.feature-card-glow:hover::before {
+  opacity: 1;
+}
+
