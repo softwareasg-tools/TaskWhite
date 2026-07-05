@@ -31,9 +31,10 @@
   </ul>
 </div>
 
-<div class="card">
-  <div class="card-body p-0">
-    <div class="table-responsive">
+<div class="card border-0 bg-transparent bg-md-white border-md shadow-sm-md">
+  <div class="card-body p-0 bg-transparent bg-md-white">
+    <!-- Desktop Table View -->
+    <div class="table-responsive d-none d-md-block">
       <table class="table table-hover mb-0">
         <thead class="bg-light">
           <tr>
@@ -74,6 +75,41 @@
           <% }) %>
         </tbody>
       </table>
+    </div>
+
+    <!-- Mobile Tile List View -->
+    <div class="d-block d-md-none">
+      <% if (team.length === 0) { %>
+        <div class="text-center text-muted p-4 bg-white rounded border">No team members found.</div>
+      <% } %>
+      <div class="d-flex flex-column gap-3">
+        <% team.forEach(member => { %>
+          <div class="p-3 border rounded shadow-sm bg-white">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div>
+                <h6 class="fw-bold mb-1 text-dark">
+                  <i class="bi bi-person-circle text-muted me-1"></i>
+                  <%= member.name %>
+                </h6>
+                <div class="text-muted small" style="font-size: 0.75rem;"><%= member.email %></div>
+              </div>
+              <div class="d-flex flex-column align-items-end gap-1">
+                <span class="badge bg-light text-secondary border px-2 py-0.5" style="font-size: 0.65rem;"><%= member.role %></span>
+                <% if (member.status === 'Active') { %>
+                  <span class="badge badge-outline text-success border-success px-2 py-0.5" style="font-size: 0.65rem;">Active</span>
+                <% } else { %>
+                  <span class="badge badge-outline text-muted border-secondary px-2 py-0.5" style="font-size: 0.65rem;">Inactive</span>
+                <% } %>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end border-top pt-2">
+              <button class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.7rem;" onclick="confirmDeleteUser('<%= member.id %>', '<%= member.name.replace(/'/g, "\\'") %>')">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
     </div>
   </div>
 </div>

@@ -14,9 +14,10 @@
 </div>
 </div>
 
-<div class="card">
-  <div class="card-body p-0">
-    <div class="table-responsive">
+<div class="card border-0 bg-transparent bg-md-white border-md shadow-sm-md">
+  <div class="card-body p-0 bg-transparent bg-md-white">
+    <!-- Desktop Table View -->
+    <div class="table-responsive d-none d-md-block">
       <table class="table table-hover mb-0">
         <thead class="bg-light">
           <tr>
@@ -55,6 +56,40 @@
           <% }) %>
         </tbody>
       </table>
+    </div>
+
+    <!-- Mobile Tile List View -->
+    <div class="d-block d-md-none">
+      <% if (templates.length === 0) { %>
+        <div class="text-center text-muted p-4 bg-white rounded border">No global templates configured.</div>
+      <% } %>
+      <div class="d-flex flex-column gap-3">
+        <% templates.forEach(temp => { %>
+          <div class="p-3 border rounded shadow-sm bg-white">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div>
+                <h6 class="fw-bold mb-1 text-dark">
+                  <i class="bi bi-file-earmark-check text-primary me-1"></i>
+                  <%= temp.TaskType ? temp.TaskType.name : 'Unknown' %>
+                </h6>
+                <div class="text-muted small" style="font-size: 0.75rem;">Assignee: <%= temp.Assignee ? temp.Assignee.name : '-' %></div>
+              </div>
+              <div class="d-flex flex-column align-items-end gap-1">
+                <% if (temp.recurrence_rule && temp.recurrence_rule.frequency === 'monthly') { %>
+                  <span class="badge bg-light text-dark border" style="font-size: 0.65rem;">Monthly (day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
+                <% } else { %>
+                  <span class="badge bg-light text-dark border" style="font-size: 0.65rem;">Recurring</span>
+                <% } %>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end border-top pt-2">
+              <button class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.7rem;" onclick="confirmDeleteTemplate('<%= temp.id %>', '<%= temp.TaskType ? temp.TaskType.name.replace(/\x27/g, `\\\'`) : `Unknown` %>')">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
     </div>
   </div>
 </div>

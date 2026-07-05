@@ -21,9 +21,10 @@
 </div>
 </div>
 
-<div class="card">
-  <div class="card-body p-0">
-    <div class="table-responsive">
+<div class="card border-0 bg-transparent bg-md-white border-md shadow-sm-md">
+  <div class="card-body p-0 bg-transparent bg-md-white">
+    <!-- Desktop Table View -->
+    <div class="table-responsive d-none d-md-block">
       <table class="table table-hover mb-0">
         <thead class="bg-light">
           <tr>
@@ -51,6 +52,28 @@
           <% }) %>
         </tbody>
       </table>
+    </div>
+
+    <!-- Mobile Tile List View -->
+    <div class="d-block d-md-none">
+      <% if (clients.length === 0) { %>
+        <div class="text-center text-muted p-4 bg-white rounded border">No clients found.</div>
+      <% } %>
+      <div class="d-flex flex-column gap-3">
+        <% clients.forEach(client => { %>
+          <div class="p-3 border rounded shadow-sm bg-white">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="fw-bold mb-0 text-dark"><%= client.name %></h6>
+              <button class="btn btn-link text-decoration-none text-danger p-0" onclick="confirmDeleteClient('<%= client.id %>', '<%= client.name.replace(/'/g, "\\'") %>')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+            <% if (client.notes) { %>
+              <div class="text-muted small mt-2 bg-light p-2 rounded" style="font-size: 0.75rem;"><%= client.notes %></div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
     </div>
   </div>
 </div>
