@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { requireAuth } = require('./authRoutes');
 const masterDataController = require('../controllers/masterDataController');
+const aiController = require('../controllers/aiController');
 
 router.get('/clients', requireAuth, masterDataController.getClients);
 router.get('/team', requireAuth, masterDataController.getTeam);
@@ -15,6 +16,7 @@ router.post('/api/task-types', requireAuth, express.json(), masterDataController
 router.post('/api/task-types/bulk', requireAuth, express.json(), masterDataController.apiBulkCreateTaskTypes);
 router.post('/api/team', requireAuth, express.json(), masterDataController.apiCreateUser);
 router.post('/api/team/bulk', requireAuth, express.json(), masterDataController.apiBulkCreateUsers);
+router.post('/api/ai/generate-tasks', requireAuth, express.json(), aiController.generateTaskTypes);
 
 router.delete('/clients/:id', requireAuth, masterDataController.deleteClient);
 router.delete('/task-types/:id', requireAuth, masterDataController.deleteTaskType);

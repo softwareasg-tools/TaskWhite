@@ -8,6 +8,7 @@
       <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
       <input type="text" id="taskTypeSearch" class="form-control border-start-0 ps-0" placeholder="Search task types...">
     </div>
+    <button class="btn btn-outline-primary text-nowrap" data-bs-toggle="modal" data-bs-target="#generateAIModal"><i class="bi bi-magic me-1"></i> Auto-Generate via AI</button>
     <button class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#addTaskTypeModal"><i class="bi bi-plus"></i> Add Task Type</button>
   </div>
 </div>
@@ -78,6 +79,32 @@
       <div class="modal-footer border-top-0 pt-0">
         <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-dark" onclick="submitAddTaskType()">Add Task Type(s)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Generation Modal -->
+<div class="modal fade" id="generateAIModal" tabindex="-1" aria-labelledby="generateAIModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+    <div class="modal-content border-primary" style="box-shadow: 0 0 20px rgba(13, 110, 253, 0.15);">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold text-primary" id="generateAIModalLabel"><i class="bi bi-magic me-2"></i>AI Task Generator</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="aiGenerateError" class="alert alert-danger small py-2" style="display: none;"></div>
+        
+        <p class="text-muted small mb-3">Save hours of setup! Let AI automatically populate standard tasks for your specific industry.</p>
+        
+        <div class="mb-3">
+          <label for="aiIndustryInput" class="form-label text-muted small fw-bold">YOUR INDUSTRY <span class="text-danger">*</span></label>
+          <input type="text" id="aiIndustryInput" class="form-control form-control-lg" placeholder="e.g. Law Firm, Architecture, Podcast Agency">
+        </div>
+      </div>
+      <div class="modal-footer border-top-0 pt-0">
+        <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="aiGenerateBtn" onclick="generateTasksWithAI()">Generate Tasks</button>
       </div>
     </div>
   </div>
@@ -215,6 +242,56 @@
       });
     }
   });
+
+  async function generateTasksWithAI() {
+    const industry = document.getElementById('aiIndustryInput').value.trim();
+    const btn = document.getElementById('aiGenerateBtn');
+    const errorDiv = document.getElementById('aiGenerateError');
+    
+    if (!industry) {
+      errorDiv.innerText = 'Please enter an industry.';
+      errorDiv.style.display = 'block';
+      return;
+    }
+    
+    try {
+      errorDiv.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+      
+      const res = await fetch('/api/ai/generate-tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ industry })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        // Hide AI modal
+        bootstrap.Modal.getInstance(document.getElementById('generateAIModal')).hide();
+        
+        // Open Add Task Type modal in Bulk mode to review
+        document.getElementById('bulkAddTaskTypeToggle').checked = true;
+        toggleBulkAddTaskType();
+        document.getElementById('bulkTaskTypeInput').value = data.tasks.join('\\n');
+        
+        if (!addTaskTypeModalObj) {
+          addTaskTypeModalObj = new bootstrap.Modal(document.getElementById('addTaskTypeModal'));
+        }
+        addTaskTypeModalObj.show();
+      } else {
+        throw new Error(data.error || 'Failed to generate tasks.');
+      }
+    } catch (err) {
+      console.error(err);
+      errorDiv.innerText = err.message || 'Server error.';
+      errorDiv.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.innerText = 'Generate Tasks';
+    }
+  }
 
   let currentSortCol = -1;
   let currentSortDir = 'asc';
