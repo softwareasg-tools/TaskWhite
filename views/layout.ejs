@@ -71,7 +71,7 @@
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="/clients">Clients</a></li>
                 <li><a class="dropdown-item" href="/team">Team</a></li>
-                <li><a class="dropdown-item" href="/task-types">Task Types</a></li>
+                <li><a class="dropdown-item" href="/task-types">Tasks</a></li>
                 <li><a class="dropdown-item" href="/settings">Settings</a></li>
                 <li>
                   <div class="dropdown-item d-flex justify-content-between align-items-center" onclick="toggleTheme(event)" style="cursor: pointer;">
@@ -126,7 +126,7 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-bottom shadow" style="margin-bottom: 0.5rem;">
           <li><a class="dropdown-item" href="/team">Team</a></li>
-          <li><a class="dropdown-item" href="/task-types">Task Types</a></li>
+          <li><a class="dropdown-item" href="/task-types">Tasks</a></li>
           <li><a class="dropdown-item" href="/settings">Settings</a></li>
           <li>
             <div class="dropdown-item d-flex justify-content-between align-items-center" onclick="toggleTheme(event)" style="cursor: pointer;">
@@ -152,7 +152,51 @@
       const themeSwitchMobile = document.getElementById('themeSwitchMobile');
       if (themeSwitch) themeSwitch.checked = isDark;
       if (themeSwitchMobile) themeSwitchMobile.checked = isDark;
+      
+      // Global Modal Autofocus Logic
+      const modals = document.querySelectorAll('.modal');
+      modals.forEach(modal => {
+        modal.addEventListener('shown.bs.modal', function () {
+          // Focus the primary action button (btn-primary, btn-danger, or btn-dark)
+          const primaryBtn = modal.querySelector('.modal-footer .btn-primary, .modal-footer .btn-danger, .modal-footer .btn-dark, .modal-footer button[type="submit"]');
+          if (primaryBtn) {
+            primaryBtn.focus();
+          } else {
+            // Fallback to the first focusable element
+            const focusable = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusable) focusable.focus();
+          }
+        });
+      });
     });
+
+    // Bulk Action Logic
+    function toggleAllCheckboxes(event) {
+      const isChecked = event.target.checked;
+      const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+      rowCheckboxes.forEach(cb => cb.checked = isChecked);
+      updateBulkDeleteAction();
+    }
+
+    function updateBulkDeleteAction() {
+      const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+      const actionBar = document.getElementById('bulkActionBar');
+      const countLabel = document.getElementById('bulkSelectedCount');
+      if (actionBar) {
+        if (checkedCount > 0) {
+          actionBar.style.display = 'flex';
+          if(countLabel) countLabel.innerText = checkedCount + ' selected';
+        } else {
+          actionBar.style.display = 'none';
+        }
+      }
+      
+      const masterCheck = document.querySelector('.master-checkbox');
+      const allRowChecks = document.querySelectorAll('.row-checkbox');
+      if (masterCheck && allRowChecks.length > 0) {
+        masterCheck.checked = checkedCount === allRowChecks.length;
+      }
+    }
   </script>
 </body>
 </html>

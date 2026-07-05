@@ -47,10 +47,27 @@
       
       <div class="mb-4">
         <label class="form-label fw-bold text-muted small text-uppercase">Time Period</label>
-        <select name="time" class="form-select">
+        <select name="time" id="timeFilterSelect" class="form-select" onchange="toggleCustomDateFields()">
           <option value="">All Time</option>
           <option value="today" <%= query.time === 'today' ? 'selected' : '' %>>Today</option>
+          <option value="7days" <%= query.time === '7days' ? 'selected' : '' %>>Next 7 Days</option>
+          <option value="15days" <%= query.time === '15days' ? 'selected' : '' %>>Next 15 Days</option>
+          <option value="30days" <%= query.time === '30days' ? 'selected' : '' %>>Next 30 Days</option>
+          <option value="60days" <%= query.time === '60days' ? 'selected' : '' %>>Next 60 Days</option>
+          <option value="90days" <%= query.time === '90days' ? 'selected' : '' %>>Next 90 Days</option>
+          <option value="custom" <%= query.time === 'custom' ? 'selected' : '' %>>Custom Date Range</option>
         </select>
+      </div>
+
+      <div id="customDateFields" style="display: <%= query.time === 'custom' ? 'block' : 'none' %>;">
+        <div class="mb-4">
+          <label class="form-label fw-bold text-muted small text-uppercase">Start Date</label>
+          <input type="date" name="start_date" class="form-control" value="<%= query.start_date || '' %>">
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-bold text-muted small text-uppercase">End Date</label>
+          <input type="date" name="end_date" class="form-control" value="<%= query.end_date || '' %>">
+        </div>
       </div>
       
       <div class="mb-4">
@@ -74,9 +91,9 @@
       </div>
       
       <div class="mb-4">
-        <label class="form-label fw-bold text-muted small text-uppercase">Task Type</label>
+        <label class="form-label fw-bold text-muted small text-uppercase">Task</label>
         <select name="task_type_id" class="form-select">
-          <option value="">All Task Types</option>
+          <option value="">All Tasks</option>
           <% taskTypes.forEach(type => { %>
             <option value="<%= type.id %>" <%= query.task_type_id == type.id ? 'selected' : '' %>><%= type.name %></option>
           <% }) %>
@@ -94,7 +111,7 @@
       </div>
       
       <div class="mt-5 pt-3 d-flex gap-2">
-        <a href="/dashboard<%= query.view ? '?view=' + query.view : '' %>" class="btn btn-light flex-grow-1 text-muted">Clear</a>
+        <a href="/dashboard<%= query.view ? '?view=' + query.view : '' %>" class="btn btn-light flex-grow-1 text-muted">Reset all</a>
         <button type="submit" class="btn btn-primary flex-grow-1">Apply Filters</button>
       </div>
     </form>
@@ -165,7 +182,7 @@
   </div>
   <div class="col-md-12">
     <div class="card h-100">
-      <div class="card-header">Tasks by Task Type</div>
+      <div class="card-header">Tasks by Task</div>
       <div class="card-body" style="height: 400px;">
         <canvas id="typeChart"></canvas>
       </div>
@@ -187,6 +204,14 @@
     <button type="button" class="btn btn-outline-secondary me-2 text-nowrap" onclick="exportExcel()"><i class="bi bi-file-earmark-excel"></i> Export Excel</button>
     <button type="button" class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#newTaskModal"><i class="bi bi-plus"></i> New Task</button>
   </div>
+  </div>
+</div>
+
+<div id="bulkActionBar" class="bulk-action-bar" style="display: none;">
+  <div class="fw-bold"><span id="bulkSelectedCount">0 selected</span></div>
+  <button class="btn btn-danger btn-sm" onclick="confirmBulkDeleteDashboardTasks()">
+    <i class="bi bi-trash"></i> Delete Selected
+  </button>
 </div>
 
 <div id="listView" class="card mb-5">
@@ -195,7 +220,8 @@
       <table class="table table-hover mb-0">
         <thead class="bg-light">
           <tr>
-            <th onclick="sortTable(0)" style="cursor: pointer;">Client <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th style="width: 40px;"><input type="checkbox" class="form-check-input master-checkbox" onchange="toggleAllCheckboxes(event)"></th>
+            <th onclick="sortTable(1)" style="cursor: pointer;">Client <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th onclick="sortTable(1)" style="cursor: pointer;">Task <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th onclick="sortTable(2)" style="cursor: pointer;">Assigned To <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th onclick="sortTable(3)" style="cursor: pointer;">Due Date <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
@@ -205,7 +231,8 @@
         </thead>
         <tbody>
           <% tasks.forEach(task => { %>
-            <tr class="dashboard-task-row" onclick="openTaskModal('<%= task.id %>')">
+            <tr class="dashboard-task-row" onclick="if(!event.target.classList.contains('row-checkbox')) openTaskModal('<%= task.id %>')">
+              <td><input type="checkbox" class="form-check-input row-checkbox" value="<%= task.id %>" data-assigned="<%= task.assigned_user_id ? 'true' : 'false' %>" data-status="<%= task.status %>" onchange="updateBulkDeleteAction()"></td>
               <td class="fw-bold"><%= task.Client ? task.Client.name : '-' %></td>
               <td>
                 <div class="fw-medium text-dark"><%= task.TaskType ? task.TaskType.name : '-' %></div>
@@ -232,7 +259,7 @@
               </td>
               <td class="text-end">
                 <i class="bi bi-pencil text-muted me-3"></i>
-                <i class="bi bi-trash text-danger" onclick="deleteTask(event, '<%= task.id %>', '<%= (task.TaskType ? task.TaskType.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', '<%= (task.Client ? task.Client.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>')" style="cursor: pointer;"></i>
+                <i class="bi bi-trash text-danger" onclick="deleteTask(event, '<%= task.id %>', '<%= (task.TaskType ? task.TaskType.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', '<%= (task.Client ? task.Client.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', <%= task.assigned_user_id ? 'true' : 'false' %>, '<%= task.status %>')" style="cursor: pointer;"></i>
               </td>
             </tr>
           <% }) %>
@@ -362,15 +389,15 @@
               </div>
             </div>
             <div class="mb-3">
-              <label class="form-label text-muted small fw-bold">TASK TYPE <span class="text-danger">*</span></label>
+              <label class="form-label text-muted small fw-bold">TASK <span class="text-danger">*</span></label>
               <div class="dropdown">
                 <button class="form-select text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="taskTypeSelectBtn">
-                  <span class="text-muted">Select Task Type...</span>
+                  <span class="text-muted">Select Task...</span>
                 </button>
                 <ul class="dropdown-menu w-100 shadow-sm border-0 py-2" style="max-height: 300px; overflow-y: auto;">
                   <li>
                     <a class="dropdown-item fw-bold text-primary py-2 d-flex align-items-center gap-2" style="background-color: #eff6ff;" href="#" onclick="handleInlineCreateCustom('task_type', event)">
-                      <i class="bi bi-plus-circle-fill"></i> Add New Task Type
+                      <i class="bi bi-plus-circle-fill"></i> Add New Task
                     </a>
                   </li>
                   <li><hr class="dropdown-divider"></li>
@@ -406,7 +433,7 @@
 
           <div id="bulkTaskMode" style="display: none;">
             <div class="mb-3">
-              <label for="bulkTaskInput" class="form-label text-muted small fw-bold">TASKS (Task Type, Due Date, Client, Assignee) <span class="text-danger">*</span></label>
+              <label for="bulkTaskInput" class="form-label text-muted small fw-bold">TASKS (Task, Due Date, Client, Assignee) <span class="text-danger">*</span></label>
               <textarea id="bulkTaskInput" class="form-control" rows="6" placeholder="Tax Return, 2026-12-31, Reliance Industries, John Doe&#10;Audit, 2026-11-15, Tata, Jane Smith"></textarea>
               <small class="text-muted d-block mt-1">One task per line. Use exact names. Client and Assignee can be blank.</small>
             </div>
@@ -466,8 +493,14 @@
   let moveModal = null;
   let confirmModal = null;
 
-  function deleteTask(event, taskId, taskTypeName, clientName) {
+  function deleteTask(event, taskId, taskTypeName, clientName, isAssigned, status) {
     event.stopPropagation();
+    
+    if (isAssigned && ['Assigned', 'In Progress', 'Overdue'].includes(status)) {
+      alert('This task is actively assigned. Please mark it as Completed or modify it instead of deleting.');
+      return;
+    }
+    
     activeDeleteTaskId = taskId;
     
     // Populate details in the modals
@@ -508,6 +541,65 @@
     }
   }
 
+  function confirmBulkDeleteDashboardTasks() {
+    const checked = document.querySelectorAll('.row-checkbox:checked');
+    if (checked.length === 0) return;
+    
+    const idsToTrash = [];
+    let assignedCount = 0;
+    
+    checked.forEach(cb => {
+      const isAssigned = cb.getAttribute('data-assigned') === 'true';
+      const status = cb.getAttribute('data-status');
+      
+      if (isAssigned && ['Assigned', 'In Progress', 'Overdue'].includes(status)) {
+        assignedCount++;
+      } else {
+        idsToTrash.push(cb.value);
+      }
+    });
+    
+    if (assignedCount > 0 && idsToTrash.length === 0) {
+      alert(`Cannot delete ${assignedCount} assigned task(s). Please mark them as completed or modify them instead.`);
+      return;
+    }
+    
+    if (assignedCount > 0) {
+      alert(`${assignedCount} task(s) are assigned and will be skipped.`);
+    }
+
+    if (idsToTrash.length > 0) {
+      if (confirm(`Move ${idsToTrash.length} task(s) to recycle bin?`)) {
+        executeBulkDashboardTrash(idsToTrash);
+      }
+    }
+  }
+
+  async function executeBulkDashboardTrash(ids) {
+    try {
+      for (const id of ids) {
+        await fetch(`/dashboard/tasks/${id}/trash`, { method: 'POST' });
+      }
+      window.location.reload();
+    } catch(err) {
+      console.error(err);
+      alert('Error moving tasks to trash.');
+    }
+  }
+
+  function toggleCustomDateFields() {
+    const timeSelect = document.getElementById('timeFilterSelect');
+    const customFields = document.getElementById('customDateFields');
+    if (timeSelect.value === 'custom') {
+      customFields.style.display = 'block';
+    } else {
+      customFields.style.display = 'none';
+      // clear the inputs when hidden
+      document.querySelector('input[name="start_date"]').value = '';
+      document.querySelector('input[name="end_date"]').value = '';
+    }
+  }
+
   function selectDropdownOption(type, id, name, event) {
     if (event) event.preventDefault();
     if (type === 'client') {
@@ -523,7 +615,7 @@
 
   async function handleInlineCreateCustom(type, event) {
     if (event) event.preventDefault();
-    let promptText = type === 'client' ? 'Enter new Client name:' : 'Enter new Task Type name:';
+    let promptText = type === 'client' ? 'Enter new Client name:' : 'Enter new Task name:';
     let url = type === 'client' ? '/api/clients' : '/api/task-types';
     
     let name = prompt(promptText);
@@ -657,7 +749,7 @@
         for (const line of lines) {
           const parts = line.split(',');
           if (parts.length < 2) {
-            errorDiv.innerText = 'Invalid format. Use "Task Type, Due Date, Client, Assignee".';
+            errorDiv.innerText = 'Invalid format. Use "Task, Due Date, Client, Assignee".';
             errorDiv.style.display = 'block';
             return;
           }

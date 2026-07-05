@@ -3,6 +3,60 @@
   <h1 class="page-title">Workspace Settings</h1>
 </div>
 
+<div class="row g-4 mb-4">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">User Profile</div>
+      <div class="card-body">
+        <form id="profileForm">
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">DISPLAY NAME</label>
+            <input type="text" class="form-control" id="profileName" value="<%= user.name %>">
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">EMAIL ADDRESS</label>
+            <input type="email" class="form-control" value="<%= user.email %>" disabled>
+          </div>
+          <button type="button" class="btn btn-dark" onclick="updateProfile()">Update Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function updateProfile() {
+    const name = document.getElementById('profileName').value.trim();
+    if (!name) return alert('Name cannot be empty');
+
+    try {
+      const btn = document.querySelector('#profileForm .btn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Updating...';
+      btn.disabled = true;
+
+      const response = await fetch('/settings/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+      
+      const data = await response.json();
+      if (response.ok) {
+        alert('Profile updated successfully!');
+        window.location.reload();
+      } else {
+        alert(data.error || 'Failed to update profile');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error while updating profile');
+    }
+  }
+</script>
+
 <div class="row g-4">
   <div class="col-md-6">
     <div class="card h-100">

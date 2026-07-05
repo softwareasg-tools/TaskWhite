@@ -8,8 +8,15 @@
       <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
       <input type="text" id="teamSearch" class="form-control border-start-0 ps-0" placeholder="Search team...">
     </div>
-    <button class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#addTeamModal"><i class="bi bi-plus"></i> Add Team Member</button>
+    <button class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#addTeamModal"><i class="bi bi-plus"></i> Add Member</button>
   </div>
+</div>
+
+<div id="bulkActionBar" class="bulk-action-bar" style="display: none; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; margin-bottom: 1rem; border-radius: 4px; display: flex; align-items: center; justify-content: space-between;">
+  <div class="fw-bold"><span id="bulkSelectedCount">0 selected</span></div>
+  <button class="btn btn-danger btn-sm" onclick="confirmBulkDeleteUsers()">
+    <i class="bi bi-trash"></i> Delete Selected
+  </button>
 </div>
 
 <div class="alert alert-info mb-4" role="alert">
@@ -28,16 +35,21 @@
       <table class="table table-hover mb-0">
         <thead class="bg-light">
           <tr>
-            <th onclick="sortTable(0)" style="cursor: pointer;">Name <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(1)" style="cursor: pointer;">Email <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(2)" style="cursor: pointer;">Role <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(3)" style="cursor: pointer;">Status <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th style="width: 40px;"><input type="checkbox" class="form-check-input master-checkbox" onchange="toggleAllCheckboxes(event)"></th>
+            <th onclick="sortTable(1)" style="cursor: pointer;">Name <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(2)" style="cursor: pointer;">Email <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(3)" style="cursor: pointer;">Role <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(4)" style="cursor: pointer;">Status <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th class="text-end">Actions</th>
           </tr>
         </thead>
         <tbody>
+          <% if (team.length === 0) { %>
+            <tr><td colspan="6" class="text-center text-muted p-4">No team members found.</td></tr>
+          <% } %>
           <% team.forEach(member => { %>
             <tr class="team-row">
+              <td><input type="checkbox" class="form-check-input row-checkbox" value="<%= member.id %>" onchange="updateBulkDeleteAction()"></td>
               <td>
                 <i class="bi bi-person-circle text-muted me-2"></i>
                 <span class="fw-bold team-name"><%= member.name %></span>
@@ -154,17 +166,32 @@
   async function executeDeleteUser() {
     if (!activeDeleteUserId) return;
     try {
-      const res = await fetch(`/team/${activeDeleteUserId}`, { method: 'DELETE' });
-      if (res.ok) {
-        deleteUserModalObj.hide();
-        window.location.reload();
-      } else {
-        alert('Failed to delete member.');
+      const ids = Array.isArray(activeDeleteUserId) ? activeDeleteUserId : [activeDeleteUserId];
+      for (const id of ids) {
+        const response = await fetch(`/team/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to delete member');
+        }
       }
+      deleteUserModalObj.hide();
+      window.location.reload();
     } catch (err) {
       console.error(err);
-      alert('Error deleting member.');
+      alert(err.message);
     }
+  }
+
+  function confirmBulkDeleteUsers() {
+    const checked = document.querySelectorAll('.row-checkbox:checked');
+    if (checked.length === 0) return;
+    const ids = Array.from(checked).map(cb => cb.value);
+    activeDeleteUserId = ids;
+    document.getElementById('deleteUserDetails').innerText = `${ids.length} member(s) selected`;
+    if (!deleteUserModalObj) {
+      deleteUserModalObj = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+    }
+    deleteUserModalObj.show();
   }
 
   function toggleBulkAddTeam() {

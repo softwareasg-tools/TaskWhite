@@ -41,13 +41,14 @@ exports.getRecycleBin = async (req, res) => {
     const db = getFirestore();
     const orgId = req.session.user.organization_id;
     
-    // Fetch deleted tasks
+    // Fetch deleted tasks by getting all tasks for org and filtering in memory to avoid composite index requirements
     const snapshot = await db.collection('tasks')
       .where('organization_id', '==', orgId)
-      .where('deleted_at', '!=', null)
       .get();
       
-    let tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    let tasks = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(task => task.deleted_at !== null && task.deleted_at !== undefined);
     
     // Fetch related master data in parallel
     const [clientsSnap, typesSnap, usersSnap] = await Promise.all([
@@ -70,7 +71,7 @@ exports.getRecycleBin = async (req, res) => {
     res.render('pages/recycle-bin', { tasks });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error');
+    res.status(500).send(`Error loading recycle bin: ${err.message}`);
   }
 };
 
@@ -87,6 +88,24 @@ exports.getSettings = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Error');
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name) return res.status(400).json({ error: 'Name is required' });
+
+    const db = getFirestore();
+    const userId = req.session.user.id;
+
+    await db.collection('users').doc(userId).update({ name });
+    req.session.user.name = name;
+
+    res.json({ success: true, name });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update profile' });
   }
 };
 
@@ -329,9 +348,19 @@ exports.apiBulkCreateUsers = async (req, res) => {
 exports.deleteClient = async (req, res) => {
   try {
     const db = getFirestore();
+    const tasksSnap = await db.collection('tasks')
+      .where('client_id', '==', req.params.id)
+      .where('deleted_at', '==', null)
+      .get();
+      
+    if (!tasksSnap.empty) {
+      return res.status(400).json({ error: `Cannot delete client. They are linked to ${tasksSnap.size} active task(s).` });
+    }
+    
     await db.collection('clients').doc(req.params.id).delete();
     res.json({ success: true });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server Error' });
   }
 };
@@ -339,9 +368,19 @@ exports.deleteClient = async (req, res) => {
 exports.deleteTaskType = async (req, res) => {
   try {
     const db = getFirestore();
+    const tasksSnap = await db.collection('tasks')
+      .where('task_type_id', '==', req.params.id)
+      .where('deleted_at', '==', null)
+      .get();
+      
+    if (!tasksSnap.empty) {
+      return res.status(400).json({ error: `Cannot delete task. It is used in ${tasksSnap.size} active dashboard task(s).` });
+    }
+    
     await db.collection('task_types').doc(req.params.id).delete();
     res.json({ success: true });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server Error' });
   }
 };
@@ -349,9 +388,24 @@ exports.deleteTaskType = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const db = getFirestore();
+    const userDoc = await db.collection('users').doc(req.params.id).get();
+    if (userDoc.exists && userDoc.data().role === 'Owner') {
+      return res.status(400).json({ error: 'Cannot delete the organization Owner.' });
+    }
+
+    const tasksSnap = await db.collection('tasks')
+      .where('assigned_user_id', '==', req.params.id)
+      .where('deleted_at', '==', null)
+      .get();
+      
+    if (!tasksSnap.empty) {
+      return res.status(400).json({ error: `Cannot delete user. They are assigned to ${tasksSnap.size} active task(s).` });
+    }
+    
     await db.collection('users').doc(req.params.id).delete();
     res.json({ success: true });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server Error' });
   }
 };

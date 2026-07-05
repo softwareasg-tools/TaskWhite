@@ -596,3 +596,36 @@ h1.page-title {
   opacity: 1;
 }
 
+
+/* Accessibility Focus Rings */
+button:focus-visible, input:focus-visible, a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.4) !important;
+  transition: box-shadow 0.2s ease;
+}
+.btn-danger:focus-visible {
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.4) !important;
+}
+.btn-dark:focus-visible {
+  box-shadow: 0 0 0 3px rgba(33, 37, 41, 0.4) !important;
+}
+
+
+/* Bulk Action Bar */
+.bulk-action-bar {
+  display: none;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  align-items: center;
+  justify-content: space-between;
+  animation: slideDown 0.3s ease;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

@@ -12,14 +12,22 @@
   </div>
 </div>
 
+<div id="bulkActionBar" class="bulk-action-bar">
+  <div class="fw-bold"><span id="bulkSelectedCount">0 selected</span></div>
+  <button class="btn btn-danger btn-sm" onclick="confirmBulkDeleteClients()">
+    <i class="bi bi-trash"></i> Delete Selected
+  </button>
+</div>
+
 <div class="card">
   <div class="card-body p-0">
     <div class="table-responsive">
       <table class="table table-hover mb-0">
         <thead class="bg-light">
           <tr>
-            <th onclick="sortTable(0)" style="cursor: pointer;">Name <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(1)" style="cursor: pointer;">Notes <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th style="width: 40px;"><input type="checkbox" class="form-check-input master-checkbox" onchange="toggleAllCheckboxes(event)"></th>
+            <th onclick="sortTable(1)" style="cursor: pointer;">Name <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(2)" style="cursor: pointer;">Notes <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th class="text-end">Actions</th>
           </tr>
         </thead>
@@ -29,6 +37,7 @@
           <% } %>
           <% clients.forEach(client => { %>
             <tr class="client-row">
+              <td><input type="checkbox" class="form-check-input row-checkbox" value="<%= client.id %>" onchange="updateBulkDeleteAction()"></td>
               <td class="fw-bold client-name"><%= client.name %></td>
               <td><%= client.notes || '-' %></td>
               <td class="text-end">
@@ -121,19 +130,33 @@
   }
 
   async function executeDeleteClient() {
-    if (!activeDeleteClientId) return;
     try {
-      const res = await fetch(`/clients/${activeDeleteClientId}`, { method: 'DELETE' });
-      if (res.ok) {
-        deleteClientModalObj.hide();
-        window.location.reload();
-      } else {
-        alert('Failed to delete client.');
+      const ids = Array.isArray(activeDeleteClientId) ? activeDeleteClientId : [activeDeleteClientId];
+      for (const id of ids) {
+        const response = await fetch(`/clients/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to delete client');
+        }
       }
+      deleteClientModalObj.hide();
+      window.location.reload();
     } catch (err) {
       console.error(err);
-      alert('Error deleting client.');
+      alert(err.message);
     }
+  }
+
+  function confirmBulkDeleteClients() {
+    const checked = document.querySelectorAll('.row-checkbox:checked');
+    if (checked.length === 0) return;
+    const ids = Array.from(checked).map(cb => cb.value);
+    activeDeleteClientId = ids;
+    document.getElementById('deleteClientDetails').innerText = `${ids.length} client(s) selected`;
+    if (!deleteClientModalObj) {
+      deleteClientModalObj = new bootstrap.Modal(document.getElementById('deleteClientModal'));
+    }
+    deleteClientModalObj.show();
   }
 
   function toggleBulkAdd() {

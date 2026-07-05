@@ -1,9 +1,18 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h4 class="text-muted fw-bold mb-0">Tasks</h4>
-  <div>
-    <button class="btn btn-outline-secondary me-2"><i class="bi bi-file-earmark-excel"></i> Export Excel</button>
-    <a href="/tasks/new" class="btn btn-primary"><i class="bi bi-plus"></i> New Task</a>
+  <div class="d-flex gap-3">
+    <div class="input-group">
+      <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+      <input type="text" id="tasksSearch" class="form-control border-start-0 ps-0" placeholder="Search tasks...">
+    </div>
+    <a href="/dashboard?action=new" class="btn btn-dark text-nowrap"><i class="bi bi-plus"></i> Add Task</a>
   </div>
+</div>
+
+<div id="bulkActionBar" class="bulk-action-bar" style="display: none;">
+  <div class="fw-bold"><span id="bulkSelectedCount">0 selected</span></div>
+  <button class="btn btn-danger btn-sm" onclick="confirmBulkDeleteTasks()">
+    <i class="bi bi-trash"></i> Delete Selected
+  </button>
 </div>
 
 <div class="card">
@@ -12,19 +21,21 @@
       <table class="table table-hover mb-0">
         <thead class="bg-light">
           <tr>
-            <th onclick="sortTable(0)" style="cursor: pointer;">Client <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(1)" style="cursor: pointer;">Show <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(2)" style="cursor: pointer;">Episode <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(3)" style="cursor: pointer;">Task <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(4)" style="cursor: pointer;">Assigned To <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(5)" style="cursor: pointer;">Due Date <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(6)" style="cursor: pointer;">Status <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(7)" style="cursor: pointer;">Priority <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th style="width: 40px;"><input type="checkbox" class="form-check-input master-checkbox" onchange="toggleAllCheckboxes(event)"></th>
+            <th onclick="sortTable(1)" style="cursor: pointer;">Client <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(2)" style="cursor: pointer;">Show <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(3)" style="cursor: pointer;">Episode <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(4)" style="cursor: pointer;">Task <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(5)" style="cursor: pointer;">Assigned To <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(6)" style="cursor: pointer;">Due Date <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(7)" style="cursor: pointer;">Status <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(8)" style="cursor: pointer;">Priority <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
           </tr>
         </thead>
         <tbody>
           <% tasks.forEach(task => { %>
-            <tr onclick="openTaskModal('<%= task.id %>')">
+            <tr onclick="if(!event.target.classList.contains('row-checkbox')) openTaskModal('<%= task.id %>')">
+              <td><input type="checkbox" class="form-check-input row-checkbox" value="<%= task.id %>" data-assigned="<%= task.assigned_user_id ? 'true' : 'false' %>" data-status="<%= task.status %>" onchange="updateBulkDeleteAction()"></td>
               <td><%= task.Client ? task.Client.name : '-' %></td>
               <td><%= task.show_name || '-' %></td>
               <td><%= task.episode_name || '-' %></td>
@@ -66,6 +77,25 @@
     alert('Opening inline edit modal for Task ID: ' + taskId);
   }
 
+  function updateBulkDeleteAction() {
+    const checked = document.querySelectorAll('.row-checkbox:checked');
+    const bulkBar = document.getElementById('bulkActionBar');
+    const countDisplay = document.getElementById('bulkSelectedCount');
+    
+    if (checked.length > 0) {
+      bulkBar.style.display = 'flex';
+      countDisplay.textContent = checked.length + ' selected';
+    } else {
+      bulkBar.style.display = 'none';
+    }
+  }
+
+  function toggleAllCheckboxes(event) {
+    const checkboxes = document.querySelectorAll('.row-checkbox');
+    checkboxes.forEach(cb => cb.checked = event.target.checked);
+    updateBulkDeleteAction();
+  }
+
   function sortTable(n) {
     var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
     table = document.querySelector(".table");
@@ -100,6 +130,53 @@
           switching = true;
         }
       }
+    }
+  }
+
+  // Bulk Delete Modal Logic for Tasks (assigned restriction)
+  function confirmBulkDeleteTasks() {
+    const checked = document.querySelectorAll('.row-checkbox:checked');
+    if (checked.length === 0) return;
+    
+    const idsToTrash = [];
+    let assignedCount = 0;
+    
+    checked.forEach(cb => {
+      const isAssigned = cb.getAttribute('data-assigned') === 'true';
+      const status = cb.getAttribute('data-status');
+      
+      if (isAssigned && ['Assigned', 'In Progress', 'Overdue'].includes(status)) {
+        assignedCount++;
+      } else {
+        idsToTrash.push(cb.value);
+      }
+    });
+    
+    if (assignedCount > 0 && idsToTrash.length === 0) {
+      alert(`Cannot delete ${assignedCount} assigned task(s). Please mark them as completed or modify them instead.`);
+      return;
+    }
+    
+    if (assignedCount > 0) {
+      alert(`${assignedCount} task(s) are assigned and will be skipped.`);
+    }
+
+    if (idsToTrash.length > 0) {
+      if (confirm(`Move ${idsToTrash.length} task(s) to recycle bin?`)) {
+        executeBulkTrash(idsToTrash);
+      }
+    }
+  }
+
+  async function executeBulkTrash(ids) {
+    try {
+      for (const id of ids) {
+        await fetch(`/dashboard/tasks/${id}/trash`, { method: 'POST' });
+      }
+      window.location.reload();
+    } catch(err) {
+      console.error(err);
+      alert('Error moving tasks to trash.');
     }
   }
 </script>

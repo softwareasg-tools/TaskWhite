@@ -9,6 +9,7 @@ router.get('/team', requireAuth, masterDataController.getTeam);
 router.get('/task-types', requireAuth, masterDataController.getTaskTypes);
 router.get('/recycle-bin', requireAuth, masterDataController.getRecycleBin);
 router.get('/settings', requireAuth, masterDataController.getSettings);
+router.post('/settings/profile', requireAuth, masterDataController.updateProfile);
 
 router.post('/api/clients', requireAuth, express.json(), masterDataController.apiCreateClient);
 router.post('/api/clients/bulk', requireAuth, express.json(), masterDataController.apiBulkCreateClients);

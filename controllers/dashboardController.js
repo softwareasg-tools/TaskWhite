@@ -46,6 +46,53 @@ exports.getDashboard = async (req, res) => {
 
     // Apply Filters
     let filteredTasks = [...allTasks];
+    
+    // Time Period Filter
+    if (req.query.time) {
+      const timeFilter = req.query.time;
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+
+      filteredTasks = filteredTasks.filter(t => {
+        if (!t.due_date) return false;
+        
+        const taskDate = new Date(t.due_date);
+        taskDate.setHours(0, 0, 0, 0);
+        
+        if (timeFilter === 'today') {
+          return taskDate.getTime() === todayDate.getTime();
+        } else if (timeFilter === 'custom') {
+          let matches = true;
+          if (req.query.start_date) {
+            const start = new Date(req.query.start_date);
+            start.setHours(0, 0, 0, 0);
+            if (taskDate < start) matches = false;
+          }
+          if (req.query.end_date) {
+            const end = new Date(req.query.end_date);
+            end.setHours(0, 0, 0, 0);
+            if (taskDate > end) matches = false;
+          }
+          return matches;
+        } else {
+          // Handle X days
+          let days = 0;
+          if (timeFilter === '7days') days = 7;
+          if (timeFilter === '15days') days = 15;
+          if (timeFilter === '30days') days = 30;
+          if (timeFilter === '60days') days = 60;
+          if (timeFilter === '90days') days = 90;
+          
+          if (days > 0) {
+            const endDate = new Date(todayDate);
+            endDate.setDate(todayDate.getDate() + days);
+            return taskDate >= todayDate && taskDate <= endDate;
+          }
+          return true;
+        }
+      });
+    }
+
     if (req.query.client_id) {
       filteredTasks = filteredTasks.filter(t => t.client_id === req.query.client_id);
     }
