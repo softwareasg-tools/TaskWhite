@@ -39,9 +39,9 @@
               </td>
               <td>
                 <% if (temp.recurrence_rule && temp.recurrence_rule.frequency === 'monthly') { %>
-                  <span class="badge bg-light text-dark border">Monthly (on day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
+                  <span class="badge bg-light  border">Monthly (on day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
                 <% } else { %>
-                  <span class="badge bg-light text-dark border">Recurring</span>
+                  <span class="badge bg-light  border">Recurring</span>
                 <% } %>
               </td>
               <td>
@@ -68,7 +68,7 @@
           <div class="p-3 border rounded shadow-sm bg-surface">
             <div class="d-flex justify-content-between align-items-start mb-2">
               <div>
-                <h6 class="fw-bold mb-1 text-dark">
+                <h6 class="fw-bold mb-1 ">
                   <i class="bi bi-file-earmark-check text-primary me-1"></i>
                   <%= temp.TaskType ? temp.TaskType.name : 'Unknown' %>
                 </h6>
@@ -76,9 +76,9 @@
               </div>
               <div class="d-flex flex-column align-items-end gap-1">
                 <% if (temp.recurrence_rule && temp.recurrence_rule.frequency === 'monthly') { %>
-                  <span class="badge bg-light text-dark border" style="font-size: 0.65rem;">Monthly (day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
+                  <span class="badge bg-light  border" style="font-size: 0.65rem;">Monthly (day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
                 <% } else { %>
-                  <span class="badge bg-light text-dark border" style="font-size: 0.65rem;">Recurring</span>
+                  <span class="badge bg-light  border" style="font-size: 0.65rem;">Recurring</span>
                 <% } %>
               </div>
             </div>
@@ -144,7 +144,7 @@
         </div>
       </div>
       <div class="modal-footer border-top-0 pt-0">
-        <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-link text-decoration-none  fw-medium" data-bs-dismiss="modal">Cancel</button>
         <button type="submit" class="btn btn-dark">Add Template</button>
       </div>
     </form>

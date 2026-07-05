@@ -40,7 +40,7 @@
                 <% } %>
               </td>
               <td class="text-end">
-                <button class="btn btn-link text-decoration-none text-dark p-0 me-3" onclick="restoreTask('<%= task.id %>')">
+                <button class="btn btn-link text-decoration-none  p-0 me-3" onclick="restoreTask('<%= task.id %>')">
                   <i class="bi bi-arrow-counterclockwise"></i> Restore
                 </button>
                 <button class="btn btn-link text-decoration-none text-danger p-0" onclick="confirmPermanentDelete('<%= task.id %>')">
@@ -73,7 +73,7 @@
         </div>
       </div>
       <div class="modal-footer border-top-0 pt-0 justify-content-end gap-2">
-        <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-link text-decoration-none  fw-medium" data-bs-dismiss="modal">Cancel</button>
         <button type="button" id="confirmDeleteBtn" class="btn text-white px-3 py-2 fw-medium" style="background-color: #ea767d; border-radius: 8px;" onclick="executePermanentDelete()">Permanently Delete</button>
       </div>
     </div>
