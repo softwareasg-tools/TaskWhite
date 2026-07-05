@@ -49,6 +49,7 @@ if (getApps().length === 0) {
 exports.getAuthVerify = (req, res) => {
   res.render('pages/auth-verify', {
     layout: 'layout',
+    user: null,
     firebaseConfig: process.env.FIREBASE_CONFIG
   });
 };
