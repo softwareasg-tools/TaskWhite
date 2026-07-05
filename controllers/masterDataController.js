@@ -391,6 +391,20 @@ exports.deleteTaskType = async (req, res) => {
     }
     
     await db.collection('task_types').doc(req.params.id).delete();
+    
+    // Cascade delete any global task templates for this task type
+    const templatesSnap = await db.collection('global_task_templates')
+      .where('task_type_id', '==', req.params.id)
+      .get();
+      
+    if (!templatesSnap.empty) {
+      const batch = db.batch();
+      templatesSnap.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      await batch.commit();
+    }
+    
     res.json({ success: true });
   } catch (err) {
     console.error(err);

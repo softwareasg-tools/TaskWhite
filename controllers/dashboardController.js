@@ -145,6 +145,9 @@ exports.getDashboard = async (req, res) => {
     const typeMap = {}; taskTypes.forEach(d => typeMap[d.id] = d);
     const userMap = {}; users.forEach(d => userMap[d.id] = d);
 
+    // Filter out orphaned tasks (whose task type was deleted)
+    filteredTasks = filteredTasks.filter(t => t.task_type_id && typeMap[t.task_type_id]);
+
     // Chart Data - Tasks by Team Member
     let chartUsers = users;
     if (req.query.user_id) {

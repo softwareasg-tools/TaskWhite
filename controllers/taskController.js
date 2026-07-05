@@ -33,6 +33,9 @@ exports.getTasks = async (req, res) => {
     const typeMap = {}; typesSnap.forEach(d => typeMap[d.id] = { id: d.id, ...d.data() });
     const userMap = {}; usersSnap.forEach(d => userMap[d.id] = { id: d.id, ...d.data() });
     
+    // Filter out orphaned tasks (whose task type was deleted)
+    tasks = tasks.filter(t => t.task_type_id && typeMap[t.task_type_id]);
+    
     tasks = tasks.map(t => ({
       ...t,
       Client: t.client_id ? clientMap[t.client_id] : null,
