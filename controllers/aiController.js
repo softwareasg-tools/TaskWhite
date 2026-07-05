@@ -1,5 +1,3 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-
 exports.generateTaskTypes = async (req, res) => {
   try {
     const { industry } = req.body;
@@ -7,12 +5,9 @@ exports.generateTaskTypes = async (req, res) => {
       return res.status(400).json({ error: 'Industry name is required' });
     }
 
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(400).json({ error: 'GEMINI_API_KEY is not configured in the server environment. Please add it to your .env file and restart the server.' });
+    if (!process.env.BYNARA_API_KEY) {
+      return res.status(400).json({ error: 'BYNARA_API_KEY is not configured in the server environment. Please add it to your .env file and restart the server.' });
     }
-
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const prompt = `You are an expert operations manager. Provide a list of 5 to 8 standard, high-level task types or workflows that a typical company in the "${industry}" industry would need to manage in their task management software.
     
@@ -20,9 +15,27 @@ exports.generateTaskTypes = async (req, res) => {
     Example output format:
     ["Draft Contracts", "Client Consultation", "Review Documents", "Court Filing"]`;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text().trim();
+    const response = await fetch('https://router.bynara.id/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.BYNARA_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'mistral-large',
+        messages: [
+          { role: 'user', content: prompt }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Bynara API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    const text = data.choices[0].message.content.trim();
     
     // Parse the JSON array, removing any potential markdown code blocks if the AI ignored the instructions
     const jsonString = text.replace(/^```json/m, '').replace(/^```/m, '').replace(/```$/m, '').trim();
