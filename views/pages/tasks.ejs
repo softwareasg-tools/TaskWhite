@@ -74,7 +74,7 @@
 <script>
   function openTaskModal(taskId) {
     // In a real implementation, this would open a modal for inline editing
-    alert('Opening inline edit modal for Task ID: ' + taskId);
+    showToast('Opening inline edit modal for Task ID: ' + taskId, 'success');
   }
 
   function updateBulkDeleteAction() {
@@ -153,12 +153,12 @@
     });
     
     if (assignedCount > 0 && idsToTrash.length === 0) {
-      alert(`Cannot delete ${assignedCount} assigned task(s). Please mark them as completed or modify them instead.`);
+      showToast(`Cannot delete ${assignedCount} assigned task(s). Please mark them as completed or modify them instead.`, 'danger');
       return;
     }
     
     if (assignedCount > 0) {
-      alert(`${assignedCount} task(s) are assigned and will be skipped.`);
+      showToast(`${assignedCount} task(s) are assigned and will be skipped.`, 'danger');
     }
 
     if (idsToTrash.length > 0) {
@@ -176,7 +176,7 @@
       window.location.reload();
     } catch(err) {
       console.error(err);
-      alert('Error moving tasks to trash.');
+      showToast('Error moving tasks to trash.', 'danger');
     }
   }
 </script>

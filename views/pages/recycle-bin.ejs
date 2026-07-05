@@ -93,11 +93,11 @@
       if (response.ok) {
         window.location.reload();
       } else {
-        alert('Failed to restore task.');
+        showToast('Failed to restore task.', 'danger');
       }
     } catch (err) {
       console.error(err);
-      alert('Error restoring task.');
+      showToast('Error restoring task.', 'danger');
     }
   }
 

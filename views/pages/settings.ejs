@@ -8,7 +8,7 @@
     <div class="card">
       <div class="card-header">User Profile</div>
       <div class="card-body">
-        <form id="profileForm">
+        <form id="profileForm" onsubmit="event.preventDefault(); updateProfile();">
           <div class="mb-3">
             <label class="form-label text-muted small fw-bold">DISPLAY NAME</label>
             <input type="text" class="form-control" id="profileName" value="<%= user.name %>">
@@ -17,7 +17,7 @@
             <label class="form-label text-muted small fw-bold">EMAIL ADDRESS</label>
             <input type="email" class="form-control" value="<%= user.email %>" disabled>
           </div>
-          <button type="button" class="btn btn-dark" onclick="updateProfile()">Update Profile</button>
+          <button type="submit" class="btn btn-dark">Update Profile</button>
         </form>
       </div>
     </div>
@@ -27,7 +27,7 @@
 <script>
   async function updateProfile() {
     const name = document.getElementById('profileName').value.trim();
-    if (!name) return alert('Name cannot be empty');
+    if (!name) return showToast('Name cannot be empty', 'danger');
 
     try {
       const btn = document.querySelector('#profileForm .btn');
@@ -43,16 +43,19 @@
       
       const data = await response.json();
       if (response.ok) {
-        alert('Profile updated successfully!');
-        window.location.reload();
+        showToast('Profile updated successfully!', 'success');
+        setTimeout(() => window.location.reload(), 1000);
       } else {
-        alert(data.error || 'Failed to update profile');
+        showToast(data.error || 'Failed to update profile', 'danger');
         btn.innerHTML = originalText;
         btn.disabled = false;
       }
     } catch (err) {
       console.error(err);
-      alert('Network error while updating profile');
+      showToast('Network error while updating profile', 'danger');
+      const btn = document.querySelector('#profileForm .btn');
+      btn.innerHTML = 'Update Profile';
+      btn.disabled = false;
     }
   }
 </script>

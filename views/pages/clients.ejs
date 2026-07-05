@@ -56,7 +56,7 @@
 <!-- Add Client Modal -->
 <div class="modal fade" id="addClientModal" tabindex="-1" aria-labelledby="addClientModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+    <form class="modal-content" onsubmit="event.preventDefault(); submitAddClient();">
       <div class="modal-header border-bottom-0 pb-0">
         <h5 class="modal-title fw-bold" id="addClientModalLabel">Add Client</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -89,9 +89,9 @@
       </div>
       <div class="modal-footer border-top-0 pt-0">
         <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-dark" onclick="submitAddClient()">Add Client(s)</button>
+        <button type="submit" class="btn btn-dark">Add Client(s)</button>
       </div>
-    </div>
+    </form>
   </div>
 </div>
 
@@ -143,7 +143,7 @@
       window.location.reload();
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      showToast(err.message, 'danger');
     }
   }
 

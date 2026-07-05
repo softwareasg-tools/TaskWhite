@@ -58,7 +58,7 @@
 <!-- Add Task Type Modal -->
 <div class="modal fade" id="addTaskTypeModal" tabindex="-1" aria-labelledby="addTaskTypeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
-    <div class="modal-content">
+    <form class="modal-content" onsubmit="event.preventDefault(); submitAddTaskType();">
       <div class="modal-header border-bottom-0 pb-0">
         <h5 class="modal-title fw-bold" id="addTaskTypeModalLabel">Add Task</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -87,16 +87,16 @@
       </div>
       <div class="modal-footer border-top-0 pt-0">
         <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-dark" onclick="submitAddTaskType()">Add Task(s)</button>
+        <button type="submit" class="btn btn-dark">Add Task(s)</button>
       </div>
-    </div>
+    </form>
   </div>
 </div>
 
 <!-- AI Generation Modal -->
 <div class="modal fade" id="generateAIModal" tabindex="-1" aria-labelledby="generateAIModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
-    <div class="modal-content border-primary" style="box-shadow: 0 0 20px rgba(13, 110, 253, 0.15);">
+    <form class="modal-content border-primary" style="box-shadow: 0 0 20px rgba(13, 110, 253, 0.15);" onsubmit="event.preventDefault(); generateTasksWithAI();">
       <div class="modal-header border-bottom-0 pb-0">
         <h5 class="modal-title fw-bold text-primary" id="generateAIModalLabel"><i class="bi bi-magic me-2"></i>AI Task Generator</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -113,9 +113,9 @@
       </div>
       <div class="modal-footer border-top-0 pt-0">
         <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="aiGenerateBtn" onclick="generateTasksWithAI()">Generate Tasks</button>
+        <button type="submit" class="btn btn-primary" id="aiGenerateBtn">Generate Tasks</button>
       </div>
-    </div>
+    </form>
   </div>
 </div>
 
@@ -171,7 +171,7 @@
       window.location.reload();
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      showToast(err.message, 'danger');
     }
   }
 
