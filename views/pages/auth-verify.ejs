@@ -115,17 +115,22 @@
       let friendlyMsg = 'Verification failed. The link may be expired or invalid. Please request a new one.';
       
       if (err.code === 'auth/invalid-email') {
-        friendlyMsg = 'That email does not match the one used to request the link. Please double-check and try again.';
+        friendlyMsg = 'The email you entered is incorrect. Please re-enter the exact email address you used to request this link.';
+        // Show the email input box again so they can retry
+        emailConfirmBlock.style.display = 'block';
+        retryBtn.style.display = 'none'; // Hide the return to login button since they are just retrying
       } else if (err.code === 'auth/invalid-action-code') {
-        friendlyMsg = 'This magic link has expired or already been used. Please request a new one.';
-      } else if (err.message) {
-        // Fallback for non-firebase custom errors
-        friendlyMsg = err.message.replace('Firebase:', '').trim();
+        friendlyMsg = 'This magic link has expired or has already been used. Please return to the login page to request a new one.';
+        retryBtn.style.display = 'block';
+      } else {
+        if (err.message) {
+          friendlyMsg = err.message.replace('Firebase:', '').trim();
+        }
+        retryBtn.style.display = 'block';
       }
 
       errorDiv.innerText = friendlyMsg;
       errorDiv.style.display = 'block';
-      retryBtn.style.display = 'block';
       
       // Instantly wipe the ugly ?apiKey=... tracking codes from the browser URL
       window.history.replaceState({}, document.title, '/auth/verify');
