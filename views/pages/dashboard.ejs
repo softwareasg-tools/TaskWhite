@@ -12,10 +12,6 @@
       <div class="section-subtitle">OVERVIEW</div>
       <h1 class="page-title mb-0">Dashboard</h1>
     </div>
-    <div class="btn-group shadow-sm mb-1" style="height: fit-content;">
-      <button class="btn btn-sm btn-dark" id="btnListView" onclick="switchTaskView('list')"><i class="bi bi-list-ul"></i> List</button>
-      <button class="btn btn-sm btn-outline-secondary" id="btnCalendarView" onclick="switchTaskView('calendar')"><i class="bi bi-calendar3"></i> Calendar</button>
-    </div>
   </div>
   <div class="d-flex align-items-center gap-2">
     
@@ -214,9 +210,15 @@
 
 <!-- Tasks List (Combined View) -->
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 mt-5 gap-3">
-  <div>
-    <div class="section-subtitle">WORKSPACE</div>
-    <h1 class="page-title mb-0">Tasks</h1>
+  <div class="d-flex flex-wrap align-items-end gap-3">
+    <div>
+      <div class="section-subtitle">WORKSPACE</div>
+      <h1 class="page-title mb-0">Tasks</h1>
+    </div>
+    <div class="btn-group shadow-sm mb-1" style="height: fit-content;">
+      <button class="btn btn-sm btn-dark" id="btnListView" onclick="switchTaskView('list')"><i class="bi bi-list-ul"></i> List</button>
+      <button class="btn btn-sm btn-outline-secondary" id="btnCalendarView" onclick="switchTaskView('calendar')"><i class="bi bi-calendar3"></i> Calendar</button>
+    </div>
   </div>
   <div class="d-flex flex-wrap gap-2 align-items-center">
     <div class="input-group" style="width: auto; flex-grow: 1; min-width: 200px;">
@@ -225,7 +227,6 @@
     </div>
     <button type="button" class="btn btn-outline-secondary me-2 text-nowrap" onclick="exportExcel()"><i class="bi bi-file-earmark-excel"></i> Export Excel</button>
     <button type="button" class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#newTaskModal"><i class="bi bi-plus"></i> New Task</button>
-  </div>
   </div>
 </div>
 
@@ -670,7 +671,7 @@
   async function executeBulkDashboardTrash(ids) {
     try {
       for (const id of ids) {
-        await fetch(`/dashboard/tasks/${id}/trash`, { method: 'POST' });
+        await fetch(`/tasks/${id}`, { method: 'DELETE' });
       }
       reloadWithSuccess('Action completed successfully!');
     } catch(err) {
