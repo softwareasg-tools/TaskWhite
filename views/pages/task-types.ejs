@@ -274,7 +274,7 @@
         // Open Add Task Type modal in Bulk mode to review
         document.getElementById('bulkAddTaskTypeToggle').checked = true;
         toggleBulkAddTaskType();
-        document.getElementById('bulkTaskTypeInput').value = data.tasks.join('\\n');
+        document.getElementById('bulkTaskTypeInput').value = data.tasks.join('\n');
         
         if (!addTaskTypeModalObj) {
           addTaskTypeModalObj = new bootstrap.Modal(document.getElementById('addTaskTypeModal'));
