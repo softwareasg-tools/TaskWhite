@@ -353,8 +353,10 @@ exports.deleteClient = async (req, res) => {
       .where('deleted_at', '==', null)
       .get();
       
-    if (!tasksSnap.empty) {
-      return res.status(400).json({ error: `Cannot delete client. They are linked to ${tasksSnap.size} active task(s).` });
+    const activeTasks = tasksSnap.docs.filter(doc => doc.data().status !== 'Completed');
+
+    if (activeTasks.length > 0) {
+      return res.status(400).json({ error: `Cannot delete client. They are linked to ${activeTasks.length} active (incomplete) task(s).` });
     }
     
     await db.collection('clients').doc(req.params.id).delete();
@@ -373,8 +375,10 @@ exports.deleteTaskType = async (req, res) => {
       .where('deleted_at', '==', null)
       .get();
       
-    if (!tasksSnap.empty) {
-      return res.status(400).json({ error: `Cannot delete task. It is used in ${tasksSnap.size} active dashboard task(s).` });
+    const activeTasks = tasksSnap.docs.filter(doc => doc.data().status !== 'Completed');
+
+    if (activeTasks.length > 0) {
+      return res.status(400).json({ error: `Cannot delete task. It is used in ${activeTasks.length} active (incomplete) dashboard task(s).` });
     }
     
     await db.collection('task_types').doc(req.params.id).delete();
@@ -398,8 +402,10 @@ exports.deleteUser = async (req, res) => {
       .where('deleted_at', '==', null)
       .get();
       
-    if (!tasksSnap.empty) {
-      return res.status(400).json({ error: `Cannot delete user. They are assigned to ${tasksSnap.size} active task(s).` });
+    const activeTasks = tasksSnap.docs.filter(doc => doc.data().status !== 'Completed');
+
+    if (activeTasks.length > 0) {
+      return res.status(400).json({ error: `Cannot delete user. They are assigned to ${activeTasks.length} active (incomplete) task(s).` });
     }
     
     await db.collection('users').doc(req.params.id).delete();
