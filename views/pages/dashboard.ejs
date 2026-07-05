@@ -521,6 +521,110 @@
               <label class="form-label text-muted small fw-bold">DUE DATE <span class="text-danger">*</span></label>
               <input type="date" name="due_date" id="due_date_input" class="form-control" required>
             </div>
+            
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="repeatTaskToggle" name="is_recurring" value="true" onchange="toggleRepeatOptions()">
+              <label class="form-check-label text-muted small fw-bold" for="repeatTaskToggle">REPEAT TASK</label>
+            </div>
+
+            <div id="repeatTaskOptions" class="p-3 rounded mb-3 border bg-light-subtle" style="display: none;">
+              <!-- NLP Smart Repeat input -->
+              <div class="mb-3">
+                <label class="form-label text-muted small fw-bold" style="font-size: 0.75rem;">DESCRIBE REPEAT (NLP)</label>
+                <input type="text" id="nlpRepeatInput" class="form-control form-control-sm" placeholder="e.g. every Friday, monthly on the 10th" oninput="parseNLPRepeat(this.value)">
+                <div id="nlpFeedback" class="text-success small mt-1" style="display: none; font-size: 0.75rem; font-weight: 500;"></div>
+              </div>
+              
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <label class="form-label text-muted small fw-bold" style="font-size: 0.75rem;">FREQUENCY</label>
+                  <select id="repeat_frequency" name="repeat_frequency" class="form-select form-select-sm" onchange="adjustRepeatDetailFields()">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label class="form-label text-muted small fw-bold" style="font-size: 0.75rem;">EVERY X TIME(S)</label>
+                  <input type="number" id="repeat_interval" name="repeat_interval" class="form-control form-control-sm" value="1" min="1">
+                </div>
+              </div>
+
+              <!-- Weekly Days Selection -->
+              <div id="weeklyOptions" class="mb-3" style="display: none;">
+                <label class="form-label text-muted small fw-bold d-block mb-1" style="font-size: 0.75rem;">REPEAT ON</label>
+                <div class="btn-group btn-group-sm w-100" role="group">
+                  <input type="checkbox" class="btn-check weekly-day-btn" id="day_SU" value="SU"><label class="btn btn-outline-secondary" for="day_SU">S</label>
+                  <input type="checkbox" class="btn-check weekly-day-btn" id="day_MO" value="MO"><label class="btn btn-outline-secondary" for="day_MO">M</label>
+                  <input type="checkbox" class="btn-check weekly-day-btn" id="day_TU" value="TU"><label class="btn btn-outline-secondary" for="day_TU">T</label>
+                  <input type="checkbox" class="btn-check weekly-day-btn" id="day_WE" value="WE"><label class="btn btn-outline-secondary" for="day_WE">W</label>
+                  <input type="checkbox" class="btn-check weekly-day-btn" id="day_TH" value="TH"><label class="btn btn-outline-secondary" for="day_TH">T</label>
+                  <input type="checkbox" class="btn-check weekly-day-btn" id="day_FR" value="FR"><label class="btn btn-outline-secondary" for="day_FR">F</label>
+                  <input type="checkbox" class="btn-check weekly-day-btn" id="day_SA" value="SA"><label class="btn btn-outline-secondary" for="day_SA">S</label>
+                </div>
+              </div>
+
+              <!-- Monthly Options Selection -->
+              <div id="monthlyOptions" class="mb-3" style="display: none;">
+                <label class="form-label text-muted small fw-bold mb-1" style="font-size: 0.75rem;">MONTHLY TYPE</label>
+                <select id="repeat_monthly_type" name="repeat_monthly_type" class="form-select form-select-sm" onchange="adjustMonthlyFields()">
+                  <option value="dayOfMonth">Day of month (e.g. 10th)</option>
+                  <option value="dayOfWeek">Day of week (e.g. last Friday)</option>
+                </select>
+
+                <div id="monthlyDayField" class="mt-2">
+                  <label class="form-label text-muted small" style="font-size: 0.7rem;">DAY OF MONTH</label>
+                  <input type="number" id="repeat_monthly_day" name="repeat_monthly_day" class="form-control form-control-sm" min="1" max="31" value="1">
+                </div>
+
+                <div id="monthlyWeekField" class="row g-2 mt-1" style="display: none;">
+                  <div class="col-6">
+                    <label class="form-label text-muted small" style="font-size: 0.7rem;">WEEK</label>
+                    <select id="repeat_monthly_week" name="repeat_monthly_week" class="form-select form-select-sm">
+                      <option value="first">First</option>
+                      <option value="second">Second</option>
+                      <option value="third">Third</option>
+                      <option value="fourth">Fourth</option>
+                      <option value="last">Last</option>
+                    </select>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label text-muted small" style="font-size: 0.7rem;">DAY OF WEEK</label>
+                    <select id="repeat_monthly_dayofweek" name="repeat_monthly_dayofweek" class="form-select form-select-sm">
+                      <option value="SU">Sunday</option>
+                      <option value="MO">Monday</option>
+                      <option value="TU">Tuesday</option>
+                      <option value="WE">Wednesday</option>
+                      <option value="TH">Thursday</option>
+                      <option value="FR">Friday</option>
+                      <option value="SA">Saturday</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- End Recurrence Selection -->
+              <div class="mb-0">
+                <label class="form-label text-muted small fw-bold mb-1" style="font-size: 0.75rem;">ENDS</label>
+                <select id="repeat_end_type" name="repeat_end_type" class="form-select form-select-sm" onchange="adjustEndFields()">
+                  <option value="never">Never</option>
+                  <option value="date">On Date</option>
+                  <option value="count">After occurrences</option>
+                </select>
+
+                <div id="endDateField" class="mt-2" style="display: none;">
+                  <label class="form-label text-muted small" style="font-size: 0.7rem;">END DATE</label>
+                  <input type="date" id="repeat_end_date" name="repeat_end_date" class="form-control form-control-sm">
+                </div>
+
+                <div id="endCountField" class="mt-2" style="display: none;">
+                  <label class="form-label text-muted small" style="font-size: 0.7rem;">OCCURRENCES</label>
+                  <input type="number" id="repeat_end_count" name="repeat_end_count" class="form-control form-control-sm" min="1" value="10">
+                </div>
+              </div>
+            </div>
+
             <div class="mb-3">
               <label class="form-label text-muted small fw-bold">TAGS</label>
               <div id="tagInputContainer" class="form-control d-flex flex-wrap gap-1 align-items-center" style="min-height: 42px; cursor: text;" onclick="document.getElementById('tagInputField').focus()">
@@ -869,12 +973,116 @@
     const tagInputField = document.getElementById('tagInputField');
     const tagInputContainer = document.getElementById('tagInputContainer');
     const hiddenTagsInput = document.getElementById('hiddenTagsInput');
-    let currentTags = [];
-
-    window.toggleBulkAddTask = function() {
+    let currentTags = [];    window.toggleBulkAddTask = function() {
       const isBulk = document.getElementById('bulkAddTaskToggle').checked;
       document.getElementById('singleTaskMode').style.display = isBulk ? 'none' : 'block';
       document.getElementById('bulkTaskMode').style.display = isBulk ? 'block' : 'none';
+    };
+
+    window.toggleRepeatOptions = function() {
+      const isRepeat = document.getElementById('repeatTaskToggle').checked;
+      document.getElementById('repeatTaskOptions').style.display = isRepeat ? 'block' : 'none';
+    };
+
+    window.adjustRepeatDetailFields = function() {
+      const freq = document.getElementById('repeat_frequency').value;
+      document.getElementById('weeklyOptions').style.display = freq === 'weekly' ? 'block' : 'none';
+      document.getElementById('monthlyOptions').style.display = freq === 'monthly' ? 'block' : 'none';
+    };
+
+    window.adjustMonthlyFields = function() {
+      const type = document.getElementById('repeat_monthly_type').value;
+      document.getElementById('monthlyDayField').style.display = type === 'dayOfMonth' ? 'block' : 'none';
+      document.getElementById('monthlyWeekField').style.display = type === 'dayOfWeek' ? 'block' : 'none';
+    };
+
+    window.adjustEndFields = function() {
+      const type = document.getElementById('repeat_end_type').value;
+      document.getElementById('endDateField').style.display = type === 'date' ? 'block' : 'none';
+      document.getElementById('endCountField').style.display = type === 'count' ? 'block' : 'none';
+    };
+
+    window.parseNLPRepeat = function(text) {
+      text = text.toLowerCase().trim();
+      const feedback = document.getElementById('nlpFeedback');
+      const freqSelect = document.getElementById('repeat_frequency');
+      const intervalInput = document.getElementById('repeat_interval');
+      
+      if (!text) {
+        feedback.style.display = 'none';
+        return;
+      }
+      
+      let detected = null;
+      
+      if (text.includes('every day') || text === 'daily') {
+        detected = { frequency: 'daily', interval: 1, desc: 'Every day' };
+      } else if (text.match(/every (\d+) days/)) {
+        const days = parseInt(text.match(/every (\d+) days/)[1], 10);
+        detected = { frequency: 'daily', interval: days, desc: `Every ${days} days` };
+      } else if (text.includes('every week') || text === 'weekly') {
+        detected = { frequency: 'weekly', interval: 1, desc: 'Every week' };
+      } else if (text.match(/every (\d+) weeks/)) {
+        const weeks = parseInt(text.match(/every (\d+) weeks/)[1], 10);
+        detected = { frequency: 'weekly', interval: weeks, desc: `Every ${weeks} weeks` };
+      } else if (text.includes('every friday') || text === 'friday') {
+        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['FR'], desc: 'Weekly on Friday' };
+      } else if (text.includes('every monday') || text === 'monday') {
+        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['MO'], desc: 'Weekly on Monday' };
+      } else if (text.includes('every tuesday') || text === 'tuesday') {
+        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['TU'], desc: 'Weekly on Tuesday' };
+      } else if (text.includes('every wednesday') || text === 'wednesday') {
+        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['WE'], desc: 'Weekly on Wednesday' };
+      } else if (text.includes('every thursday') || text === 'thursday') {
+        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['TH'], desc: 'Weekly on Thursday' };
+      } else if (text.includes('every saturday') || text === 'saturday') {
+        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['SA'], desc: 'Weekly on Saturday' };
+      } else if (text.includes('every sunday') || text === 'sunday') {
+        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['SU'], desc: 'Weekly on Sunday' };
+      } else if (text.includes('every month') || text === 'monthly') {
+        detected = { frequency: 'monthly', interval: 1, monthlyType: 'dayOfMonth', desc: 'Every month' };
+      } else if (text.match(/every (\d+) months/)) {
+        const months = parseInt(text.match(/every (\d+) months/)[1], 10);
+        detected = { frequency: 'monthly', interval: months, monthlyType: 'dayOfMonth', desc: `Every ${months} months` };
+      } else if (text.match(/monthly on the (\d+)/)) {
+        const day = parseInt(text.match(/monthly on the (\d+)/)[1], 10);
+        detected = { frequency: 'monthly', interval: 1, monthlyType: 'dayOfMonth', monthlyDay: day, desc: `Monthly on day ${day}` };
+      } else if (text.includes('last friday')) {
+        detected = { frequency: 'monthly', interval: 1, monthlyType: 'dayOfWeek', monthlyWeek: 'last', monthlyDayOfWeek: 'FR', desc: 'Monthly on last Friday' };
+      } else if (text.includes('first monday')) {
+        detected = { frequency: 'monthly', interval: 1, monthlyType: 'dayOfWeek', monthlyWeek: 'first', monthlyDayOfWeek: 'MO', desc: 'Monthly on first Monday' };
+      }
+      
+      if (detected) {
+        freqSelect.value = detected.frequency;
+        intervalInput.value = detected.interval;
+        adjustRepeatDetailFields();
+        
+        if (detected.weeklyDays) {
+          document.querySelectorAll('.weekly-day-btn').forEach(btn => {
+            btn.checked = detected.weeklyDays.includes(btn.value);
+          });
+        }
+        
+        if (detected.monthlyType) {
+          document.getElementById('repeat_monthly_type').value = detected.monthlyType;
+          adjustMonthlyFields();
+          if (detected.monthlyDay) {
+            document.getElementById('repeat_monthly_day').value = detected.monthlyDay;
+          }
+          if (detected.monthlyWeek) {
+            document.getElementById('repeat_monthly_week').value = detected.monthlyWeek;
+          }
+          if (detected.monthlyDayOfWeek) {
+            document.getElementById('repeat_monthly_dayofweek').value = detected.monthlyDayOfWeek;
+          }
+        }
+        
+        feedback.innerText = `Matched: "${detected.desc}"`;
+        feedback.style.display = 'block';
+      } else {
+        feedback.style.display = 'none';
+      }
     };
 
     window.submitAddTask = async function(e) {
@@ -885,7 +1093,7 @@
 
       if (isBulk) {
         const bulkInput = document.getElementById('bulkTaskInput').value;
-        const lines = bulkInput.split('\\n').map(l => l.trim()).filter(l => l);
+        const lines = bulkInput.split('\n').map(l => l.trim()).filter(l => l);
         
         if (lines.length === 0) {
           errorDiv.innerText = 'Please enter at least one task.';
@@ -929,10 +1137,55 @@
         }
 
       } else {
-        // Standard single submit
-        document.getElementById('newTaskForm').submit();
+        // Standard single submit via AJAX to support success toast UX
+        const payload = {
+          client_id: document.getElementById('client_id_input').value,
+          task_type_id: document.getElementById('task_type_id_input').value,
+          assigned_user_id: document.getElementById('assigned_user_id_input').value,
+          due_date: document.getElementById('due_date_input').value,
+          tags: hiddenTagsInput.value
+        };
+
+        const isRecurring = document.getElementById('repeatTaskToggle').checked;
+        if (isRecurring) {
+          const weeklyDays = Array.from(document.querySelectorAll('.weekly-day-btn:checked')).map(cb => cb.value);
+          payload.recurrence_rule = {
+            frequency: document.getElementById('repeat_frequency').value,
+            interval: parseInt(document.getElementById('repeat_interval').value || 1, 10),
+            weeklyDays,
+            monthlyType: document.getElementById('repeat_monthly_type').value,
+            monthlyDay: parseInt(document.getElementById('repeat_monthly_day').value || 1, 10),
+            monthlyWeek: document.getElementById('repeat_monthly_week').value,
+            monthlyDayOfWeek: document.getElementById('repeat_monthly_dayofweek').value,
+            endType: document.getElementById('repeat_end_type').value,
+            endDate: document.getElementById('repeat_end_date').value,
+            endCount: parseInt(document.getElementById('repeat_end_count').value || 10, 10)
+          };
+        }
+
+        try {
+          const response = await fetch('/tasks', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+          const data = await response.json();
+          if (response.ok) {
+            reloadWithSuccess('Action completed successfully!');
+          } else {
+            errorDiv.innerText = data.error || 'Failed to create task.';
+            errorDiv.style.display = 'block';
+          }
+        } catch (err) {
+          console.error(err);
+          errorDiv.innerText = 'Server error. Please try again.';
+          errorDiv.style.display = 'block';
+        }
       }
-    };
+    };};
 
     function renderTags() {
       // Remove existing visual tags

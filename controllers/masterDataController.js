@@ -1,4 +1,5 @@
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+const { generateTasksFromTemplates } = require('../utils/templateManager');
 
 exports.getClients = async (req, res) => {
   try {
@@ -124,6 +125,10 @@ exports.apiCreateClient = async (req, res) => {
     };
     
     const ref = await db.collection('clients').add(newDoc);
+    
+    // Auto-generate template tasks for the new client
+    await generateTasksFromTemplates(db, req.session.user.organization_id, true);
+    
     res.json({ id: ref.id, ...newDoc });
   } catch (err) {
     console.error(err);
@@ -153,6 +158,10 @@ exports.apiBulkCreateClients = async (req, res) => {
     });
     
     await batch.commit();
+    
+    // Auto-generate template tasks for the new clients
+    await generateTasksFromTemplates(db, orgId, true);
+    
     res.json({ success: true, count: names.length });
   } catch (err) {
     console.error(err);

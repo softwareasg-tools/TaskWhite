@@ -1,0 +1,183 @@
+<div style="position: sticky; top: 60px; z-index: 1020; background-color: var(--bg-color); padding: 15px 0 10px 0; margin-top: -15px; margin-bottom: 15px;">
+<div class="d-flex justify-content-between align-items-center">
+  <div>
+    <div class="section-subtitle">COMPLIANCE</div>
+    <h1 class="page-title mb-0">Global Templates</h1>
+  </div>
+  <div class="d-flex gap-3">
+    <div class="input-group">
+      <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+      <input type="text" id="templateSearch" class="form-control border-start-0 ps-0" placeholder="Search templates...">
+    </div>
+    <button class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#addTemplateModal"><i class="bi bi-plus"></i> Add Template</button>
+  </div>
+</div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th>Task Name</th>
+            <th>Frequency</th>
+            <th>Default Assignee</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="templateTableBody">
+          <% if (templates.length === 0) { %>
+            <tr><td colspan="4" class="text-center text-muted p-4">No global templates configured. Spawning compliance tasks across all clients automatically.</td></tr>
+          <% } %>
+          <% templates.forEach(temp => { %>
+            <tr class="template-row">
+              <td>
+                <i class="bi bi-file-earmark-check text-primary me-2"></i>
+                <span class="fw-bold"><%= temp.TaskType ? temp.TaskType.name : 'Unknown' %></span>
+              </td>
+              <td>
+                <% if (temp.recurrence_rule && temp.recurrence_rule.frequency === 'monthly') { %>
+                  <span class="badge bg-light text-dark border">Monthly (on day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
+                <% } else { %>
+                  <span class="badge bg-light text-dark border">Recurring</span>
+                <% } %>
+              </td>
+              <td>
+                <%= temp.Assignee ? temp.Assignee.name : '-' %>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-link text-decoration-none text-danger p-0" onclick="confirmDeleteTemplate('<%= temp.id %>', '<%= temp.TaskType ? temp.TaskType.name.replace(/\x27/g, `\\\'`) : `Unknown` %>')">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add Template Modal -->
+<div class="modal fade" id="addTemplateModal" tabindex="-1" aria-labelledby="addTemplateModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+    <form class="modal-content" onsubmit="event.preventDefault(); submitAddTemplate();">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold" id="addTemplateModalLabel">Add Global Template</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="addTemplateError" class="alert alert-danger small py-2" style="display: none;"></div>
+        
+        <div class="mb-3">
+          <label for="templateTaskType" class="form-label text-muted small fw-bold">TASK <span class="text-danger">*</span></label>
+          <select id="templateTaskType" class="form-select" required>
+            <option value="">Select Task...</option>
+            <% taskTypes.forEach(type => { %>
+              <option value="<%= type.id %>"><%= type.name %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="templateAssignee" class="form-label text-muted small fw-bold">DEFAULT ASSIGNEE</label>
+          <select id="templateAssignee" class="form-select">
+            <option value="">Unassigned</option>
+            <% users.forEach(user => { %>
+              <option value="<%= user.id %>"><%= user.name %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label text-muted small fw-bold">RECURRENCE</label>
+          <div class="p-3 bg-light rounded border">
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label text-muted small" style="font-size: 0.7rem;">FREQUENCY</label>
+                <select id="template_freq" class="form-select form-select-sm" disabled>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label text-muted small" style="font-size: 0.7rem;">DAY OF MONTH</label>
+                <input type="number" id="template_day" class="form-control form-control-sm" min="1" max="31" value="20" required>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-top-0 pt-0">
+        <button type="button" class="btn btn-link text-decoration-none text-dark fw-medium" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-dark">Add Template</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Search Templates
+  document.getElementById('templateSearch').addEventListener('keyup', function(e) {
+    const term = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('.template-row');
+    rows.forEach(row => {
+      if (row.innerText.toLowerCase().includes(term)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+
+  async function submitAddTemplate() {
+    const errorDiv = document.getElementById('addTemplateError');
+    errorDiv.style.display = 'none';
+
+    const payload = {
+      task_type_id: document.getElementById('templateTaskType').value,
+      assigned_user_id: document.getElementById('templateAssignee').value,
+      recurrence_rule: {
+        frequency: 'monthly',
+        interval: 1,
+        monthlyType: 'dayOfMonth',
+        monthlyDay: parseInt(document.getElementById('template_day').value || 20, 10),
+        endType: 'never'
+      }
+    };
+
+    try {
+      const response = await fetch('/api/templates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (response.ok) {
+        reloadWithSuccess('Global template saved and tasks generated successfully!');
+      } else {
+        errorDiv.innerText = data.error || 'Failed to add template.';
+        errorDiv.style.display = 'block';
+      }
+    } catch (err) {
+      console.error(err);
+      errorDiv.innerText = 'Server error. Please try again.';
+      errorDiv.style.display = 'block';
+    }
+  }
+
+  async function confirmDeleteTemplate(id, name) {
+    if (!confirm(`Are you sure you want to delete the global template for "${name}"?\nNote: This will also remove any incomplete dashboard tasks generated by this template.`)) return;
+    try {
+      const response = await fetch(`/templates/${id}`, { method: 'DELETE' });
+      if (response.ok) {
+        reloadWithSuccess('Global template deleted successfully!');
+      } else {
+        showToast('Failed to delete template.', 'danger');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Error deleting template.', 'danger');
+    }
+  }
+</script>

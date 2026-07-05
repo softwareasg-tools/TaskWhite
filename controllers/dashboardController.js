@@ -6,6 +6,10 @@ exports.getDashboard = async (req, res) => {
     const orgId = req.session.user.organization_id;
     const userId = req.session.user.id;
 
+    // Auto-generate template tasks if not already run today
+    const { generateTasksFromTemplates } = require('../utils/templateManager');
+    await generateTasksFromTemplates(db, orgId);
+
     // Fetch active tasks for this organization
     const snapshot = await db.collection('tasks')
       .where('organization_id', '==', orgId)

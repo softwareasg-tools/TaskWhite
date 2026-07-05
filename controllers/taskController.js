@@ -1,5 +1,6 @@
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const bcrypt = require('bcrypt');
+const { getNextOccurrence } = require('../utils/recurrenceEngine');
 
 exports.getTasks = async (req, res) => {
   try {
@@ -54,7 +55,7 @@ exports.createTask = async (req, res) => {
   try {
     const db = getFirestore();
     const orgId = req.session.user.organization_id;
-    const { client_id, task_type_id, assigned_user_id, due_date, tags } = req.body;
+    const { client_id, task_type_id, assigned_user_id, due_date, tags, recurrence_rule } = req.body;
     
     // Parse tags if provided as JSON string
     let parsedTags = [];
@@ -71,7 +72,7 @@ exports.createTask = async (req, res) => {
     const todayStr = new Date().toISOString().split('T')[0];
     const initialStatus = due_date < todayStr ? 'Overdue' : 'Assigned';
 
-    await db.collection('tasks').add({
+    const taskData = {
       organization_id: orgId,
       client_id: client_id || null,
       task_type_id,
@@ -82,12 +83,26 @@ exports.createTask = async (req, res) => {
       tags: parsedTags,
       created_at: FieldValue.serverTimestamp(),
       deleted_at: null
-    });
+    };
+
+    if (recurrence_rule) {
+      taskData.recurrence_rule = recurrence_rule;
+      if (recurrence_rule.endType === 'count') {
+        taskData.recurrence_count = 1;
+      }
+    }
+
+    await db.collection('tasks').add(taskData);
     
-    // Redirect back to dashboard where they created it
+    if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
+      return res.json({ success: true });
+    }
     res.redirect('/dashboard');
   } catch (err) {
     console.error(err);
+    if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
+      return res.status(500).json({ error: 'Server Error' });
+    }
     res.status(500).send('Internal Server Error');
   }
 };
@@ -146,6 +161,45 @@ exports.updateTask = async (req, res) => {
       ...updates,
       updated_at: FieldValue.serverTimestamp()
     });
+
+    // Chaining recurring task if marked Completed
+    const isNowCompleted = (updates.status === 'Completed' && currentData.status !== 'Completed');
+    if (isNowCompleted && currentData.recurrence_rule) {
+      try {
+        const rule = currentData.recurrence_rule;
+        const nextDate = getNextOccurrence(currentData.due_date, rule);
+        
+        let shouldSpawn = true;
+        let nextCount = (currentData.recurrence_count || 1) + 1;
+        
+        if (rule.endType === 'date' && rule.endDate && nextDate > rule.endDate) {
+          shouldSpawn = false;
+        } else if (rule.endType === 'count' && rule.endCount && nextCount > rule.endCount) {
+          shouldSpawn = false;
+        }
+        
+        if (shouldSpawn) {
+          const nextInitialStatus = nextDate < todayStr ? 'Overdue' : 'Assigned';
+          
+          await db.collection('tasks').add({
+            organization_id: orgId,
+            client_id: currentData.client_id || null,
+            task_type_id: currentData.task_type_id,
+            assigned_user_id: currentData.assigned_user_id || null,
+            created_by: currentData.created_by,
+            due_date: nextDate,
+            status: nextInitialStatus,
+            tags: currentData.tags || [],
+            created_at: FieldValue.serverTimestamp(),
+            deleted_at: null,
+            recurrence_rule: rule,
+            recurrence_count: nextCount
+          });
+        }
+      } catch (recErr) {
+        console.error('Error generating next recurring occurrence:', recErr);
+      }
+    }
 
     res.json({ success: true, message: 'Task updated successfully' });
   } catch (err) {
