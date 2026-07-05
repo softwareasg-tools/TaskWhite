@@ -1,7 +1,7 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
   <div class="card shadow-sm" style="width: 100%; max-width: 400px; border-radius: 10px; margin: 0 15px;">
     <div class="card-body p-4 text-center">
-      <a href="/" class="text-decoration-none d-block">
+      <a href="/" class="text-decoration-none text-reset d-block">
         <img src="/images/logo.svg" alt="TaskWhite Logo" style="height: 64px; width: 64px; object-fit: cover; border-radius: 14px;" class="mb-3 shadow-sm">
         <div class="d-flex justify-content-center mb-4">
           <h3 class="card-title text-center mb-0 brand-text" style="font-size: 2.25rem; color: inherit;">Task<span class="white-part">White</span></h3>
@@ -65,7 +65,7 @@
       window.localStorage.setItem('emailForSignIn', email);
       
       errorDiv.style.display = 'none';
-      successDiv.innerText = "Magic link sent! Check your email, click the link, and you're in.";
+      successDiv.innerHTML = "Magic link sent!<br>Check your email, click the link, and you're in.";
       successDiv.style.display = 'block';
       document.getElementById('emailStep').style.display = 'none';
       document.getElementById('loginTitle').style.display = 'none'; // Also hide the "Task Manager - Magic Link Login" text to keep it perfectly clean
