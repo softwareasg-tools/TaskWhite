@@ -15,7 +15,6 @@
       <div id="emailConfirmBlock" style="display: none; text-align: left;">
         <p class="text-muted mb-3 text-center" style="font-size: 14px;">For security, please confirm your email address to complete sign in.</p>
         <div class="mb-3">
-          <label for="confirmEmail" class="form-label text-muted">Email address</label>
           <input type="email" id="confirmEmail" class="form-control" placeholder="name@company.com">
         </div>
         <button id="confirmEmailBtn" class="btn btn-dark w-100">Confirm Email</button>
@@ -56,7 +55,7 @@
         emailConfirmBlock.style.display = 'block';
         
         email = await new Promise((resolve) => {
-          confirmEmailBtn.addEventListener('click', () => {
+          const submitEmail = () => {
             const inputVal = confirmEmailInput.value.trim();
             if (inputVal) {
               emailConfirmBlock.style.display = 'none';
@@ -65,6 +64,14 @@
             } else {
               errorDiv.innerText = 'Please enter an email address.';
               errorDiv.style.display = 'block';
+            }
+          };
+
+          confirmEmailBtn.addEventListener('click', submitEmail);
+          
+          confirmEmailInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+              submitEmail();
             }
           });
         });
