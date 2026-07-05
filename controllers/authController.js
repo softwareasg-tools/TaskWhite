@@ -100,78 +100,98 @@ exports.postLoginRouting = async (req, res) => {
 
     const db = getFirestore();
     
-    // Two-Tier Domain Logic
+    // Two-Tier Domain Logic definitions
     const domain = email.split('@')[1].toLowerCase();
     const genericDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com'];
     
     let organizationId = null;
     let localUserId = firebaseUserId;
     let userRole = 'Member';
-
-    if (genericDomains.includes(domain)) {
-      // 1. Personal Workspace
-      // Create Organization
-      const orgRef = await db.collection('organizations').add({
-        org_name: (name || email.split('@')[0]) + "'s Workspace",
-        invite_code: Math.random().toString(36).substring(2, 8).toUpperCase(),
-        created_at: FieldValue.serverTimestamp()
-      });
-      organizationId = orgRef.id;
-      userRole = 'Owner';
-      
-      // Create Member Link
-      await db.collection('org_members').add({
-        org_id: organizationId,
-        user_id: firebaseUserId,
-        role: userRole,
-        joined_at: FieldValue.serverTimestamp()
-      });
-      
+    
+    // Check if user already exists in Firestore (by ID or email) to prevent duplicate org creation
+    const userDocRef = db.collection('users').doc(firebaseUserId);
+    const userDoc = await userDocRef.get();
+    
+    let existingUser = null;
+    if (userDoc.exists) {
+      existingUser = userDoc.data();
     } else {
-      // 2. Company Domain
-      // Check if Org with this domain exists
-      const orgsSnapshot = await db.collection('organizations')
-        .where('domain_restriction', '==', domain)
-        .limit(1)
-        .get();
-        
-      if (!orgsSnapshot.empty) {
-        // Auto-join existing org
-        const orgDoc = orgsSnapshot.docs[0];
-        organizationId = orgDoc.id;
-        
-        // Ensure not already a member
-        const memberSnapshot = await db.collection('org_members')
-          .where('org_id', '==', organizationId)
-          .where('user_id', '==', firebaseUserId)
-          .limit(1)
-          .get();
-        
-        if (memberSnapshot.empty) {
-          await db.collection('org_members').add({
-            org_id: organizationId,
-            user_id: firebaseUserId,
-            role: 'Member',
-            joined_at: FieldValue.serverTimestamp()
-          });
-        }
-      } else {
-        // Create new company org
+      const userEmailSnap = await db.collection('users').where('email', '==', email).limit(1).get();
+      if (!userEmailSnap.empty) {
+        existingUser = userEmailSnap.docs[0].data();
+      }
+    }
+
+    if (existingUser) {
+      organizationId = existingUser.organization_id;
+      userRole = existingUser.role || 'Member';
+    } else {
+      // User is completely new, run two-tier domain routing
+      if (genericDomains.includes(domain)) {
+        // 1. Personal Workspace
+        // Create Organization
         const orgRef = await db.collection('organizations').add({
-          org_name: domain.split('.')[0].toUpperCase() + ' Workspace',
+          org_name: (name || email.split('@')[0]) + "'s Workspace",
           invite_code: Math.random().toString(36).substring(2, 8).toUpperCase(),
-          domain_restriction: domain,
           created_at: FieldValue.serverTimestamp()
         });
         organizationId = orgRef.id;
         userRole = 'Owner';
         
+        // Create Member Link
         await db.collection('org_members').add({
           org_id: organizationId,
           user_id: firebaseUserId,
           role: userRole,
           joined_at: FieldValue.serverTimestamp()
         });
+        
+      } else {
+        // 2. Company Domain
+        // Check if Org with this domain exists
+        const orgsSnapshot = await db.collection('organizations')
+          .where('domain_restriction', '==', domain)
+          .limit(1)
+          .get();
+          
+        if (!orgsSnapshot.empty) {
+          // Auto-join existing org
+          const orgDoc = orgsSnapshot.docs[0];
+          organizationId = orgDoc.id;
+          
+          // Ensure not already a member
+          const memberSnapshot = await db.collection('org_members')
+            .where('org_id', '==', organizationId)
+            .where('user_id', '==', firebaseUserId)
+            .limit(1)
+            .get();
+          
+          if (memberSnapshot.empty) {
+            await db.collection('org_members').add({
+              org_id: organizationId,
+              user_id: firebaseUserId,
+              role: 'Member',
+              joined_at: FieldValue.serverTimestamp()
+            });
+          }
+        } else {
+          // Create new company org
+          const orgRef = await db.collection('organizations').add({
+            org_name: domain.split('.')[0].toUpperCase() + ' Workspace',
+            invite_code: Math.random().toString(36).substring(2, 8).toUpperCase(),
+            domain_restriction: domain,
+            created_at: FieldValue.serverTimestamp()
+          });
+          organizationId = orgRef.id;
+          userRole = 'Owner';
+          
+          await db.collection('org_members').add({
+            org_id: organizationId,
+            user_id: firebaseUserId,
+            role: userRole,
+            joined_at: FieldValue.serverTimestamp()
+          });
+        }
       }
     }
 
