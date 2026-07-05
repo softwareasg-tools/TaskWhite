@@ -134,6 +134,7 @@
   let activeDeleteTaskTypeId = null;
   let deleteTaskTypeModalObj = null;
   let addTaskTypeModalObj = null;
+  let currentGeneratedIndustry = '';
 
   function confirmDeleteTaskType(id, name) {
     activeDeleteTaskTypeId = id;
@@ -164,6 +165,7 @@
     const isBulk = document.getElementById('bulkAddTaskTypeToggle').checked;
     document.getElementById('singleTaskTypeMode').style.display = isBulk ? 'none' : 'block';
     document.getElementById('bulkTaskTypeMode').style.display = isBulk ? 'block' : 'none';
+    if (!isBulk) currentGeneratedIndustry = ''; // Clear tracking if they toggle off bulk
   }
 
   async function submitAddTaskType() {
@@ -177,13 +179,14 @@
 
     if (isBulk) {
       const bulkInput = document.getElementById('bulkTaskTypeInput').value;
-      const names = bulkInput.split('\\n').map(n => n.trim()).filter(n => n);
+      const names = bulkInput.split('\n').map(n => n.trim()).filter(n => n);
       if (names.length === 0) {
         errorDiv.innerText = 'Please enter at least one task type name.';
         errorDiv.style.display = 'block';
         return;
       }
       payload = { names };
+      if (currentGeneratedIndustry) payload.aiIndustry = currentGeneratedIndustry;
       url = '/api/task-types/bulk';
     } else {
       const name = document.getElementById('taskTypeNameInput').value.trim();
@@ -271,7 +274,19 @@
         // Hide AI modal
         bootstrap.Modal.getInstance(document.getElementById('generateAIModal')).hide();
         
+        // Setup Warning Alert in Add Modal if they switched industries
+        const addErrorDiv = document.getElementById('addTaskTypeError');
+        if (data.lastIndustry && data.lastIndustry.toLowerCase() !== industry.toLowerCase() && document.querySelectorAll('.task-type-row').length > 0) {
+          addErrorDiv.innerHTML = `<strong>Warning:</strong> You previously generated tasks for a <strong>${data.lastIndustry}</strong>. Are you sure you want to proceed with adding tasks for a <strong>${industry}</strong>?`;
+          addErrorDiv.classList.replace('alert-danger', 'alert-warning');
+          addErrorDiv.style.display = 'block';
+        } else {
+          addErrorDiv.style.display = 'none';
+          addErrorDiv.classList.replace('alert-warning', 'alert-danger');
+        }
+
         // Open Add Task Type modal in Bulk mode to review
+        currentGeneratedIndustry = industry;
         document.getElementById('bulkAddTaskTypeToggle').checked = true;
         toggleBulkAddTaskType();
         document.getElementById('bulkTaskTypeInput').value = data.tasks.join('\n');

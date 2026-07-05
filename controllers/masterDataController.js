@@ -163,7 +163,7 @@ exports.apiCreateTaskType = async (req, res) => {
 
 exports.apiBulkCreateTaskTypes = async (req, res) => {
   try {
-    const { names } = req.body;
+    const { names, aiIndustry } = req.body;
     if (!names || !Array.isArray(names) || names.length === 0) {
       return res.status(400).json({ error: 'Valid array of names is required' });
     }
@@ -180,6 +180,10 @@ exports.apiBulkCreateTaskTypes = async (req, res) => {
         created_at: FieldValue.serverTimestamp()
       });
     });
+
+    if (aiIndustry) {
+      batch.update(db.collection('organizations').doc(orgId), { last_ai_industry: aiIndustry });
+    }
     
     await batch.commit();
     res.json({ success: true, count: names.length });
