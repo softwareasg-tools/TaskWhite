@@ -72,9 +72,60 @@
 </div>
 
 <script>
+  const allTasks = <%- JSON.stringify(tasks) %>;
+  let editTaskModalObj = null;
+
   function openTaskModal(taskId) {
-    // In a real implementation, this would open a modal for inline editing
-    showToast('Opening inline edit modal for Task ID: ' + taskId, 'success');
+    if (!editTaskModalObj) {
+      editTaskModalObj = new bootstrap.Modal(document.getElementById('editTaskModal'));
+    }
+    const task = allTasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    document.getElementById('edit_task_id').value = task.id;
+    document.getElementById('edit_status_input').value = task.status;
+    document.getElementById('edit_client_id_input').value = task.client_id || '';
+    document.getElementById('edit_task_type_id_input').value = task.task_type_id || '';
+    document.getElementById('edit_assigned_user_id_input').value = task.assigned_user_id || '';
+    document.getElementById('edit_due_date_input').value = task.due_date || '';
+    document.getElementById('edit_tags_input').value = (task.tags || []).join(', ');
+
+    editTaskModalObj.show();
+  }
+
+  async function submitEditTask(e) {
+    e.preventDefault();
+    const taskId = document.getElementById('edit_task_id').value;
+    const errorDiv = document.getElementById('editTaskError');
+    errorDiv.style.display = 'none';
+
+    const payload = {
+      status: document.getElementById('edit_status_input').value,
+      client_id: document.getElementById('edit_client_id_input').value,
+      task_type_id: document.getElementById('edit_task_type_id_input').value,
+      assigned_user_id: document.getElementById('edit_assigned_user_id_input').value,
+      due_date: document.getElementById('edit_due_date_input').value,
+      tags: document.getElementById('edit_tags_input').value
+    };
+
+    try {
+      const response = await fetch('/tasks/' + taskId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        errorDiv.innerText = data.error || 'Failed to update task.';
+        errorDiv.style.display = 'block';
+      }
+    } catch(err) {
+      console.error(err);
+      errorDiv.innerText = 'Server error. Please try again.';
+      errorDiv.style.display = 'block';
+    }
   }
 
   function updateBulkDeleteAction() {

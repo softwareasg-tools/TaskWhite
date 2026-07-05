@@ -39,7 +39,11 @@ exports.getTasks = async (req, res) => {
       Assignee: t.assigned_user_id ? userMap[t.assigned_user_id] : null
     }));
 
-    res.render('pages/tasks', { tasks });
+    const clients = clientsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const taskTypes = typesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    res.render('pages/tasks', { tasks, clients, taskTypes, users });
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');
@@ -85,6 +89,68 @@ exports.createTask = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');
+  }
+};
+
+exports.updateTask = async (req, res) => {
+  try {
+    const db = getFirestore();
+    const orgId = req.session.user.organization_id;
+    const taskId = req.params.id;
+    const { client_id, task_type_id, assigned_user_id, due_date, status, tags } = req.body;
+
+    const docRef = db.collection('tasks').doc(taskId);
+    const doc = await docRef.get();
+
+    if (!doc.exists || doc.data().organization_id !== orgId) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    let parsedTags = undefined;
+    if (tags !== undefined) {
+      if (typeof tags === 'string') {
+        try {
+          parsedTags = JSON.parse(tags);
+        } catch (e) {
+          parsedTags = tags.split(',').map(t => t.trim()).filter(t => t);
+        }
+      } else if (Array.isArray(tags)) {
+        parsedTags = tags;
+      }
+    }
+
+    const updates = {};
+    if (client_id !== undefined) updates.client_id = client_id || null;
+    if (task_type_id !== undefined) updates.task_type_id = task_type_id;
+    if (assigned_user_id !== undefined) updates.assigned_user_id = assigned_user_id || null;
+    if (due_date !== undefined) updates.due_date = due_date;
+    if (status !== undefined) updates.status = status;
+    if (parsedTags !== undefined) updates.tags = parsedTags;
+
+    // Check if overdue based on new date or current date if not updated
+    const currentData = doc.data();
+    const activeDueDate = due_date !== undefined ? due_date : currentData.due_date;
+    const todayStr = new Date().toISOString().split('T')[0];
+    
+    // Auto-update status based on due date if it's not marked Completed
+    if (updates.status !== 'Completed' && currentData.status !== 'Completed') {
+      if (activeDueDate < todayStr) {
+        updates.status = 'Overdue';
+      } else if (updates.status === 'Overdue') {
+        // If it was overdue but date pushed forward, revert to Assigned/In Progress
+        updates.status = currentData.status === 'Overdue' ? 'Assigned' : currentData.status;
+      }
+    }
+
+    await docRef.update({
+      ...updates,
+      updated_at: FieldValue.serverTimestamp()
+    });
+
+    res.json({ success: true, message: 'Task updated successfully' });
+  } catch (err) {
+    console.error('Update Task Error:', err);
+    res.status(500).json({ error: 'Server Error' });
   }
 };
 

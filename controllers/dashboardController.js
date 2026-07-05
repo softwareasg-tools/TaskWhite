@@ -105,6 +105,9 @@ exports.getDashboard = async (req, res) => {
     if (req.query.tag) {
       filteredTasks = filteredTasks.filter(t => t.tags && t.tags.includes(req.query.tag));
     }
+    if (req.query.status) {
+      filteredTasks = filteredTasks.filter(t => t.status === req.query.status);
+    }
 
     // Extract all unique tags for the filter dropdown (from all org tasks, not just filtered ones)
     const uniqueTags = new Set();
