@@ -45,6 +45,9 @@
   const confirmEmailBtn = document.getElementById('confirmEmailBtn');
 
   const originalUrl = window.location.href;
+  
+  // Immediately mask the URL in the browser's address bar so users don't see the ugly API keys or tokens
+  window.history.replaceState({}, document.title, '/auth/verify');
 
   async function processLogin(emailToUse) {
     try {
