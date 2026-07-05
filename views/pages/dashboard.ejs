@@ -12,6 +12,10 @@
       <div class="section-subtitle">OVERVIEW</div>
       <h1 class="page-title mb-0">Dashboard</h1>
     </div>
+    <div class="btn-group shadow-sm mb-1" style="height: fit-content;">
+      <button class="btn btn-sm btn-dark btnListView" onclick="switchTaskView('list')"><i class="bi bi-list-ul"></i> List</button>
+      <button class="btn btn-sm btn-outline-secondary btnCalendarView" onclick="switchTaskView('calendar')"><i class="bi bi-calendar3"></i> Calendar</button>
+    </div>
   </div>
   <div class="d-flex align-items-center gap-2">
     
@@ -216,8 +220,8 @@
       <h1 class="page-title mb-0">Tasks</h1>
     </div>
     <div class="btn-group shadow-sm mb-1" style="height: fit-content;">
-      <button class="btn btn-sm btn-dark" id="btnListView" onclick="switchTaskView('list')"><i class="bi bi-list-ul"></i> List</button>
-      <button class="btn btn-sm btn-outline-secondary" id="btnCalendarView" onclick="switchTaskView('calendar')"><i class="bi bi-calendar3"></i> Calendar</button>
+      <button class="btn btn-sm btn-dark btnListView" onclick="switchTaskView('list')"><i class="bi bi-list-ul"></i> List</button>
+      <button class="btn btn-sm btn-outline-secondary btnCalendarView" onclick="switchTaskView('calendar')"><i class="bi bi-calendar3"></i> Calendar</button>
     </div>
   </div>
   <div class="d-flex flex-wrap gap-2 align-items-center">
@@ -1062,19 +1066,19 @@
   let selectedDateString = null;
 
   function switchTaskView(view) {
-    const listBtn = document.getElementById('btnListView');
-    const calBtn = document.getElementById('btnCalendarView');
+    const listBtns = document.querySelectorAll('.btnListView');
+    const calBtns = document.querySelectorAll('.btnCalendarView');
     const listView = document.getElementById('listView');
     const calView = document.getElementById('calendarView');
     
     if (view === 'list') {
-      listBtn.className = 'btn btn-sm btn-dark';
-      calBtn.className = 'btn btn-sm btn-outline-secondary';
+      listBtns.forEach(btn => btn.className = 'btn btn-sm btn-dark btnListView');
+      calBtns.forEach(btn => btn.className = 'btn btn-sm btn-outline-secondary btnCalendarView');
       listView.classList.remove('d-none');
       calView.classList.add('d-none');
     } else {
-      calBtn.className = 'btn btn-sm btn-dark';
-      listBtn.className = 'btn btn-sm btn-outline-secondary';
+      calBtns.forEach(btn => btn.className = 'btn btn-sm btn-dark btnCalendarView');
+      listBtns.forEach(btn => btn.className = 'btn btn-sm btn-outline-secondary btnListView');
       calView.classList.remove('d-none');
       listView.classList.add('d-none');
       renderCalendar();
