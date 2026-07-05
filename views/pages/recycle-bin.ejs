@@ -91,7 +91,7 @@
         method: 'POST'
       });
       if (response.ok) {
-        window.location.reload();
+        reloadWithSuccess('Action completed successfully!');
       } else {
         showToast('Failed to restore task.', 'danger');
       }
@@ -141,7 +141,7 @@
       const data = await response.json();
       if (response.ok) {
         deleteModalObj.hide();
-        window.location.reload();
+        reloadWithSuccess('Action completed successfully!');
       } else {
         errorDiv.innerText = data.error || 'Failed to delete task.';
         errorDiv.style.display = 'block';

@@ -168,7 +168,20 @@
           }
         });
       });
+
+      // Check for flash messages
+      const flashMessage = sessionStorage.getItem('flashMessage');
+      if (flashMessage) {
+        showToast(flashMessage, 'success');
+        sessionStorage.removeItem('flashMessage');
+      }
     });
+
+    // Global helper to reload with a success message
+    function reloadWithSuccess(message = 'Action completed successfully!') {
+      sessionStorage.setItem('flashMessage', message);
+      window.location.reload();
+    }
 
     // Bulk Action Logic
     function toggleAllCheckboxes(event) {

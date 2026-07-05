@@ -1,4 +1,5 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div style="position: sticky; top: 60px; z-index: 1020; background-color: var(--bg-color); padding: 15px 0 10px 0; margin-top: -15px; margin-bottom: 15px;">
+<div class="d-flex justify-content-between align-items-center">
   <div>
     <div class="section-subtitle">MASTER DATA</div>
     <h1 class="page-title mb-0">Clients</h1>
@@ -12,11 +13,12 @@
   </div>
 </div>
 
-<div id="bulkActionBar" class="bulk-action-bar">
+<div id="bulkActionBar" class="bulk-action-bar mt-3" style="margin-bottom: 0;">
   <div class="fw-bold"><span id="bulkSelectedCount">0 selected</span></div>
   <button class="btn btn-danger btn-sm" onclick="confirmBulkDeleteClients()">
     <i class="bi bi-trash"></i> Delete Selected
   </button>
+</div>
 </div>
 
 <div class="card">
@@ -140,7 +142,7 @@
         }
       }
       deleteClientModalObj.hide();
-      window.location.reload();
+      reloadWithSuccess('Action completed successfully!');
     } catch (err) {
       console.error(err);
       showToast(err.message, 'danger');
@@ -209,7 +211,7 @@
           addClientModalObj = bootstrap.Modal.getInstance(document.getElementById('addClientModal'));
         }
         addClientModalObj?.hide();
-        window.location.reload();
+        reloadWithSuccess('Action completed successfully!');
       } else {
         errorDiv.innerText = data.error || 'Failed to add client(s).';
         errorDiv.style.display = 'block';

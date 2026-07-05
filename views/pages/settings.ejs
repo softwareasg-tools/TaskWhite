@@ -44,7 +44,7 @@
       const data = await response.json();
       if (response.ok) {
         showToast('Profile updated successfully!', 'success');
-        setTimeout(() => window.location.reload(), 1000);
+        reloadWithSuccess('Action completed successfully!');
       } else {
         showToast(data.error || 'Failed to update profile', 'danger');
         btn.innerHTML = originalText;

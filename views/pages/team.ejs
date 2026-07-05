@@ -1,4 +1,5 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div style="position: sticky; top: 60px; z-index: 1020; background-color: var(--bg-color); padding: 15px 0 10px 0; margin-top: -15px; margin-bottom: 15px;">
+<div class="d-flex justify-content-between align-items-center">
   <div>
     <div class="section-subtitle">MASTER DATA</div>
     <h1 class="page-title mb-0">Team Members</h1>
@@ -12,11 +13,12 @@
   </div>
 </div>
 
-<div id="bulkActionBar" class="bulk-action-bar" style="display: none; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; margin-bottom: 1rem; border-radius: 4px; display: flex; align-items: center; justify-content: space-between;">
+<div id="bulkActionBar" class="bulk-action-bar mt-3" style="display: none; padding: 10px; background: var(--card-bg); border: 1px solid var(--border-color); margin-bottom: 0; border-radius: 8px; align-items: center; justify-content: space-between;">
   <div class="fw-bold"><span id="bulkSelectedCount">0 selected</span></div>
   <button class="btn btn-danger btn-sm" onclick="confirmBulkDeleteUsers()">
     <i class="bi bi-trash"></i> Delete Selected
   </button>
+</div>
 </div>
 
 <div class="alert alert-info mb-4" role="alert">
@@ -175,7 +177,7 @@
         }
       }
       deleteUserModalObj.hide();
-      window.location.reload();
+      reloadWithSuccess('Action completed successfully!');
     } catch (err) {
       console.error(err);
       showToast(err.message, 'danger');
@@ -261,7 +263,7 @@
           addTeamModalObj = bootstrap.Modal.getInstance(document.getElementById('addTeamModal'));
         }
         addTeamModalObj?.hide();
-        window.location.reload();
+        reloadWithSuccess('Action completed successfully!');
       } else {
         errorDiv.innerText = data.error || 'Failed to add team member(s).';
         errorDiv.style.display = 'block';

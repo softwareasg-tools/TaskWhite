@@ -624,7 +624,7 @@
     try {
       const response = await fetch(`/tasks/${activeDeleteTaskId}`, { method: 'DELETE' });
       if (response.ok) {
-        window.location.reload();
+        reloadWithSuccess('Action completed successfully!');
       } else {
         showToast('Failed to delete task.', 'danger');
       }
@@ -672,7 +672,7 @@
       for (const id of ids) {
         await fetch(`/dashboard/tasks/${id}/trash`, { method: 'POST' });
       }
-      window.location.reload();
+      reloadWithSuccess('Action completed successfully!');
     } catch(err) {
       console.error(err);
       showToast('Error moving tasks to trash.', 'danger');
@@ -791,7 +791,7 @@
       });
       const data = await response.json();
       if (response.ok) {
-        window.location.reload();
+        reloadWithSuccess('Action completed successfully!');
       } else {
         errorDiv.innerText = data.error || 'Failed to update task.';
         errorDiv.style.display = 'block';
@@ -912,7 +912,7 @@
           });
           const data = await response.json();
           if (response.ok) {
-            window.location.reload();
+            reloadWithSuccess('Action completed successfully!');
           } else {
             errorDiv.innerText = data.error || 'Failed to add tasks.';
             errorDiv.style.display = 'block';
