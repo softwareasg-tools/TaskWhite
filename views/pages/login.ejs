@@ -23,6 +23,13 @@
 </div>
 
 <script type="module">
+  // Allow Enter key to trigger the magic link
+  document.getElementById('email').addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+      window.requestMagicLink();
+    }
+  });
+
   window.requestMagicLink = async function() {
     const email = document.getElementById('email').value.trim();
     const errorDiv = document.getElementById('jsError');
