@@ -281,7 +281,7 @@
                 <% } %>
               </td>
               <td><%= task.Assignee ? task.Assignee.name : '-' %></td>
-              <td><%= task.due_date %></td>
+              <td><%= formatAppDate(task.due_date) %></td>
               <td>
                 <% if (task.status === 'Completed') { %>
                   <span class="badge badge-outline text-success border-success">Completed</span>
@@ -326,7 +326,7 @@
             </div>
             <div class="text-muted small mb-2"><%= clientName %> &middot; <%= assigneeName %></div>
             <div class="d-flex justify-content-between align-items-center mt-2 border-top pt-2">
-              <span class="text-muted small" style="font-size: 0.75rem;"><i class="bi bi-calendar-event me-1"></i><%= task.due_date %></span>
+              <span class="text-muted small" style="font-size: 0.75rem;"><i class="bi bi-calendar-event me-1"></i><%= formatAppDate(task.due_date) %></span>
               <div class="d-flex gap-2">
                 <button class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.7rem;" onclick="event.stopPropagation(); openTaskModal('<%= task.id %>')"><i class="bi bi-pencil"></i> Edit</button>
                 <button class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.7rem;" onclick="event.stopPropagation(); deleteTask(event, '<%= task.id %>', '<%= (task.TaskType ? task.TaskType.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', '<%= (task.Client ? task.Client.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', <%= task.assigned_user_id ? 'true' : 'false' %>, '<%= task.status %>')"><i class="bi bi-trash"></i> Delete</button>
@@ -1486,9 +1486,15 @@
     selectedDateString = dateStr;
     renderCalendar(); // Refresh to show active state
     
-    const dateObj = new Date(dateStr);
-    const options = { weekday: 'long', month: 'short', day: 'numeric' };
-    document.getElementById('selectedDayTitle').innerText = dateObj.toLocaleDateString('en-US', options);
+    const parts = dateStr.split('-');
+    let dateLabel = dateStr;
+    if (parts.length === 3) {
+      const d = new Date(parts[0], parts[1] - 1, parts[2]);
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      dateLabel = `${days[d.getDay()]}, ${String(d.getDate()).padStart(2, '0')}-${months[d.getMonth()]}-${d.getFullYear()}`;
+    }
+    document.getElementById('selectedDayTitle').innerText = dateLabel;
     
     const container = document.getElementById('selectedDayTasks');
     container.innerHTML = '';

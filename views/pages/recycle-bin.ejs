@@ -27,7 +27,7 @@
               <td class="fw-bold"><%= task.Client ? task.Client.name : '-' %></td>
               <td><%= task.TaskType ? task.TaskType.name : '-' %></td>
               <td><%= task.Assignee ? task.Assignee.name : '-' %></td>
-              <td><%= task.due_date %></td>
+              <td><%= formatAppDate(task.due_date) %></td>
               <td>
                 <% if (task.status === 'Completed') { %>
                   <span class="badge badge-outline text-success border-success">Completed</span>

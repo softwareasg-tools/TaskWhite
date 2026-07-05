@@ -28,10 +28,39 @@ app.use(session({
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days
 }));
 
+function formatAppDate(dateVal) {
+  if (!dateVal) return '-';
+  let dateObj;
+  if (typeof dateVal === 'string') {
+    const parts = dateVal.split('-');
+    if (parts.length !== 3) return dateVal;
+    dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+  } else if (dateVal instanceof Date) {
+    dateObj = dateVal;
+  } else if (dateVal.toDate && typeof dateVal.toDate === 'function') {
+    dateObj = dateVal.toDate();
+  } else {
+    return dateVal;
+  }
+  
+  if (isNaN(dateObj.getTime())) return '-';
+  
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  const dayName = days[dateObj.getDay()];
+  const dayStr = String(dateObj.getDate()).padStart(2, '0');
+  const monthName = months[dateObj.getMonth()];
+  const yearStr = dateObj.getFullYear();
+  
+  return `${dayName}, ${dayStr}-${monthName}-${yearStr}`;
+}
+
 // Setup global variables for views
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.currentPath = req.path;
+  res.locals.formatAppDate = formatAppDate;
   next();
 });
 
