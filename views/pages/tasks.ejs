@@ -24,7 +24,7 @@
         </thead>
         <tbody>
           <% tasks.forEach(task => { %>
-            <tr onclick="openTaskModal(<%= task.id %>)">
+            <tr onclick="openTaskModal('<%= task.id %>')">
               <td><%= task.Client ? task.Client.name : '-' %></td>
               <td><%= task.show_name || '-' %></td>
               <td><%= task.episode_name || '-' %></td>

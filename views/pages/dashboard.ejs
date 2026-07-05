@@ -205,7 +205,7 @@
         </thead>
         <tbody>
           <% tasks.forEach(task => { %>
-            <tr class="dashboard-task-row" onclick="openTaskModal(<%= task.id %>)">
+            <tr class="dashboard-task-row" onclick="openTaskModal('<%= task.id %>')">
               <td class="fw-bold"><%= task.Client ? task.Client.name : '-' %></td>
               <td>
                 <div class="fw-medium text-dark"><%= task.TaskType ? task.TaskType.name : '-' %></div>
@@ -232,7 +232,7 @@
               </td>
               <td class="text-end">
                 <i class="bi bi-pencil text-muted me-3"></i>
-                <i class="bi bi-trash text-danger" onclick="deleteTask(event, <%= task.id %>, '<%= (task.TaskType ? task.TaskType.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', '<%= (task.Client ? task.Client.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>')" style="cursor: pointer;"></i>
+                <i class="bi bi-trash text-danger" onclick="deleteTask(event, '<%= task.id %>', '<%= (task.TaskType ? task.TaskType.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', '<%= (task.Client ? task.Client.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>')" style="cursor: pointer;"></i>
               </td>
             </tr>
           <% }) %>

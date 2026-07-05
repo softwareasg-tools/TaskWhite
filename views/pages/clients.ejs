@@ -32,7 +32,7 @@
               <td class="fw-bold client-name"><%= client.name %></td>
               <td><%= client.notes || '-' %></td>
               <td class="text-end">
-                <button class="btn btn-link text-decoration-none text-danger p-0" onclick="confirmDeleteClient(<%= client.id %>, '<%= client.name.replace(/'/g, "\\'") %>')">
+                <button class="btn btn-link text-decoration-none text-danger p-0" onclick="confirmDeleteClient('<%= client.id %>', '<%= client.name.replace(/'/g, "\\'") %>')">
                   <i class="bi bi-trash"></i>
                 </button>
               </td>

@@ -52,7 +52,7 @@
                 <% } %>
               </td>
               <td class="text-end">
-                <button class="btn btn-link text-decoration-none text-danger p-0" onclick="confirmDeleteUser(<%= member.id %>, '<%= member.name.replace(/'/g, "\\'") %>')">
+                <button class="btn btn-link text-decoration-none text-danger p-0" onclick="confirmDeleteUser('<%= member.id %>', '<%= member.name.replace(/'/g, "\\'") %>')">
                   <i class="bi bi-trash"></i>
                 </button>
               </td>
