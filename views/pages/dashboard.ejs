@@ -196,7 +196,7 @@
   </div>
   <div class="col-md-6">
     <div class="card h-100">
-      <div class="card-header">Tasks by Employee</div>
+      <div class="card-header fw-bold text-muted small">TASK COUNT BY TEAM MEMBER</div>
       <div class="card-body" style="height: 300px;">
         <canvas id="teamChart"></canvas>
       </div>
@@ -204,7 +204,7 @@
   </div>
   <div class="col-md-12">
     <div class="card h-100">
-      <div class="card-header">Tasks by Task</div>
+      <div class="card-header fw-bold text-muted small">TASK COUNT</div>
       <div class="card-body" style="height: 400px;">
         <canvas id="typeChart"></canvas>
       </div>
@@ -1018,7 +1018,8 @@
         label: 'Tasks',
         data: <%- JSON.stringify(chartData.teamData) %>,
         backgroundColor: '#404347',
-        borderRadius: 4
+          borderRadius: 4,
+          maxBarThickness: 35
       }]
     },
     options: {
@@ -1040,7 +1041,8 @@
         label: 'Tasks',
         data: <%- JSON.stringify(chartData.typeData) %>,
         backgroundColor: '#5f6368',
-        borderRadius: 4
+          borderRadius: 4,
+          maxBarThickness: 35
       }]
     },
     options: {
