@@ -244,6 +244,27 @@
         });
       });
     }
+
+    // Enter key support for modal inputs
+    const taskTypeNameInput = document.getElementById('taskTypeNameInput');
+    if (taskTypeNameInput) {
+      taskTypeNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          submitAddTaskType();
+        }
+      });
+    }
+
+    const aiIndustryInput = document.getElementById('aiIndustryInput');
+    if (aiIndustryInput) {
+      aiIndustryInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          generateTasksWithAI();
+        }
+      });
+    }
   });
 
   async function generateTasksWithAI() {

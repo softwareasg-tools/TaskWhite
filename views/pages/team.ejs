@@ -257,8 +257,8 @@
       searchInput.addEventListener('keyup', (e) => {
         const term = e.target.value.toLowerCase();
         rows.forEach(row => {
-          const name = row.querySelector('.team-name').textContent.toLowerCase();
-          if (name.includes(term)) {
+          const text = row.textContent.toLowerCase();
+          if (text.includes(term)) {
             row.style.display = '';
           } else {
             row.style.display = 'none';
@@ -266,6 +266,20 @@
         });
       });
     }
+
+    // Enter key support for modal inputs
+    const memberNameInput = document.getElementById('memberName');
+    const memberEmailInput = document.getElementById('memberEmail');
+    
+    function handleEnter(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitAddTeam();
+      }
+    }
+
+    if (memberNameInput) memberNameInput.addEventListener('keypress', handleEnter);
+    if (memberEmailInput) memberEmailInput.addEventListener('keypress', handleEnter);
   });
 
   let currentSortCol = -1;

@@ -218,6 +218,20 @@
         });
       });
     }
+
+    // Enter key support for modal inputs
+    const clientNameInput = document.getElementById('clientName');
+    const clientNotesInput = document.getElementById('clientNotes');
+    
+    function handleEnter(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitAddClient();
+      }
+    }
+
+    if (clientNameInput) clientNameInput.addEventListener('keypress', handleEnter);
+    // Don't bind enter on clientNotes because it's a textarea and we might want newlines
   });
 
   let currentSortCol = -1;
