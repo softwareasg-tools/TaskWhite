@@ -15,9 +15,10 @@
   </button>
 </div>
 
-<div class="card">
-  <div class="card-body p-0">
-    <div class="table-responsive">
+<div class="card border-0 bg-transparent bg-md-white border-md shadow-sm-md">
+  <div class="card-body p-0 bg-transparent bg-md-white">
+    <!-- Desktop Table View -->
+    <div class="table-responsive d-none d-md-block">
       <table class="table table-hover mb-0">
         <thead class="bg-light">
           <tr>
@@ -34,7 +35,7 @@
         </thead>
         <tbody>
           <% tasks.forEach(task => { %>
-            <tr onclick="if(!event.target.classList.contains('row-checkbox')) openTaskModal('<%= task.id %>')">
+            <tr class="tasks-task-row" onclick="if(!event.target.classList.contains('row-checkbox')) openTaskModal('<%= task.id %>')">
               <td><input type="checkbox" class="form-check-input row-checkbox" value="<%= task.id %>" data-assigned="<%= task.assigned_user_id ? 'true' : 'false' %>" data-status="<%= task.status %>" onchange="updateBulkDeleteAction()"></td>
               <td><%= task.Client ? task.Client.name : '-' %></td>
               <td><%= task.show_name || '-' %></td>
@@ -67,6 +68,35 @@
           <% }) %>
         </tbody>
       </table>
+    </div>
+    
+    <!-- Mobile Tile View -->
+    <div class="d-block d-md-none">
+      <% if (tasks.length === 0) { %>
+        <div class="text-center opacity-75 p-4 bg-white rounded border">No tasks found.</div>
+      <% } %>
+      <div class="d-flex flex-column gap-3">
+        <% tasks.forEach(task => { 
+             const typeName = task.TaskType ? task.TaskType.name : '-';
+             const clientName = task.Client ? task.Client.name : 'Internal';
+             const assigneeName = task.Assignee ? task.Assignee.name : 'Unassigned';
+             let badgeClass = 'text-secondary border-secondary';
+             if (task.status === 'Completed') badgeClass = 'text-success border-success';
+             else if (task.status === 'Overdue') badgeClass = 'text-danger border-danger';
+             else if (task.status === 'In Progress') badgeClass = 'text-primary border-primary';
+        %>
+          <div class="tasks-task-row p-3 border rounded shadow-sm bg-white" onclick="openTaskModal('<%= task.id %>')">
+            <div class="d-flex justify-content-between align-items-start mb-1">
+              <h6 class="fw-bold mb-0"><%= typeName %></h6>
+              <span class="badge bg-transparent border <%= badgeClass %>" style="font-size: 0.65rem;"><%= task.status %></span>
+            </div>
+            <div class="opacity-75 small mb-2"><%= clientName %> &middot; <%= assigneeName %></div>
+            <div class="d-flex justify-content-between align-items-center mt-2 border-top pt-2">
+              <span class="opacity-75 small" style="font-size: 0.75rem;"><i class="bi bi-calendar-event me-1"></i><%= formatAppDate(task.due_date) %></span>
+            </div>
+          </div>
+        <% }) %>
+      </div>
     </div>
   </div>
 </div>
@@ -230,4 +260,25 @@
       showToast('Error moving tasks to trash.', 'danger');
     }
   }
+
+  // Reactive Search
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('tasksSearch');
+    if (searchInput) {
+      searchInput.addEventListener('keyup', (e) => {
+        const term = e.target.value.toLowerCase();
+        const currentRows = document.querySelectorAll('.tasks-task-row');
+        currentRows.forEach(row => {
+          const text = row.innerText.toLowerCase();
+          if (text.includes(term)) {
+            row.classList.remove('d-none');
+            row.style.display = '';
+          } else {
+            row.classList.add('d-none');
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+  });
 </script>
