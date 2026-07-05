@@ -101,7 +101,7 @@
       const data = await res.json();
       
       if (res.ok) {
-        // Success! Redirect to dashboard
+        // Success! Redirect to dashboard (URL clears automatically)
         window.location.href = '/dashboard';
       } else {
         throw new Error(data.error || 'Failed to setup workspace routing.');
@@ -110,9 +110,25 @@
     } catch (err) {
       console.error(err);
       statusDiv.style.display = 'none';
-      errorDiv.innerText = err.message || 'Verification failed. Link may be expired.';
+      
+      // Translate scary Firebase errors into friendly human errors
+      let friendlyMsg = 'Verification failed. The link may be expired or invalid. Please request a new one.';
+      
+      if (err.code === 'auth/invalid-email') {
+        friendlyMsg = 'That email does not match the one used to request the link. Please double-check and try again.';
+      } else if (err.code === 'auth/invalid-action-code') {
+        friendlyMsg = 'This magic link has expired or already been used. Please request a new one.';
+      } else if (err.message) {
+        // Fallback for non-firebase custom errors
+        friendlyMsg = err.message.replace('Firebase:', '').trim();
+      }
+
+      errorDiv.innerText = friendlyMsg;
       errorDiv.style.display = 'block';
       retryBtn.style.display = 'block';
+      
+      // Instantly wipe the ugly ?apiKey=... tracking codes from the browser URL
+      window.history.replaceState({}, document.title, '/auth/verify');
     }
   }
 
