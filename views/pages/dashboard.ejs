@@ -73,82 +73,49 @@
           <hr class="text-muted opacity-25">
           
           <div class="mb-4">
-            <label class="form-label fw-bold text-dark small d-flex justify-content-between">
-              Clients 
-              <span class="badge bg-light text-secondary border rounded-pill"><%= clients.length %></span>
-            </label>
-            <div class="filter-checkbox-list" style="max-height: 150px; overflow-y: auto;">
-              <div class="form-check mb-1">
-                <input class="form-check-input shadow-sm" type="radio" name="client_id" id="client_none" value="" <%= !query.client_id ? 'checked' : '' %>>
-                <label class="form-check-label small text-muted" for="client_none" style="cursor: pointer;">All Clients</label>
-              </div>
+            <label class="form-label fw-bold text-dark small">Clients</label>
+            <select name="client_id" class="form-select form-select-sm">
+              <option value="">All Clients</option>
               <% clients.forEach(client => { %>
-                <div class="form-check mb-1">
-                  <input class="form-check-input shadow-sm" type="radio" name="client_id" id="client_<%= client.id %>" value="<%= client.id %>" <%= query.client_id == client.id ? 'checked' : '' %>>
-                  <label class="form-check-label small" for="client_<%= client.id %>" style="cursor: pointer;"><%= client.name %></label>
-                </div>
+                <option value="<%= client.id %>" <%= query.client_id == client.id ? 'selected' : '' %>><%= client.name %></option>
               <% }) %>
-            </div>
+            </select>
           </div>
           
           <hr class="text-muted opacity-25">
           
           <div class="mb-4">
-            <label class="form-label fw-bold text-dark small d-flex justify-content-between">
-              Team Members
-            </label>
-            <div class="filter-checkbox-list" style="max-height: 150px; overflow-y: auto;">
-              <div class="form-check mb-1">
-                <input class="form-check-input shadow-sm" type="radio" name="user_id" id="user_none" value="" <%= !query.user_id ? 'checked' : '' %>>
-                <label class="form-check-label small text-muted" for="user_none" style="cursor: pointer;">All Members</label>
-              </div>
+            <label class="form-label fw-bold text-dark small">Team Members</label>
+            <select name="user_id" class="form-select form-select-sm">
+              <option value="">All Members</option>
               <% users.forEach(u => { %>
-                <div class="form-check mb-1">
-                  <input class="form-check-input shadow-sm" type="radio" name="user_id" id="user_<%= u.id %>" value="<%= u.id %>" <%= query.user_id == u.id ? 'checked' : '' %>>
-                  <label class="form-check-label small" for="user_<%= u.id %>" style="cursor: pointer;"><%= u.name %></label>
-                </div>
+                <option value="<%= u.id %>" <%= query.user_id == u.id ? 'selected' : '' %>><%= u.name %></option>
               <% }) %>
-            </div>
+            </select>
           </div>
           
           <hr class="text-muted opacity-25">
           
           <div class="mb-4">
-            <label class="form-label fw-bold text-dark small d-flex justify-content-between">
-              Task Types
-            </label>
-            <div class="filter-checkbox-list" style="max-height: 150px; overflow-y: auto;">
-              <div class="form-check mb-1">
-                <input class="form-check-input shadow-sm" type="radio" name="task_type_id" id="taskType_none" value="" <%= !query.task_type_id ? 'checked' : '' %>>
-                <label class="form-check-label small text-muted" for="taskType_none" style="cursor: pointer;">All Tasks</label>
-              </div>
+            <label class="form-label fw-bold text-dark small">Task Types</label>
+            <select name="task_type_id" class="form-select form-select-sm">
+              <option value="">All Tasks</option>
               <% taskTypes.forEach(type => { %>
-                <div class="form-check mb-1">
-                  <input class="form-check-input shadow-sm" type="radio" name="task_type_id" id="taskType_<%= type.id %>" value="<%= type.id %>" <%= query.task_type_id == type.id ? 'checked' : '' %>>
-                  <label class="form-check-label small" for="taskType_<%= type.id %>" style="cursor: pointer;"><%= type.name %></label>
-                </div>
+                <option value="<%= type.id %>" <%= query.task_type_id == type.id ? 'selected' : '' %>><%= type.name %></option>
               <% }) %>
-            </div>
+            </select>
           </div>
 
           <hr class="text-muted opacity-25">
           
           <div class="mb-2">
-            <label class="form-label fw-bold text-dark small d-flex justify-content-between">
-              Tags
-            </label>
-            <div class="filter-checkbox-list" style="max-height: 150px; overflow-y: auto;">
-               <div class="form-check mb-1">
-                  <input class="form-check-input shadow-sm" type="radio" name="tag" id="tag_none" value="" <%= !query.tag ? 'checked' : '' %>>
-                  <label class="form-check-label small text-muted" for="tag_none" style="cursor: pointer;">All Tags</label>
-                </div>
+            <label class="form-label fw-bold text-dark small">Tags</label>
+            <select name="tag" class="form-select form-select-sm">
+              <option value="">All Tags</option>
               <% availableTags.forEach(tag => { %>
-                <div class="form-check mb-1">
-                  <input class="form-check-input shadow-sm" type="radio" name="tag" id="tag_<%= tag %>" value="<%= tag %>" <%= query.tag === tag ? 'checked' : '' %>>
-                  <label class="form-check-label small" for="tag_<%= tag %>" style="cursor: pointer;"><%= tag %></label>
-                </div>
+                <option value="<%= tag %>" <%= query.tag === tag ? 'selected' : '' %>><%= tag %></option>
               <% }) %>
-            </div>
+            </select>
           </div>
 
           <!-- Hidden Submit Button (triggered via JS) -->
