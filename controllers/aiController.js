@@ -5,7 +5,8 @@ exports.generateTaskTypes = async (req, res) => {
       return res.status(400).json({ error: 'Industry name is required' });
     }
 
-    if (!process.env.BYNARA_API_KEY) {
+    const apiKey = process.env.BYNARA_API_KEY || 'sk-nry-4RdxOQXlaRgi1fD9hUUpJOl5pjwN0TL-FYP9MrGVNLo';
+    if (!apiKey) {
       return res.status(400).json({ error: 'BYNARA_API_KEY is not configured in the server environment. Please add it to your .env file and restart the server.' });
     }
 
@@ -18,7 +19,7 @@ exports.generateTaskTypes = async (req, res) => {
     const response = await fetch('https://router.bynara.id/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.BYNARA_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
