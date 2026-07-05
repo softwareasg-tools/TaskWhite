@@ -47,6 +47,8 @@ if (getApps().length === 0) {
 }
 
 exports.getAuthVerify = (req, res) => {
+  if (req.session.user) return res.redirect('/dashboard');
+
   res.render('pages/auth-verify', {
     layout: 'layout',
     user: null,
