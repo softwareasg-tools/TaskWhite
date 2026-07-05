@@ -1,5 +1,5 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-sm" style="width: 400px; border-radius: 10px;">
+  <div class="card shadow-sm" style="width: 100%; max-width: 400px; border-radius: 10px; margin: 0 15px;">
     <div class="card-body p-4 text-center">
       <img src="/images/logo.svg" alt="TaskWhite Logo" style="height: 64px; width: 64px; object-fit: cover; border-radius: 14px;" class="mb-3 shadow-sm">
       <div class="d-flex justify-content-center mb-4">
@@ -10,8 +10,18 @@
         <div class="spinner-border spinner-border-sm me-2" role="status"></div>
         Verifying your magic link...
       </div>
+
+      <!-- Sleek Email Confirmation Block -->
+      <div id="emailConfirmBlock" style="display: none; text-align: left;">
+        <p class="text-muted mb-3 text-center" style="font-size: 14px;">For security, please confirm your email address to complete sign in.</p>
+        <div class="mb-3">
+          <label for="confirmEmail" class="form-label text-muted">Email address</label>
+          <input type="email" id="confirmEmail" class="form-control" placeholder="name@company.com">
+        </div>
+        <button id="confirmEmailBtn" class="btn btn-dark w-100">Confirm Email</button>
+      </div>
       
-      <div class="alert alert-danger py-2" id="errorDiv" style="display: none;"></div>
+      <div class="alert alert-danger py-2 mt-3" id="errorDiv" style="display: none;"></div>
       
       <a href="/login" class="btn btn-outline-secondary w-100 mt-3" id="retryBtn" style="display: none;">Return to Login</a>
     </div>
@@ -29,6 +39,9 @@
   const statusDiv = document.getElementById('status');
   const errorDiv = document.getElementById('errorDiv');
   const retryBtn = document.getElementById('retryBtn');
+  const emailConfirmBlock = document.getElementById('emailConfirmBlock');
+  const confirmEmailInput = document.getElementById('confirmEmail');
+  const confirmEmailBtn = document.getElementById('confirmEmailBtn');
 
   async function verifySession() {
     try {
@@ -38,7 +51,24 @@
       
       let email = window.localStorage.getItem('emailForSignIn');
       if (!email) {
-        email = window.prompt('Please provide your email for confirmation');
+        // Show sleek embedded confirmation instead of window.prompt
+        statusDiv.style.display = 'none';
+        emailConfirmBlock.style.display = 'block';
+        
+        email = await new Promise((resolve) => {
+          confirmEmailBtn.addEventListener('click', () => {
+            const inputVal = confirmEmailInput.value.trim();
+            if (inputVal) {
+              emailConfirmBlock.style.display = 'none';
+              statusDiv.style.display = 'block';
+              resolve(inputVal);
+            } else {
+              errorDiv.innerText = 'Please enter an email address.';
+              errorDiv.style.display = 'block';
+            }
+          });
+        });
+        errorDiv.style.display = 'none'; // Clear error once submitted
       }
       
       const result = await signInWithEmailLink(auth, email, window.location.href);
