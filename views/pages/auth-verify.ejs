@@ -42,101 +42,88 @@
   const confirmEmailInput = document.getElementById('confirmEmail');
   const confirmEmailBtn = document.getElementById('confirmEmailBtn');
 
-  async function verifySession() {
-    try {
-      if (!isSignInWithEmailLink(auth, window.location.href)) {
-        throw new Error('Invalid magic link URL.');
-      }
-      
-      let email = window.localStorage.getItem('emailForSignIn');
-      if (!email) {
-        // Show sleek embedded confirmation instead of window.prompt
-        statusDiv.style.display = 'none';
-        emailConfirmBlock.style.display = 'block';
-        
-        email = await new Promise((resolve) => {
-          const submitEmail = () => {
-            const inputVal = confirmEmailInput.value.trim();
-            if (inputVal) {
-              emailConfirmBlock.style.display = 'none';
-              statusDiv.style.display = 'block';
-              resolve(inputVal);
-            } else {
-              errorDiv.innerText = 'Please enter an email address.';
-              errorDiv.style.display = 'block';
-            }
-          };
+  const originalUrl = window.location.href;
 
-          confirmEmailBtn.addEventListener('click', submitEmail);
-          
-          confirmEmailInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') {
-              submitEmail();
-            }
-          });
-        });
-        errorDiv.style.display = 'none'; // Clear error once submitted
-      }
-      
-      const result = await signInWithEmailLink(auth, email, window.location.href);
-      
-      // Clear email from storage
+  async function processLogin(emailToUse) {
+    try {
+      statusDiv.style.display = 'block';
+      emailConfirmBlock.style.display = 'none';
+      errorDiv.style.display = 'none';
+      retryBtn.style.display = 'none';
+
+      const result = await signInWithEmailLink(auth, emailToUse, originalUrl);
       window.localStorage.removeItem('emailForSignIn');
-      
       const user = result.user;
       
-      // Send session to our backend for routing and local session sync
       statusDiv.innerHTML = '<div class="spinner-border spinner-border-sm me-2" role="status"></div> Finalizing workspace...';
       
       const res = await fetch('/api/auth/post-login-routing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email: user.email, 
-          name: user.displayName || '', 
-          firebaseUserId: user.uid 
-        })
+        body: JSON.stringify({ email: user.email, name: user.displayName || '', firebaseUserId: user.uid })
       });
-      
       const data = await res.json();
       
       if (res.ok) {
-        // Success! Redirect to dashboard (URL clears automatically)
+        window.history.replaceState({}, document.title, '/auth/verify');
         window.location.href = '/dashboard';
       } else {
         throw new Error(data.error || 'Failed to setup workspace routing.');
       }
-      
     } catch (err) {
       console.error(err);
       statusDiv.style.display = 'none';
       
-      // Translate scary Firebase errors into friendly human errors
       let friendlyMsg = 'Verification failed. The link may be expired or invalid. Please request a new one.';
-      
       if (err.code === 'auth/invalid-email') {
         friendlyMsg = 'The email you entered is incorrect. Please re-enter the exact email address you used to request this link.';
-        // Show the email input box again so they can retry
         emailConfirmBlock.style.display = 'block';
-        retryBtn.style.display = 'none'; // Hide the return to login button since they are just retrying
       } else if (err.code === 'auth/invalid-action-code') {
         friendlyMsg = 'This magic link has expired or has already been used. Please return to the login page to request a new one.';
         retryBtn.style.display = 'block';
+        window.history.replaceState({}, document.title, '/auth/verify'); // wipe URL on permanent error
       } else {
-        if (err.message) {
-          friendlyMsg = err.message.replace('Firebase:', '').trim();
-        }
+        if (err.message) friendlyMsg = err.message.replace('Firebase:', '').trim();
         retryBtn.style.display = 'block';
       }
-
+      
       errorDiv.innerText = friendlyMsg;
       errorDiv.style.display = 'block';
-      
-      // Instantly wipe the ugly ?apiKey=... tracking codes from the browser URL
-      window.history.replaceState({}, document.title, '/auth/verify');
     }
   }
 
-  // Start verification on load
-  verifySession();
+  function init() {
+    if (!isSignInWithEmailLink(auth, originalUrl)) {
+      statusDiv.style.display = 'none';
+      errorDiv.innerText = 'Invalid magic link URL.';
+      errorDiv.style.display = 'block';
+      retryBtn.style.display = 'block';
+      return;
+    }
+    
+    let storedEmail = window.localStorage.getItem('emailForSignIn');
+    if (storedEmail) {
+      processLogin(storedEmail);
+    } else {
+      statusDiv.style.display = 'none';
+      emailConfirmBlock.style.display = 'block';
+    }
+  }
+
+  const submitEmail = () => {
+    const inputVal = confirmEmailInput.value.trim();
+    if (inputVal) {
+      processLogin(inputVal);
+    } else {
+      errorDiv.innerText = 'Please enter an email address.';
+      errorDiv.style.display = 'block';
+    }
+  };
+
+  confirmEmailBtn.addEventListener('click', submitEmail);
+  confirmEmailInput.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') submitEmail();
+  });
+
+  init();
 </script>
