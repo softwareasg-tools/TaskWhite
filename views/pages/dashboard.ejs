@@ -998,11 +998,14 @@
     if (searchInput) {
       searchInput.addEventListener('keyup', (e) => {
         const term = e.target.value.toLowerCase();
-        rows.forEach(row => {
+        const currentRows = document.querySelectorAll('.dashboard-task-row');
+        currentRows.forEach(row => {
           const text = row.innerText.toLowerCase();
           if (text.includes(term)) {
+            row.classList.remove('d-none');
             row.style.display = '';
           } else {
+            row.classList.add('d-none');
             row.style.display = 'none';
           }
         });
