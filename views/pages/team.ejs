@@ -6,7 +6,7 @@
   </div>
   <div class="d-flex flex-wrap gap-2 gap-sm-3 align-items-center">
     <div class="input-group">
-      <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+      <span class="input-group-text bg-surface border-end-0"><i class="bi bi-search text-muted"></i></span>
       <input type="text" id="teamSearch" class="form-control border-start-0 ps-0" placeholder="Search team...">
     </div>
     <button class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#addTeamModal"><i class="bi bi-plus"></i> Add Member</button>
@@ -31,8 +31,8 @@
   </ul>
 </div>
 
-<div class="card border-0 bg-transparent bg-md-white border-md shadow-sm-md">
-  <div class="card-body p-0 bg-transparent bg-md-white">
+<div class="card border-0 bg-transparent bg-md-surface border-md shadow-sm-md">
+  <div class="card-body p-0 bg-transparent bg-md-surface">
     <!-- Desktop Table View -->
     <div class="table-responsive d-none d-md-block">
       <table class="table table-hover mb-0">
@@ -80,11 +80,11 @@
     <!-- Mobile Tile List View -->
     <div class="d-block d-md-none">
       <% if (team.length === 0) { %>
-        <div class="text-center opacity-75 p-4 bg-white rounded border">No team members found.</div>
+        <div class="text-center opacity-75 p-4 bg-surface rounded border">No team members found.</div>
       <% } %>
       <div class="d-flex flex-column gap-3">
         <% team.forEach(member => { %>
-          <div class="p-3 border rounded shadow-sm bg-white">
+          <div class="p-3 border rounded shadow-sm bg-surface">
             <div class="d-flex justify-content-between align-items-start mb-2">
               <div>
                 <h6 class="fw-bold mb-1 text-dark">
