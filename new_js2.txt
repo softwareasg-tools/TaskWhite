@@ -1,0 +1,62 @@
+  function triggerCompleteEffects(taskIds) {
+    if (!Array.isArray(taskIds)) taskIds = [taskIds];
+    
+    if (typeof confetti !== 'undefined') {
+      confetti({ particleCount: 100 * taskIds.length, spread: 70, origin: { y: 0.6 } });
+    }
+    playChimeSound();
+    
+    const rows = document.querySelectorAll('.dashboard-task-row');
+    
+    taskIds.forEach(taskId => {
+      rows.forEach(r => {
+        const cb = r.querySelector('.row-checkbox');
+        // Match either desktop row checkbox or mobile row (mobile row passes taskId directly in some places, but let's check checkbox first)
+        let isMatch = false;
+        if (cb && cb.value === taskId) isMatch = true;
+        else if (r.getAttribute('onclick') && r.getAttribute('onclick').includes(taskId)) isMatch = true;
+
+        if (isMatch) {
+          r.classList.add('task-complete-anim');
+          
+          // Immediately update status badge visually
+          const desktopStatusCell = r.querySelector('td:nth-child(6)');
+          if (desktopStatusCell) {
+            desktopStatusCell.innerHTML = '<span class="badge badge-outline text-success border-success">Completed</span>';
+          }
+          const mobileBadge = r.querySelector('.badge');
+          if (mobileBadge && r.tagName !== 'TR') {
+            mobileBadge.className = 'badge bg-transparent border text-success border-success';
+            mobileBadge.innerText = 'Completed';
+          }
+          
+          if (globalArchiveRule === '0') {
+            setTimeout(() => {
+              r.classList.remove('task-complete-anim');
+              r.classList.add('task-complete-anim-fadeout');
+              setTimeout(() => {
+                r.style.display = 'none'; // hide it
+                fetch(\/tasks/\/archive-immediate\, { method: 'POST' });
+              }, 500);
+            }, 5000);
+          } else {
+            // Keep blue for 5 seconds
+            setTimeout(() => {
+              r.classList.remove('task-complete-anim');
+              r.classList.add('task-complete-anim-fadeout');
+              setTimeout(() => {
+                r.classList.remove('task-complete-anim-fadeout');
+              }, 2000);
+            }, 5000);
+          }
+        }
+      });
+    });
+
+    // Refresh table after 5 seconds so they stay blue for exactly 5s before jumping to the top!
+    setTimeout(() => {
+      if (globalArchiveRule === '0') showToast(taskIds.length > 1 ? \\ tasks moved to archives\ : 'Task moved to archives', 'success');
+      else showToast(taskIds.length > 1 ? \\ tasks marked completed!\ : 'Task status updated!', 'success');
+      refreshDashboardTable();
+    }, 5500);
+  }
