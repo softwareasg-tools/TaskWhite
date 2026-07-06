@@ -1681,6 +1681,7 @@
       const newTbody = doc.querySelector('.table tbody');
       const oldTbody = document.querySelector('.table tbody');
       if (newTbody && oldTbody) oldTbody.innerHTML = newTbody.innerHTML;
+      if (typeof syncCheckboxStyles === 'function') syncCheckboxStyles();
       
       const newKpis = Array.from(doc.querySelectorAll('.row.mb-4')).find(r => r.innerHTML.includes('Total Tasks'));
       const oldKpis = Array.from(document.querySelectorAll('.row.mb-4')).find(r => r.innerHTML.includes('Total Tasks'));
@@ -1965,7 +1966,7 @@
         const cb = focusedRow.querySelector('.row-checkbox');
         if (cb) {
           cb.checked = !cb.checked;
-          cb.dispatchEvent(new Event('change'));
+          cb.dispatchEvent(new Event('change', { bubbles: true }));
         }
         return;
       } else if (e.key.toLowerCase() === 'e' || e.key === 'Enter') {
