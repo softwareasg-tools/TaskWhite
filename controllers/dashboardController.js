@@ -34,7 +34,7 @@ exports.getDashboard = async (req, res) => {
     // Automatic Status Update for Overdue Tasks
     allTasks.forEach(task => {
       let changed = false;
-      if (['Assigned', 'In Progress'].includes(task.status) && task.due_date && task.due_date < todayStr) {
+      if (task.status === 'Assigned' && task.due_date && task.due_date < todayStr) {
         task.status = 'Overdue';
         changed = true;
       } else if (task.status === 'Overdue' && task.due_date && task.due_date >= todayStr) {

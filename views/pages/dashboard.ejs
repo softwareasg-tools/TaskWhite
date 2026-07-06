@@ -1685,7 +1685,7 @@
       
       const searchInput = document.getElementById('dashboardSearch');
       if (searchInput && searchInput.value.trim() !== '') {
-        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+        searchInput.dispatchEvent(new Event('keyup', { bubbles: true }));
       }
       
       const newKpis = Array.from(doc.querySelectorAll('.row.mb-4')).find(r => r.innerHTML.includes('Total Tasks'));
@@ -1761,64 +1761,69 @@
       });
     });
 
-    if (false) {
-      setTimeout(() => {
-        const tbody = document.querySelector('.table tbody');
-        if (!tbody) {
-          // Fallback if mobile view or table missing
-          sessionStorage.setItem('completedTasksHighlight', JSON.stringify(taskIds));
-          refreshDashboardTable();
-          return;
+    if (tasksToAnimate.length === 0) {
+      sessionStorage.setItem('completedTasksHighlight', JSON.stringify(taskIds));
+      refreshDashboardTable();
+      return;
+    }
+
+    // Start climbing animation after 3 seconds
+    setTimeout(() => {
+      const tbody = document.querySelector('.table tbody');
+      if (!tbody) {
+        sessionStorage.setItem('completedTasksHighlight', JSON.stringify(taskIds));
+        refreshDashboardTable();
+        return;
+      }
+      
+      let currentTargetY = tbody.getBoundingClientRect().top + window.scrollY;
+      
+      tasksToAnimate.forEach(t => {
+        const rect = t.row.getBoundingClientRect();
+        const clone = t.row.cloneNode(true);
+        
+        // Fix widths to prevent collapse
+        const originalCells = t.row.querySelectorAll('td, th');
+        const cloneCells = clone.querySelectorAll('td, th');
+        for (let i = 0; i < originalCells.length; i++) {
+           cloneCells[i].style.width = originalCells[i].getBoundingClientRect().width + 'px';
         }
         
-        let currentTargetY = tbody.getBoundingClientRect().top + window.scrollY;
+        clone.style.position = 'absolute';
+        clone.style.left = rect.left + window.scrollX + 'px';
+        clone.style.top = rect.top + window.scrollY + 'px';
+        clone.style.width = rect.width + 'px';
+        clone.style.zIndex = '9999';
+        clone.style.backgroundColor = 'rgba(135, 206, 235, 0.8)';
+        clone.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
+        clone.classList.remove('task-complete-anim');
+        clone.classList.add('task-linger-blue-anim');
+        document.body.appendChild(clone);
         
-        tasksToAnimate.forEach(t => {
-          const rect = t.row.getBoundingClientRect();
-          const clone = t.row.cloneNode(true);
-          
-          // Fix widths to prevent collapse
-          const originalCells = t.row.querySelectorAll('td, th');
-          const cloneCells = clone.querySelectorAll('td, th');
-          for (let i = 0; i < originalCells.length; i++) {
-             cloneCells[i].style.width = originalCells[i].getBoundingClientRect().width + 'px';
-          }
-          
-          clone.style.position = 'absolute';
-          clone.style.left = rect.left + window.scrollX + 'px';
-          clone.style.top = rect.top + window.scrollY + 'px';
-          clone.style.width = rect.width + 'px';
-          clone.style.zIndex = '9999';
-          clone.style.backgroundColor = 'rgba(135, 206, 235, 0.8)';
-          clone.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
-          clone.classList.remove('task-complete-anim');
-            clone.classList.add('task-linger-blue-anim');
-          document.body.appendChild(clone);
-          
-          t.row.style.visibility = 'hidden';
-          
-          requestAnimationFrame(() => {
-            clone.style.transition = 'top 1s cubic-bezier(0.25, 1, 0.5, 1), background-color 1s ease-out';
-            clone.style.top = currentTargetY + 'px';
-            clone.style.backgroundColor = 'rgba(135, 206, 235, 0.4)';
-          });
-          
-          currentTargetY += rect.height; // Next task stacks below
-          
-          // Cleanup clone after animation
-          setTimeout(() => {
-            if(clone.parentNode) clone.parentNode.removeChild(clone);
-          }, 1000);
+        t.row.style.visibility = 'hidden';
+        
+        requestAnimationFrame(() => {
+          clone.style.transition = 'top 1s cubic-bezier(0.25, 1, 0.5, 1), background-color 3s ease-out';
+          clone.style.top = currentTargetY + 'px';
+          clone.style.backgroundColor = 'rgba(135, 206, 235, 0.1)';
         });
-
-        setTimeout(() => {
-          showToast(taskIds.length > 1 ? `${taskIds.length} tasks marked completed!` : 'Task status updated!', 'success');
-          sessionStorage.setItem('completedTasksHighlight', JSON.stringify(taskIds));
-          refreshDashboardTable();
-        }, 1000);
         
+        currentTargetY += rect.height; // Next task stacks below
+        
+        // Cleanup clone after animation (3 seconds linger)
+        setTimeout(() => {
+          if(clone.parentNode) clone.parentNode.removeChild(clone);
+        }, 3000);
+      });
+
+      // Refresh table after 3 seconds animation / linger completes
+      setTimeout(() => {
+        showToast(taskIds.length > 1 ? `${taskIds.length} tasks marked completed!` : 'Task status updated!', 'success');
+        sessionStorage.setItem('completedTasksHighlight', JSON.stringify(taskIds));
+        refreshDashboardTable();
       }, 3000);
-    }
+      
+    }, 3000);
   }
 
 
@@ -1893,6 +1898,32 @@
   }
 
   document.addEventListener('keydown', function(e) {
+    // Handle Enter and Ctrl+Enter inside active modal inputs/selects BEFORE ignoring generic shortcuts
+    const activeModal = document.querySelector('.modal.show');
+    if (activeModal && e.target.closest('.modal.show')) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        const form = activeModal.querySelector('form');
+        if (form) {
+          const submitBtn = form.querySelector('button[type="submit"]');
+          if (submitBtn) submitBtn.click();
+        }
+        return;
+      }
+      if (e.key === 'Enter') {
+        // Do not intercept Enter for SELECT, BUTTON elements, and tagInputField
+        if (e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON' && e.target.id !== 'tagInputField') {
+          e.preventDefault();
+          const form = activeModal.querySelector('form');
+          if (form) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.click();
+          }
+          return;
+        }
+      }
+    }
+
     // Ignore shortcuts if the user is typing in an input, textarea, or select
     if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || e.target.isContentEditable) {
       if (e.key === 'Escape') {
@@ -1902,24 +1933,9 @@
       return;
     }
 
-        const isAnyModalOpen = document.querySelector('.modal.show') !== null;
-    if (isAnyModalOpen) {
-      if (e.key === 'Enter') {
-        // Do not intercept Enter for SELECT elements so they can open dropdowns natively
-        if (e.target.tagName === 'SELECT' || e.target.id === 'tagInputField') {
-          // just let it fall through
-        } else {
-          const activeModal = document.querySelector('.modal.show');
-          if (activeModal) {
-            e.preventDefault();
-            const form = activeModal.querySelector('form');
-            if (form) {
-              const submitBtn = form.querySelector('button[type="submit"]');
-              if (submitBtn) submitBtn.click();
-            }
-          }
-          return;
-        }
+    if (activeModal) {
+      return; // Block global shortcuts when a modal is open
+    }
       }
 
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
