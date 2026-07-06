@@ -1683,6 +1683,11 @@
       if (newTbody && oldTbody) oldTbody.innerHTML = newTbody.innerHTML;
       if (typeof syncCheckboxStyles === 'function') syncCheckboxStyles();
       
+      const searchInput = document.getElementById('dashboardSearch');
+      if (searchInput && searchInput.value.trim() !== '') {
+        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      
       const newKpis = Array.from(doc.querySelectorAll('.row.mb-4')).find(r => r.innerHTML.includes('Total Tasks'));
       const oldKpis = Array.from(document.querySelectorAll('.row.mb-4')).find(r => r.innerHTML.includes('Total Tasks'));
       if (newKpis && oldKpis) oldKpis.innerHTML = newKpis.innerHTML;
@@ -1756,23 +1761,7 @@
       });
     });
 
-    if (globalArchiveRule === '0') {
-      setTimeout(() => {
-        tasksToAnimate.forEach(t => {
-          t.row.classList.remove('task-complete-anim');
-          t.row.classList.add('task-complete-anim-fadeout');
-          setTimeout(() => {
-            t.row.style.display = 'none';
-            fetch(`/tasks/${t.taskId}/archive-immediate`, { method: 'POST' });
-          }, 500);
-        });
-        
-        setTimeout(() => {
-          showToast(taskIds.length > 1 ? `${taskIds.length} tasks moved to archives` : 'Task moved to archives', 'success');
-          refreshDashboardTable();
-        }, 500);
-      }, 3000);
-    } else {
+    if (false) {
       setTimeout(() => {
         const tbody = document.querySelector('.table tbody');
         if (!tbody) {
