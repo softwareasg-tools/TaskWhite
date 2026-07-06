@@ -1196,7 +1196,7 @@
       // Add visual tags
       currentTags.forEach((tag, index) => {
         const span = document.createElement('span');
-        span.className = 'visual-tag badge bg-light  border d-flex align-items-center gap-1 px-2 py-1';
+        span.className = 'visual-tag badge bg-light text-dark border d-flex align-items-center gap-1 px-2 py-1';
         span.innerHTML = `<span>${tag}</span> <i class="bi bi-x-circle-fill text-muted" style="cursor:pointer;" onclick="removeTag(${index})"></i>`;
         tagInputContainer.insertBefore(span, tagInputField);
       });
