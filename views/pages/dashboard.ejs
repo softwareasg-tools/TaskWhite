@@ -1919,7 +1919,7 @@
       return; 
     }
 
-    const taskRows = Array.from(document.querySelectorAll('.dashboard-task-row'));
+    const taskRows = Array.from(document.querySelectorAll('.dashboard-task-row')).filter(r => r.style.display !== 'none' && !r.classList.contains('d-none'));
     if (taskRows.length > 0) {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
