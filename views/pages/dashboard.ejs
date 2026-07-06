@@ -446,6 +446,20 @@
   </div>
 </div>
 
+<!-- Keyboard Shortcuts Floating Footer -->
+<div id="shortcutFooter" class="d-none d-md-flex position-fixed bottom-0 start-50 translate-middle-x mb-4 py-2 px-4 shadow align-items-center justify-content-center gap-4" style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 30px; z-index: 1050; opacity: 0.95; backdrop-filter: blur(8px); transition: all 0.3s ease;">
+  <div class="shortcut-default d-flex gap-4">
+    <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">C</kbd> New Task</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">/</kbd> Search</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">V</kbd> Toggle View</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">F</kbd> Filters</span>
+  </div>
+  <div class="shortcut-modal d-none gap-4">
+    <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">Ctrl + Enter</kbd> Save</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">Esc</kbd> Cancel</span>
+  </div>
+</div>
+
 <!-- Edit Task Modal -->
 <div class="modal fade" id="editTaskModal" tabindex="-1">
   <div class="modal-dialog">
@@ -1501,5 +1515,101 @@
     }
     form.submit();
   }
+
+  // --- KEYBOARD SHORTCUTS ---
+  document.addEventListener('keydown', function(e) {
+    // Ignore shortcuts if the user is typing in an input, textarea, or select
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || e.target.isContentEditable) {
+      if (e.key === 'Escape') {
+        e.target.blur(); // Escape removes focus from inputs
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        // Submit modal form if focused inside one
+        const modal = e.target.closest('.modal');
+        if (modal) {
+          const form = modal.querySelector('form');
+          if (form) {
+            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.click();
+          }
+        }
+      }
+      return;
+    }
+
+    // Modal open state
+    const isAnyModalOpen = document.querySelector('.modal.show') !== null;
+    if (isAnyModalOpen) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        const activeModal = document.querySelector('.modal.show');
+        if (activeModal) {
+          const form = activeModal.querySelector('form');
+          if (form) {
+            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.click();
+          }
+        }
+      }
+      return; 
+    }
+
+    // Global Shortcuts
+    if (e.key === 'c' || e.key === 'n') {
+      e.preventDefault();
+      const newTaskBtn = document.querySelector('[data-bs-target="#newTaskModal"]');
+      if (newTaskBtn) newTaskBtn.click();
+    } else if (e.key === '/') {
+      e.preventDefault();
+      const searchInput = document.getElementById('dashboardSearch');
+      if (searchInput) searchInput.focus();
+    } else if (e.key === 'v') {
+      e.preventDefault();
+      // Click the opposite view button
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentView = urlParams.get('task_view') || 'list';
+      if (currentView === 'list') {
+        const calBtn = document.querySelector('.btnCalendarView');
+        if(calBtn) calBtn.click();
+      } else {
+        const listBtn = document.querySelector('.btnListView');
+        if(listBtn) listBtn.click();
+      }
+    } else if (e.key === 'f') {
+      e.preventDefault();
+      const statusFilter = document.querySelector('select[name="status"]'); 
+      if (statusFilter) statusFilter.focus();
+    }
+  });
+
+  // Modal event listeners to toggle the footer state
+  document.addEventListener('DOMContentLoaded', () => {
+    const shortcutFooter = document.getElementById('shortcutFooter');
+    if (shortcutFooter) {
+      const defaultShortcuts = shortcutFooter.querySelector('.shortcut-default');
+      const modalShortcuts = shortcutFooter.querySelector('.shortcut-modal');
+
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('show.bs.modal', () => {
+          defaultShortcuts.classList.add('d-none');
+          defaultShortcuts.classList.remove('d-flex');
+          modalShortcuts.classList.remove('d-none');
+          modalShortcuts.classList.add('d-flex');
+        });
+        modal.addEventListener('hidden.bs.modal', () => {
+          // Add slight delay to check if another modal was opened over it
+          setTimeout(() => {
+            if (!document.querySelector('.modal.show')) {
+              modalShortcuts.classList.add('d-none');
+              modalShortcuts.classList.remove('d-flex');
+              defaultShortcuts.classList.remove('d-none');
+              defaultShortcuts.classList.add('d-flex');
+            }
+          }, 50);
+        });
+      });
+    }
+  });
 </script>
 
