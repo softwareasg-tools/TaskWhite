@@ -9,7 +9,9 @@
       <span class="input-group-text bg-surface border-end-0"><i class="bi bi-search text-muted"></i></span>
       <input type="text" id="teamSearch" class="form-control border-start-0 ps-0" placeholder="Search team...">
     </div>
+    <% if (user.role === 'Owner' || user.role === 'Admin') { %>
     <button class="btn btn-dark text-nowrap" data-bs-toggle="modal" data-bs-target="#addTeamModal"><i class="bi bi-plus"></i> Add Member</button>
+    <% } %>
   </div>
 </div>
 
@@ -60,14 +62,14 @@
               </td>
               <td><%= member.email %></td>
               <td>
-                <select class="form-select form-select-sm border-0 bg-transparent shadow-none" style="width: auto; cursor: pointer;" onchange="updateUserAccess('<%= member.id %>', 'role', this.value)">
+                <select class="form-select form-select-sm border-0 bg-transparent shadow-none" style="cursor: pointer; min-width: 100px;" onchange="updateUserAccess('<%= member.id %>', 'role', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
                   <option value="Member" <%= member.role === 'Member' ? 'selected' : '' %>>Member</option>
                   <option value="Admin" <%= member.role === 'Admin' ? 'selected' : '' %>>Admin</option>
                   <option value="Owner" <%= member.role === 'Owner' ? 'selected' : '' %>>Owner</option>
                 </select>
               </td>
               <td>
-                <select class="form-select form-select-sm border-0 bg-transparent shadow-none" style="width: auto; cursor: pointer;" onchange="updateUserAccess('<%= member.id %>', 'view_access', this.value)">
+                <select class="form-select form-select-sm border-0 bg-transparent shadow-none" style="cursor: pointer; min-width: 140px;" onchange="updateUserAccess('<%= member.id %>', 'view_access', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
                   <option value="org_and_my" <%= (!member.view_access || member.view_access === 'org_and_my') ? 'selected' : '' %>>Org + My View</option>
                   <option value="my_only" <%= member.view_access === 'my_only' ? 'selected' : '' %>>My View Only</option>
                 </select>
@@ -80,9 +82,11 @@
                 <% } %>
               </td>
               <td class="text-end">
+                <% if (user.role === 'Owner' || user.role === 'Admin') { %>
                 <button class="btn btn-link text-decoration-none text-danger p-0" onclick="confirmDeleteUser('<%= member.id %>', '<%= member.name.replace(/'/g, "\\'") %>')">
                   <i class="bi bi-trash"></i>
                 </button>
+                <% } %>
               </td>
             </tr>
           <% }) %>
@@ -107,12 +111,12 @@
                 <div class="opacity-75 small" style="font-size: 0.75rem;"><%= member.email %></div>
               </div>
               <div class="d-flex flex-column align-items-end gap-1">
-                <select class="form-select form-select-sm border opacity-75 px-2 py-0" style="font-size: 0.65rem; height: 24px; padding-right: 20px;" onchange="updateUserAccess('<%= member.id %>', 'role', this.value)">
+                <select class="form-select form-select-sm border opacity-75 px-2 py-0" style="font-size: 0.65rem; height: 24px; padding-right: 20px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'role', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
                   <option value="Member" <%= member.role === 'Member' ? 'selected' : '' %>>Member</option>
                   <option value="Admin" <%= member.role === 'Admin' ? 'selected' : '' %>>Admin</option>
                   <option value="Owner" <%= member.role === 'Owner' ? 'selected' : '' %>>Owner</option>
                 </select>
-                <select class="form-select form-select-sm border opacity-75 px-2 py-0" style="font-size: 0.65rem; height: 24px; padding-right: 20px;" onchange="updateUserAccess('<%= member.id %>', 'view_access', this.value)">
+                <select class="form-select form-select-sm border opacity-75 px-2 py-0" style="font-size: 0.65rem; height: 24px; padding-right: 20px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'view_access', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
                   <option value="org_and_my" <%= (!member.view_access || member.view_access === 'org_and_my') ? 'selected' : '' %>>Org + My View</option>
                   <option value="my_only" <%= member.view_access === 'my_only' ? 'selected' : '' %>>My View Only</option>
                 </select>
@@ -123,11 +127,13 @@
                 <% } %>
               </div>
             </div>
+            <% if (user.role === 'Owner' || user.role === 'Admin') { %>
             <div class="d-flex justify-content-end border-top pt-2">
               <button class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.7rem;" onclick="confirmDeleteUser('<%= member.id %>', '<%= member.name.replace(/'/g, "\\'") %>')">
                 <i class="bi bi-trash"></i> Delete
               </button>
             </div>
+            <% } %>
           </div>
         <% }) %>
       </div>

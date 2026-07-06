@@ -223,9 +223,12 @@ exports.apiBulkCreateTaskTypes = async (req, res) => {
 
 exports.apiCreateUser = async (req, res) => {
   try {
-    const { name, email, role } = req.body;
+    if (req.session.user.role !== 'Owner' && req.session.user.role !== 'Admin') {
+      return res.status(403).json({ error: 'Only Admins and Owners can perform this action.' });
+    }
+    const { name, email } = req.body;
     if (!name || !email) {
-      return res.status(400).json({ error: 'Name and Email are required.' });
+      return res.status(400).json({ error: 'Name and Email are required' });
     }
     
     const db = getFirestore();
@@ -286,6 +289,9 @@ exports.apiCreateUser = async (req, res) => {
 
 exports.apiBulkCreateUsers = async (req, res) => {
   try {
+    if (req.session.user.role !== 'Owner' && req.session.user.role !== 'Admin') {
+      return res.status(403).json({ error: 'Only Admins and Owners can perform this action.' });
+    }
     const { members, role } = req.body;
     if (!members || !Array.isArray(members) || members.length === 0) {
       return res.status(400).json({ error: 'Valid array of members is required.' });
@@ -416,9 +422,13 @@ exports.deleteTaskType = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
+    if (req.session.user.role !== 'Owner' && req.session.user.role !== 'Admin') {
+      return res.status(403).json({ error: 'Only Admins and Owners can perform this action.' });
+    }
     const db = getFirestore();
     const userDoc = await db.collection('users').doc(req.params.id).get();
-    if (userDoc.exists && userDoc.data().role === 'Owner') {
+    
+    if (!userDoc.exists || userDoc.data().organization_id !== req.session.user.organization_id || userDoc.data().role === 'Owner') {
       return res.status(400).json({ error: 'Cannot delete the organization Owner.' });
     }
 
@@ -443,6 +453,9 @@ exports.deleteUser = async (req, res) => {
 
 exports.apiUpdateUser = async (req, res) => {
   try {
+    if (req.session.user.role !== 'Owner' && req.session.user.role !== 'Admin') {
+      return res.status(403).json({ error: 'Only Admins and Owners can perform this action.' });
+    }
     const { id } = req.params;
     const { role, view_access } = req.body;
     
