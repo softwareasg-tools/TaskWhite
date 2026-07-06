@@ -197,6 +197,20 @@
   .transition-transform {
     transition: transform 0.3s ease;
   }
+  .keyboard-focused {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    outline: 2px solid var(--bs-primary);
+    outline-offset: -2px;
+  }
+  [data-bs-theme="dark"] .keyboard-focused {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  .task-selected {
+    background-color: rgba(135, 206, 235, 0.2) !important;
+  }
+  [data-bs-theme="dark"] .task-selected {
+    background-color: rgba(135, 206, 235, 0.15) !important;
+  }
 </style>
 <div class="mb-4 d-flex align-items-center">
   <hr class="flex-grow-1 text-muted opacity-25 m-0">
@@ -453,6 +467,12 @@
     <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">/</kbd> Search</span>
     <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">V</kbd> Toggle View</span>
     <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">F</kbd> Filters</span>
+  </div>
+  <div class="shortcut-row-focus d-none gap-4">
+    <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">E</kbd> Edit</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">M</kbd> Mark Complete</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">Space</kbd> Select</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-light text-danger border border-danger">Del</kbd> Delete</span>
   </div>
   <div class="shortcut-modal d-none gap-4">
     <span class="small text-muted fw-bold"><kbd class="bg-light text-dark border">Ctrl + Enter</kbd> Save</span>
@@ -1517,6 +1537,61 @@
   }
 
   // --- KEYBOARD SHORTCUTS ---
+  let currentFocusedTaskIndex = -1;
+
+  async function quickMarkComplete(taskId) {
+    const task = allTasks.find(t => t.id === taskId);
+    if (!task) return;
+    
+    // Toggle status between 'Completed' and 'In Progress'
+    const newStatus = task.status === 'Completed' ? 'In Progress' : 'Completed';
+    
+    const payload = {
+      status: newStatus,
+      client_id: task.client_id || '',
+      task_type_id: task.task_type_id || '',
+      assigned_user_id: task.assigned_user_id || '',
+      due_date: task.due_date || '',
+      tags: (task.tags || []).join(', ')
+    };
+
+    try {
+      const response = await fetch('/tasks/' + taskId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (response.ok) {
+        reloadWithSuccess('Task status updated!');
+      }
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  function updateShortcutFooterState(state) {
+    const shortcutFooter = document.getElementById('shortcutFooter');
+    if (!shortcutFooter) return;
+    const defaultShortcuts = shortcutFooter.querySelector('.shortcut-default');
+    const modalShortcuts = shortcutFooter.querySelector('.shortcut-modal');
+    const rowShortcuts = shortcutFooter.querySelector('.shortcut-row-focus');
+
+    [defaultShortcuts, modalShortcuts, rowShortcuts].forEach(el => {
+      if (el) { el.classList.add('d-none'); el.classList.remove('d-flex'); }
+    });
+
+    if (state === 'modal' && modalShortcuts) {
+      modalShortcuts.classList.remove('d-none');
+      modalShortcuts.classList.add('d-flex');
+    } else if (state === 'row' && rowShortcuts) {
+      rowShortcuts.classList.remove('d-none');
+      rowShortcuts.classList.add('d-flex');
+    } else if (defaultShortcuts) {
+      defaultShortcuts.classList.remove('d-none');
+      defaultShortcuts.classList.add('d-flex');
+    }
+  }
+
   document.addEventListener('keydown', function(e) {
     // Ignore shortcuts if the user is typing in an input, textarea, or select
     if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || e.target.isContentEditable) {
@@ -1524,7 +1599,6 @@
         e.target.blur(); // Escape removes focus from inputs
       }
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        // Submit modal form if focused inside one
         const modal = e.target.closest('.modal');
         if (modal) {
           const form = modal.querySelector('form');
@@ -1538,7 +1612,6 @@
       return;
     }
 
-    // Modal open state
     const isAnyModalOpen = document.querySelector('.modal.show') !== null;
     if (isAnyModalOpen) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
@@ -1555,6 +1628,64 @@
       return; 
     }
 
+    const taskRows = Array.from(document.querySelectorAll('.dashboard-task-row'));
+    if (taskRows.length > 0) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (currentFocusedTaskIndex < taskRows.length - 1) {
+          if (currentFocusedTaskIndex >= 0) taskRows[currentFocusedTaskIndex].classList.remove('keyboard-focused');
+          currentFocusedTaskIndex++;
+          taskRows[currentFocusedTaskIndex].classList.add('keyboard-focused');
+          taskRows[currentFocusedTaskIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+          updateShortcutFooterState('row');
+        }
+        return;
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (currentFocusedTaskIndex > 0) {
+          taskRows[currentFocusedTaskIndex].classList.remove('keyboard-focused');
+          currentFocusedTaskIndex--;
+          taskRows[currentFocusedTaskIndex].classList.add('keyboard-focused');
+          taskRows[currentFocusedTaskIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+          updateShortcutFooterState('row');
+        } else if (currentFocusedTaskIndex === 0) {
+          taskRows[currentFocusedTaskIndex].classList.remove('keyboard-focused');
+          currentFocusedTaskIndex = -1;
+          updateShortcutFooterState('default');
+        }
+        return;
+      }
+    }
+
+    if (currentFocusedTaskIndex >= 0 && currentFocusedTaskIndex < taskRows.length) {
+      const focusedRow = taskRows[currentFocusedTaskIndex];
+      
+      if (e.key === ' ') { // Space
+        e.preventDefault();
+        const cb = focusedRow.querySelector('.row-checkbox');
+        if (cb) {
+          cb.checked = !cb.checked;
+          cb.dispatchEvent(new Event('change'));
+        }
+        return;
+      } else if (e.key.toLowerCase() === 'e') {
+        e.preventDefault();
+        const cb = focusedRow.querySelector('.row-checkbox');
+        if (cb) openTaskModal(cb.value);
+        return;
+      } else if (e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        const cb = focusedRow.querySelector('.row-checkbox');
+        if (cb) quickMarkComplete(cb.value);
+        return;
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        const delBtn = focusedRow.querySelector('.bi-trash');
+        if (delBtn) delBtn.click();
+        return;
+      }
+    }
+
     // Global Shortcuts
     if (e.key === 'c' || e.key === 'n') {
       e.preventDefault();
@@ -1566,7 +1697,6 @@
       if (searchInput) searchInput.focus();
     } else if (e.key === 'v') {
       e.preventDefault();
-      // Click the opposite view button
       const urlParams = new URLSearchParams(window.location.search);
       const currentView = urlParams.get('task_view') || 'list';
       if (currentView === 'list') {
@@ -1583,28 +1713,37 @@
     }
   });
 
-  // Modal event listeners to toggle the footer state
   document.addEventListener('DOMContentLoaded', () => {
+    // Checkbox highlighting logic
+    document.addEventListener('change', (e) => {
+      if (e.target.classList.contains('row-checkbox')) {
+        const row = e.target.closest('.dashboard-task-row');
+        if (row) {
+          if (e.target.checked) row.classList.add('task-selected');
+          else row.classList.remove('task-selected');
+        }
+      } else if (e.target.classList.contains('master-checkbox')) {
+        const isChecked = e.target.checked;
+        document.querySelectorAll('.dashboard-task-row').forEach(row => {
+          const cb = row.querySelector('.row-checkbox');
+          if (cb) {
+            if (isChecked) row.classList.add('task-selected');
+            else row.classList.remove('task-selected');
+          }
+        });
+      }
+    });
+
     const shortcutFooter = document.getElementById('shortcutFooter');
     if (shortcutFooter) {
-      const defaultShortcuts = shortcutFooter.querySelector('.shortcut-default');
-      const modalShortcuts = shortcutFooter.querySelector('.shortcut-modal');
-
       document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('show.bs.modal', () => {
-          defaultShortcuts.classList.add('d-none');
-          defaultShortcuts.classList.remove('d-flex');
-          modalShortcuts.classList.remove('d-none');
-          modalShortcuts.classList.add('d-flex');
+          updateShortcutFooterState('modal');
         });
         modal.addEventListener('hidden.bs.modal', () => {
-          // Add slight delay to check if another modal was opened over it
           setTimeout(() => {
             if (!document.querySelector('.modal.show')) {
-              modalShortcuts.classList.add('d-none');
-              modalShortcuts.classList.remove('d-flex');
-              defaultShortcuts.classList.remove('d-none');
-              defaultShortcuts.classList.add('d-flex');
+              updateShortcutFooterState(currentFocusedTaskIndex >= 0 ? 'row' : 'default');
             }
           }, 50);
         });
