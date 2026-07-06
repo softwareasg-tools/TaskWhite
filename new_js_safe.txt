@@ -1,0 +1,109 @@
+  function triggerCompleteEffects(taskIds) {
+    if (!Array.isArray(taskIds)) taskIds = [taskIds];
+    
+    if (typeof confetti !== 'undefined') {
+      confetti({ particleCount: 100 * taskIds.length, spread: 70, origin: { y: 0.6 } });
+    }
+    playChimeSound();
+    
+    const rows = document.querySelectorAll('.dashboard-task-row');
+    const tasksToAnimate = [];
+
+    taskIds.forEach(taskId => {
+      rows.forEach(r => {
+        const cb = r.querySelector('.row-checkbox');
+        let isMatch = false;
+        if (cb && cb.value === taskId) isMatch = true;
+        else if (r.getAttribute('onclick') && r.getAttribute('onclick').includes(taskId)) isMatch = true;
+
+        if (isMatch) {
+          r.classList.add('task-complete-anim');
+          
+          const desktopStatusCell = r.querySelector('td:nth-child(6)');
+          if (desktopStatusCell) {
+            desktopStatusCell.innerHTML = '<span class="badge badge-outline text-success border-success">Completed</span>';
+          }
+          const mobileBadge = r.querySelector('.badge');
+          if (mobileBadge && r.tagName !== 'TR') {
+            mobileBadge.className = 'badge bg-transparent border text-success border-success';
+            mobileBadge.innerText = 'Completed';
+          }
+          tasksToAnimate.push({ row: r, taskId: taskId });
+        }
+      });
+    });
+
+    if (globalArchiveRule === '0') {
+      setTimeout(() => {
+        tasksToAnimate.forEach(t => {
+          t.row.classList.remove('task-complete-anim');
+          t.row.classList.add('task-complete-anim-fadeout');
+          setTimeout(() => {
+            t.row.style.display = 'none';
+            fetch(`/tasks/${t.taskId}/archive-immediate`, { method: 'POST' });
+          }, 500);
+        });
+        
+        setTimeout(() => {
+          showToast(taskIds.length > 1 ? `${taskIds.length} tasks moved to archives` : 'Task moved to archives', 'success');
+          refreshDashboardTable();
+        }, 500);
+      }, 3000);
+    } else {
+      setTimeout(() => {
+        const tbody = document.querySelector('.table tbody');
+        if (!tbody) {
+          // Fallback if mobile view or table missing
+          sessionStorage.setItem('completedTasksHighlight', JSON.stringify(taskIds));
+          refreshDashboardTable();
+          return;
+        }
+        
+        let currentTargetY = tbody.getBoundingClientRect().top + window.scrollY;
+        
+        tasksToAnimate.forEach(t => {
+          const rect = t.row.getBoundingClientRect();
+          const clone = t.row.cloneNode(true);
+          
+          // Fix widths to prevent collapse
+          const originalCells = t.row.querySelectorAll('td, th');
+          const cloneCells = clone.querySelectorAll('td, th');
+          for (let i = 0; i < originalCells.length; i++) {
+             cloneCells[i].style.width = originalCells[i].getBoundingClientRect().width + 'px';
+          }
+          
+          clone.style.position = 'absolute';
+          clone.style.left = rect.left + window.scrollX + 'px';
+          clone.style.top = rect.top + window.scrollY + 'px';
+          clone.style.width = rect.width + 'px';
+          clone.style.zIndex = '9999';
+          clone.style.backgroundColor = 'rgba(135, 206, 235, 0.8)';
+          clone.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
+          clone.classList.remove('task-complete-anim');
+          document.body.appendChild(clone);
+          
+          t.row.style.visibility = 'hidden';
+          
+          requestAnimationFrame(() => {
+            clone.style.transition = 'top 1s cubic-bezier(0.25, 1, 0.5, 1), background-color 1s ease-out';
+            clone.style.top = currentTargetY + 'px';
+            clone.style.backgroundColor = 'rgba(135, 206, 235, 0.4)';
+          });
+          
+          currentTargetY += rect.height; // Next task stacks below
+          
+          // Cleanup clone after animation
+          setTimeout(() => {
+            if(clone.parentNode) clone.parentNode.removeChild(clone);
+          }, 1000);
+        });
+
+        setTimeout(() => {
+          showToast(taskIds.length > 1 ? `${taskIds.length} tasks marked completed!` : 'Task status updated!', 'success');
+          sessionStorage.setItem('completedTasksHighlight', JSON.stringify(taskIds));
+          refreshDashboardTable();
+        }, 1000);
+        
+      }, 3000);
+    }
+  }
