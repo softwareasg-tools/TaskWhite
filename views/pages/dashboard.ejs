@@ -234,6 +234,17 @@
     --bs-table-bg: transparent;
     --bs-table-accent-bg: transparent;
   }
+  .task-highlight-anim {
+    background-color: #d4edda !important;
+    transition: background-color 1s ease-out;
+  }
+  .task-highlight-anim td,
+  .task-highlight-anim th {
+    background-color: transparent !important;
+    --bs-table-bg: transparent;
+    --bs-table-accent-bg: transparent;
+    --bs-table-striped-bg: transparent;
+  }
   @keyframes fillSkyBlue {
     to { background-position: left bottom; }
   }
@@ -1670,10 +1681,9 @@
         if (checkbox) {
           const tr = checkbox.closest('tr');
           if (tr) {
-            tr.style.backgroundColor = '#d4edda';
-            tr.style.transition = 'background-color 1s ease-out';
+            tr.classList.add('task-highlight-anim');
             setTimeout(() => {
-              tr.style.backgroundColor = '';
+              tr.classList.remove('task-highlight-anim');
             }, 10000);
           }
         }
@@ -1686,103 +1696,111 @@
 
   const globalArchiveRule = '<%= archiveRule %>';
 
-  function triggerCompleteEffects(taskId) {
+  function triggerCompleteEffects(taskIds) {
+    if (!Array.isArray(taskIds)) taskIds = [taskIds];
+    
     if (typeof confetti !== 'undefined') {
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      confetti({ particleCount: 100 * taskIds.length, spread: 70, origin: { y: 0.6 } });
     }
     playChimeSound();
     
-    let row = null;
-    let taskText = 'Task';
-    
-    if (taskId) {
-      const rows = document.querySelectorAll('.dashboard-task-row');
+    const rows = document.querySelectorAll('.dashboard-task-row');
+    let maxWait = 0;
+
+    taskIds.forEach(taskId => {
+      let row = null;
+      let taskText = 'Task';
+      
       rows.forEach(r => {
         const cb = r.querySelector('.row-checkbox');
         if (cb && cb.value === taskId) {
           row = r;
-          // Extract text for toast: Client Name - Task Name
           const clientCell = r.querySelector('td:nth-child(2)');
           const taskCell = r.querySelector('td:nth-child(3)');
           const clientName = clientCell ? clientCell.innerText.trim() : '';
           const taskName = taskCell ? taskCell.innerText.trim() : '';
-          if (clientName && taskName) taskText = `${clientName} - ${taskName}`;
+          if (clientName && taskName) taskText = \ - \;
           else if (taskName) taskText = taskName;
         }
       });
-    }
 
-    if (row) {
-      row.classList.add('task-complete-anim');
-      
-      if (globalArchiveRule === '0') {
-        setTimeout(() => {
-          row.classList.remove('task-complete-anim');
-          row.classList.add('task-complete-anim-fadeout');
+      if (row) {
+        row.classList.add('task-complete-anim');
+        
+        if (globalArchiveRule === '0') {
+          maxWait = Math.max(maxWait, 5500);
           setTimeout(() => {
-            row.style.display = 'none'; // hide it
-            showToast(`${taskText} has been moved to archives`, 'success');
-            // Inform backend to archive immediately
-            fetch(`/tasks/${taskId}/archive-immediate`, { method: 'POST' }).then(() => {
-              refreshDashboardTable();
-            });
+            row.classList.remove('task-complete-anim');
+            row.classList.add('task-complete-anim-fadeout');
+            setTimeout(() => {
+              row.style.display = 'none'; // hide it
+              fetch(\/tasks/\/archive-immediate\, { method: 'POST' });
+            }, 500);
+          }, 5000);
+        } else {
+          maxWait = Math.max(maxWait, 2500);
+          setTimeout(() => {
+            row.classList.remove('task-complete-anim');
+            row.classList.add('task-complete-anim-fadeout');
+            setTimeout(() => {
+              row.classList.remove('task-complete-anim-fadeout');
+            }, 2000);
           }, 500);
-        }, 5000);
-      } else {
-        setTimeout(() => {
-          row.classList.remove('task-complete-anim');
-          row.classList.add('task-complete-anim-fadeout');
-          setTimeout(() => {
-            row.classList.remove('task-complete-anim-fadeout');
-            showToast('Task status updated!', 'success');
-            refreshDashboardTable();
-          }, 2000);
-        }, 500);
+        }
       }
-    } else {
-      if (globalArchiveRule === '0') {
-        setTimeout(() => {
-          fetch(`/tasks/${taskId}/archive-immediate`, { method: 'POST' }).then(() => {
-            reloadWithSuccess('Task moved to archives!');
-          });
-        }, 5000);
-      } else {
-        setTimeout(() => reloadWithSuccess('Task status updated!'), 1500);
-      }
-    }
+    });
+
+    setTimeout(() => {
+      if (globalArchiveRule === '0') showToast(taskIds.length > 1 ? \ tasks moved to archives\ : 'Task moved to archives', 'success');
+      else showToast(taskIds.length > 1 ? \ tasks marked completed!\ : 'Task status updated!', 'success');
+      refreshDashboardTable();
+    }, maxWait);
   }
 
-  async function quickMarkComplete(taskId) {
-    const task = allTasks.find(t => t.id === taskId);
-    if (!task) return;
+  async function quickMarkComplete(taskIds) {
+    if (!Array.isArray(taskIds)) taskIds = [taskIds];
     
-    // Toggle status between 'Completed' and 'In Progress'
-    const newStatus = task.status === 'Completed' ? 'In Progress' : 'Completed';
+    const tasksToComplete = [];
+    const tasksToRevert = [];
     
-    const payload = {
-      status: newStatus,
-      client_id: task.client_id || '',
-      task_type_id: task.task_type_id || '',
-      assigned_user_id: task.assigned_user_id || '',
-      due_date: task.due_date || '',
-      tags: (task.tags || []).join(', ')
-    };
+    taskIds.forEach(id => {
+      const task = allTasks.find(t => t.id === id);
+      if (task) {
+        if (task.status === 'Completed') tasksToRevert.push(task);
+        else tasksToComplete.push(task);
+      }
+    });
 
-    try {
-      const response = await fetch('/tasks/' + taskId, {
+    if (tasksToComplete.length === 0 && tasksToRevert.length === 0) return;
+
+    const updateTask = async (task, newStatus) => {
+      const payload = {
+        status: newStatus,
+        client_id: task.client_id || '',
+        task_type_id: task.task_type_id || '',
+        assigned_user_id: task.assigned_user_id || '',
+        due_date: task.due_date || '',
+        tags: (task.tags || []).join(', ')
+      };
+      const response = await fetch('/tasks/' + task.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      if (response.ok) {
-        if (newStatus === 'Completed') {
-          triggerCompleteEffects(taskId);
-        } else {
-          reloadWithSuccess('Task status updated!');
-        }
-      }
-    } catch(err) {
-      console.error(err);
+      return response.ok;
+    };
+
+    const promises = [];
+    tasksToComplete.forEach(t => promises.push(updateTask(t, 'Completed')));
+    tasksToRevert.forEach(t => promises.push(updateTask(t, 'In Progress')));
+    
+    await Promise.all(promises);
+
+    if (tasksToComplete.length > 0) {
+      triggerCompleteEffects(tasksToComplete.map(t => t.id));
+    } else if (tasksToRevert.length > 0) {
+      showToast('Task statuses reverted!', 'success');
+      refreshDashboardTable();
     }
   }
 
@@ -1885,15 +1903,21 @@
           cb.dispatchEvent(new Event('change'));
         }
         return;
-      } else if (e.key.toLowerCase() === 'e') {
+      } else if (e.key.toLowerCase() === 'e' || e.key === 'Enter') {
         e.preventDefault();
         const cb = focusedRow.querySelector('.row-checkbox');
         if (cb) openTaskModal(cb.value);
         return;
       } else if (e.key.toLowerCase() === 'm') {
         e.preventDefault();
-        const cb = focusedRow.querySelector('.row-checkbox');
-        if (cb) quickMarkComplete(cb.value);
+        const selectedCheckboxes = Array.from(document.querySelectorAll('.row-checkbox:checked'));
+        if (selectedCheckboxes.length > 0) {
+          const taskIds = selectedCheckboxes.map(cb => cb.value);
+          quickMarkComplete(taskIds);
+        } else {
+          const cb = focusedRow.querySelector('.row-checkbox');
+          if (cb) quickMarkComplete([cb.value]);
+        }
         return;
       } else if (e.key === 'Delete' || e.key === 'Backspace') {
         e.preventDefault();
@@ -1981,10 +2005,9 @@
       if (checkbox) {
         const tr = checkbox.closest('tr');
         if (tr) {
-          tr.style.backgroundColor = '#d4edda';
-          tr.style.transition = 'background-color 1s ease-out';
+          tr.classList.add('task-highlight-anim');
           setTimeout(() => {
-            tr.style.backgroundColor = '';
+            tr.classList.remove('task-highlight-anim');
           }, 10000);
         }
       }

@@ -186,11 +186,14 @@ exports.getDashboard = async (req, res) => {
       Assignee: t.assigned_user_id ? userMap[t.assigned_user_id] : null
     }));
     
-    // Sort tasks by due date
+    // Sort tasks by updated_at descending
     mappedTasks.sort((a, b) => {
-      if (!a.due_date) return 1;
-      if (!b.due_date) return -1;
-      return a.due_date.localeCompare(b.due_date);
+      const getMs = (t) => {
+        if (t.updated_at && t.updated_at._seconds) return t.updated_at._seconds;
+        if (t.created_at && t.created_at._seconds) return t.created_at._seconds;
+        return 0;
+      };
+      return getMs(b) - getMs(a);
     });
 
     // Fetch organization settings for archiveRule
