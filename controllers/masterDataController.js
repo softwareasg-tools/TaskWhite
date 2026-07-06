@@ -440,3 +440,38 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 };
+
+exports.apiUpdateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role, view_access } = req.body;
+    
+    if (!role && !view_access) {
+      return res.status(400).json({ error: 'No fields to update.' });
+    }
+
+    const { getFirestore } = require('firebase-admin/firestore');
+    const db = getFirestore();
+    const userRef = db.collection('users').doc(id);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+    
+    const data = userDoc.data();
+    if (data.organization_id !== req.session.user.organization_id) {
+      return res.status(403).json({ error: 'Unauthorized.' });
+    }
+
+    const updates = {};
+    if (role) updates.role = role;
+    if (view_access) updates.view_access = view_access;
+
+    await userRef.update(updates);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error updating user:', err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};

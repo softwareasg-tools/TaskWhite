@@ -20,6 +20,7 @@ router.post('/api/task-types', requireAuth, express.json(), masterDataController
 router.post('/api/task-types/bulk', requireAuth, express.json(), masterDataController.apiBulkCreateTaskTypes);
 router.post('/api/team', requireAuth, express.json(), masterDataController.apiCreateUser);
 router.post('/api/team/bulk', requireAuth, express.json(), masterDataController.apiBulkCreateUsers);
+router.put('/api/team/:id', requireAuth, express.json(), masterDataController.apiUpdateUser);
 router.post('/api/ai/generate-tasks', requireAuth, express.json(), aiController.generateTaskTypes);
 router.post('/api/templates', requireAuth, express.json(), templateController.apiCreateTemplate);
 
