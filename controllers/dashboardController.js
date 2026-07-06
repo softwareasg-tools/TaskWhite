@@ -16,7 +16,8 @@ exports.getDashboard = async (req, res) => {
       .where('deleted_at', '==', null)
       .get();
       
-    let allTasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    let allTasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                                .filter(task => !task.is_archived);
 
     // My View Toggle Logic
     const viewAccess = req.session.user.view_access;
@@ -192,6 +193,10 @@ exports.getDashboard = async (req, res) => {
       return a.due_date.localeCompare(b.due_date);
     });
 
+    // Fetch organization settings for archiveRule
+    const orgDoc = await db.collection('organizations').doc(orgId).get();
+    const archiveRule = (orgDoc.exists && orgDoc.data().archive_tasks_days) ? orgDoc.data().archive_tasks_days : 'Never';
+
     res.render('pages/dashboard', {
       stats: { totalTasks, assigned, inProgress, completed, overdue },
       tasks: mappedTasks,
@@ -199,6 +204,7 @@ exports.getDashboard = async (req, res) => {
       users,
       taskTypes,
       availableTags,
+      archiveRule,
       query: req.query,
       chartData: {
         statusLabels: ['Assigned', 'In Progress', 'Completed', 'Overdue'],
