@@ -1018,6 +1018,10 @@
     document.getElementById('edit_tags_input').value = (task.tags || []).join(', ');
 
     editTaskModalObj.show();
+      setTimeout(() => {
+        const statusInput = document.getElementById('edit_status_input');
+        if (statusInput) statusInput.focus();
+      }, 200);
   }
 
   async function submitEditTask(e) {
@@ -1789,6 +1793,7 @@
           clone.style.backgroundColor = 'rgba(135, 206, 235, 0.8)';
           clone.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
           clone.classList.remove('task-complete-anim');
+            clone.classList.add('task-linger-blue-anim');
           document.body.appendChild(clone);
           
           t.row.style.visibility = 'hidden';
@@ -1894,17 +1899,7 @@
       if (e.key === 'Escape') {
         e.target.blur(); // Escape removes focus from inputs
       }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        const modal = e.target.closest('.modal');
-        if (modal) {
-          const form = modal.querySelector('form');
-          if (form) {
-            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn) submitBtn.click();
-          }
-        }
-      }
+      
       return;
     }
 
