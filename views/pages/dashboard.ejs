@@ -212,40 +212,34 @@
     background-color: rgba(135, 206, 235, 0.15) !important;
   }
   .task-complete-anim {
-    position: relative;
-    overflow: hidden;
+    background-image: linear-gradient(to right, skyblue 50%, transparent 50%) !important;
+    background-size: 200% 100% !important;
+    background-position: right bottom !important;
+    animation: fillSkyBlue 0.5s ease-out forwards !important;
   }
-  .task-complete-anim::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; bottom: 0;
-    width: 0%;
-    background-color: skyblue;
-    z-index: 0;
-    animation: fillSkyBlue 0.5s ease-out forwards;
+  .task-complete-anim td,
+  .task-complete-anim th {
+    background-color: transparent !important;
+    --bs-table-bg: transparent;
+    --bs-table-accent-bg: transparent;
+    --bs-table-striped-bg: transparent;
   }
-  .task-complete-anim > * {
-    position: relative;
-    z-index: 1;
+  .task-complete-anim-fadeout {
+    background-color: skyblue !important;
+    animation: fadeOutWhite 2s ease-out forwards !important;
   }
-  .task-complete-anim-fadeout::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; bottom: 0; width: 100%;
-    background-color: skyblue;
-    z-index: 0;
-    animation: fadeOutWhite 2s ease-out forwards;
-  }
-  .task-complete-anim-fadeout > * {
-    position: relative;
-    z-index: 1;
+  .task-complete-anim-fadeout td,
+  .task-complete-anim-fadeout th {
+    background-color: transparent !important;
+    --bs-table-bg: transparent;
+    --bs-table-accent-bg: transparent;
   }
   @keyframes fillSkyBlue {
-    to { width: 100%; }
+    to { background-position: left bottom; }
   }
   @keyframes fadeOutWhite {
-    from { background-color: skyblue; opacity: 1; }
-    to { background-color: transparent; opacity: 0; }
+    from { background-color: skyblue; }
+    to { background-color: transparent; }
   }
 </style>
 <div class="mb-4 d-flex align-items-center">
