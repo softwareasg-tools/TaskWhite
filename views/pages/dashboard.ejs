@@ -1428,7 +1428,7 @@
   });
 
   // Calendar Logic
-  const allTasks = <%- JSON.stringify(tasks) %>;
+  let allTasks = <%- JSON.stringify(tasks) %>;
   let currentMonth = new Date().getMonth();
   let currentYear = new Date().getFullYear();
   let selectedDateString = null;
@@ -1650,6 +1650,20 @@
       const newKpis = Array.from(doc.querySelectorAll('.row.mb-4')).find(r => r.innerHTML.includes('Total Tasks'));
       const oldKpis = Array.from(document.querySelectorAll('.row.mb-4')).find(r => r.innerHTML.includes('Total Tasks'));
       if (newKpis && oldKpis) oldKpis.innerHTML = newKpis.innerHTML;
+
+      // Update allTasks array from the new HTML
+      const scripts = doc.querySelectorAll('script');
+      for (const script of scripts) {
+        if (script.textContent.includes('let allTasks =')) {
+          const match = script.textContent.match(/let allTasks = (\[.*\]);/);
+          if (match && match[1]) {
+            try {
+              allTasks = JSON.parse(match[1]);
+            } catch(e) { console.error('Error parsing updated allTasks', e); }
+          }
+          break;
+        }
+      }
       
       if (taskIdToHighlight) {
         const checkbox = document.querySelector(`.row-checkbox[value="${taskIdToHighlight}"]`);
