@@ -207,6 +207,15 @@
   }
   .task-selected {
     background-color: rgba(135, 206, 235, 0.2) !important;
+    outline: 2px solid var(--bs-primary);
+    outline-offset: -2px;
+  }
+  .task-selected td,
+  .task-selected th {
+    background-color: transparent !important;
+    --bs-table-bg: transparent;
+    --bs-table-accent-bg: transparent;
+    --bs-table-striped-bg: transparent;
   }
   [data-bs-theme="dark"] .task-selected {
     background-color: rgba(135, 206, 235, 0.15) !important;
