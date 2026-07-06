@@ -66,11 +66,11 @@
             <div id="customDateFields" class="mt-2 p-2 bg-light rounded" style="display: <%= query.time === 'custom' ? 'block' : 'none' %>;">
               <div class="mb-2">
                 <label class="text-muted" style="font-size:0.7rem;">START DATE</label>
-                <input type="date" name="start_date" class="form-control form-control-sm" value="<%= query.start_date || '' %>">
+                <input type="text" id="filter_start_date" name="start_date" class="form-control form-control-sm" placeholder="Select Date" value="<%= query.start_date || '' %>">
               </div>
               <div>
                 <label class="text-muted" style="font-size:0.7rem;">END DATE</label>
-                <input type="date" name="end_date" class="form-control form-control-sm" value="<%= query.end_date || '' %>">
+                <input type="text" id="filter_end_date" name="end_date" class="form-control form-control-sm" placeholder="Select Date" value="<%= query.end_date || '' %>">
               </div>
             </div>
           </div>
@@ -488,7 +488,7 @@
 
         <div class="mb-3">
           <label class="form-label text-muted small fw-bold">DUE DATE <span class="text-danger">*</span></label>
-          <input type="date" id="edit_due_date_input" class="form-control" required>
+          <input type="text" id="edit_due_date_input" class="form-control" placeholder="Select Date" required>
         </div>
 
         <div class="mb-3">
@@ -991,6 +991,9 @@
     if (typeof flatpickr !== 'undefined') {
       flatpickr("#due_date_input", { dateFormat: "Y-m-d", allowInput: true });
       flatpickr("#repeat_end_date", { dateFormat: "Y-m-d", allowInput: true });
+      flatpickr("#filter_start_date", { dateFormat: "Y-m-d", allowInput: true });
+      flatpickr("#filter_end_date", { dateFormat: "Y-m-d", allowInput: true });
+      flatpickr("#edit_due_date_input", { dateFormat: "Y-m-d", allowInput: true });
     }
 
     const searchInput = document.getElementById('dashboardSearch');
