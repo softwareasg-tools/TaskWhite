@@ -1936,21 +1936,6 @@
     if (activeModal) {
       return; // Block global shortcuts when a modal is open
     }
-      }
-
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        const activeModal = document.querySelector('.modal.show');
-        if (activeModal) {
-          const form = activeModal.querySelector('form');
-          if (form) {
-            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn) submitBtn.click();
-          }
-        }
-      }
-      return; 
-    }
 
     const taskRows = Array.from(document.querySelectorAll('.dashboard-task-row')).filter(r => r.style.display !== 'none' && !r.classList.contains('d-none'));
     if (taskRows.length > 0) {
