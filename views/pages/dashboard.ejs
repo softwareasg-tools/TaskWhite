@@ -329,14 +329,16 @@
             <th onclick="sortTable(2)" style="cursor: pointer;">Assigned To <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th onclick="sortTable(3)" style="cursor: pointer;">Due Date <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th onclick="sortTable(4)" style="cursor: pointer;">Status <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(5)" style="cursor: pointer;">Created <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(6)" style="cursor: pointer;">Updated <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th class="text-end">Actions</th>
+            <th onclick="sortByActionDate()" class="text-end" style="cursor: pointer;">Actions <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
           </tr>
         </thead>
         <tbody>
-          <% tasks.forEach(task => { %>
-            <tr class="dashboard-task-row" onclick="if(!event.target.classList.contains('row-checkbox')) openTaskModal('<%= task.id %>')">
+          <% tasks.forEach(task => { 
+               let timestamp = 0;
+               if (task.updated_at && task.updated_at._seconds) timestamp = task.updated_at._seconds;
+               else if (task.created_at && task.created_at._seconds) timestamp = task.created_at._seconds;
+          %>
+            <tr class="dashboard-task-row" onclick="if(!event.target.classList.contains('row-checkbox')) openTaskModal('<%= task.id %>')" data-timestamp="<%= timestamp %>">
               <td><input type="checkbox" class="form-check-input row-checkbox" value="<%= task.id %>" data-assigned="<%= task.assigned_user_id ? 'true' : 'false' %>" data-status="<%= task.status %>" onchange="updateBulkDeleteAction()"></td>
               <td class="fw-bold"><%= task.Client ? task.Client.name : '-' %></td>
               <td>
@@ -362,8 +364,6 @@
                   <span class="badge badge-outline">Assigned</span>
                 <% } %>
               </td>
-              <td class="small text-muted"><%= task.createdAt ? new Date(task.createdAt).toLocaleDateString() : '-' %></td>
-              <td class="small text-muted"><%= task.updatedAt ? new Date(task.updatedAt).toLocaleDateString() : '-' %></td>
               <td class="text-end">
                 <i class="bi bi-pencil text-muted me-3"></i>
                 <i class="bi bi-trash text-danger" onclick="deleteTask(event, '<%= task.id %>', '<%= (task.TaskType ? task.TaskType.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', '<%= (task.Client ? task.Client.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', <%= task.assigned_user_id ? 'true' : 'false' %>, '<%= task.status %>')" style="cursor: pointer;"></i>
@@ -1045,6 +1045,32 @@
 
   let currentSortCol = -1;
   let currentSortDir = 'asc';
+
+  function sortByActionDate() {
+    const table = document.querySelector(".table");
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr.dashboard-task-row"));
+    
+    if (rows.length === 0) return;
+
+    if (currentSortCol === 'actions') {
+      currentSortDir = currentSortDir === 'desc' ? 'asc' : 'desc'; // Default to descending first when clicking? We'll just toggle.
+    } else {
+      currentSortCol = 'actions';
+      currentSortDir = 'desc'; // Most recent first is usually best for action dates
+    }
+
+    rows.sort((a, b) => {
+      const aVal = parseInt(a.getAttribute('data-timestamp') || '0', 10);
+      const bVal = parseInt(b.getAttribute('data-timestamp') || '0', 10);
+      
+      if (aVal < bVal) return currentSortDir === 'asc' ? -1 : 1;
+      if (aVal > bVal) return currentSortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    rows.forEach(r => tbody.appendChild(r));
+  }
 
   function sortTable(n) {
     const table = document.querySelector(".table");
