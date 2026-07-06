@@ -1025,12 +1025,13 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      const data = await response.json();
-      if (response.ok) {
         if (payload.status === 'Completed') {
+          bootstrap.Modal.getInstance(document.getElementById('editTaskModal'))?.hide();
           triggerCompleteEffects(taskId);
         } else {
-          reloadWithSuccess('Action completed successfully!', taskId);
+          bootstrap.Modal.getInstance(document.getElementById('editTaskModal'))?.hide();
+          showToast('Action completed successfully!', 'success');
+          refreshDashboardTable(taskId);
         }
       } else {
         errorDiv.innerText = data.error || 'Failed to update task.';
@@ -1291,7 +1292,10 @@
         });
         const data = await response.json();
         if (response.ok) {
-          reloadWithSuccess('Action completed successfully!', data.taskId);
+          bootstrap.Modal.getInstance(document.getElementById('newTaskModal'))?.hide();
+          document.getElementById('newTaskForm').reset();
+          showToast('Action completed successfully!', 'success');
+          refreshDashboardTable(data.taskId);
         } else {
           errorDiv.innerText = data.error || 'Failed to create task.';
           errorDiv.style.display = 'block';
@@ -1607,26 +1611,67 @@
   }
 
   // --- KEYBOARD SHORTCUTS ---
-  let currentFocusedTaskIndex = -1;
-
-  function playChingSound() {
+  let currentFocusedTaskIndex = -1;  function playChimeSound() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       if (!AudioContext) return;
       const ctx = new AudioContext();
-      const osc = ctx.createOscillator();
-      const gainNode = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(1200, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1600, ctx.currentTime + 0.1);
-      gainNode.gain.setValueAtTime(0, ctx.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-      osc.connect(gainNode);
-      gainNode.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.5);
-    } catch(e) { console.warn(e); }
+      
+      function playNote(freq, startTime, duration) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, startTime);
+        
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.5, startTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+        
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+      }
+      
+      const now = ctx.currentTime;
+      playNote(523.25, now, 1); // C5
+      playNote(659.25, now + 0.1, 1); // E5
+      playNote(783.99, now + 0.2, 1.5); // G5
+    } catch(e) { console.error(e); }
+  }
+
+  async function refreshDashboardTable(taskIdToHighlight = null) {
+    try {
+      const res = await fetch(window.location.href);
+      const html = await res.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      
+      const newTbody = doc.querySelector('.table tbody');
+      const oldTbody = document.querySelector('.table tbody');
+      if (newTbody && oldTbody) oldTbody.innerHTML = newTbody.innerHTML;
+      
+      const newKpis = Array.from(doc.querySelectorAll('.row.mb-4')).find(r => r.innerHTML.includes('Total Tasks'));
+      const oldKpis = Array.from(document.querySelectorAll('.row.mb-4')).find(r => r.innerHTML.includes('Total Tasks'));
+      if (newKpis && oldKpis) oldKpis.innerHTML = newKpis.innerHTML;
+      
+      if (taskIdToHighlight) {
+        const checkbox = document.querySelector(`.row-checkbox[value="${taskIdToHighlight}"]`);
+        if (checkbox) {
+          const tr = checkbox.closest('tr');
+          if (tr) {
+            tr.style.backgroundColor = '#d4edda';
+            tr.style.transition = 'background-color 1s ease-out';
+            setTimeout(() => {
+              tr.style.backgroundColor = '';
+            }, 10000);
+          }
+        }
+      }
+    } catch(e) {
+      console.error(e);
+      window.location.reload();
+    }
   }
 
   const globalArchiveRule = '<%= archiveRule %>';
@@ -1635,7 +1680,7 @@
     if (typeof confetti !== 'undefined') {
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     }
-    playChingSound();
+    playChimeSound();
     
     let row = null;
     let taskText = 'Task';
@@ -1669,8 +1714,7 @@
             showToast(`${taskText} has been moved to archives`, 'success');
             // Inform backend to archive immediately
             fetch(`/tasks/${taskId}/archive-immediate`, { method: 'POST' }).then(() => {
-              // Optionally reload after a while or just let the user continue
-              setTimeout(() => reloadWithSuccess('Task moved to archives!'), 1500);
+              refreshDashboardTable();
             });
           }, 500);
         }, 5000);
@@ -1680,7 +1724,8 @@
           row.classList.add('task-complete-anim-fadeout');
           setTimeout(() => {
             row.classList.remove('task-complete-anim-fadeout');
-            reloadWithSuccess('Task status updated!');
+            showToast('Task status updated!', 'success');
+            refreshDashboardTable();
           }, 2000);
         }, 500);
       }
