@@ -159,12 +159,13 @@ exports.updateTask = async (req, res) => {
     const todayStr = new Date().toISOString().split('T')[0];
     
     // Auto-update status based on due date if it's not marked Completed
-    if (updates.status !== 'Completed' && currentData.status !== 'Completed') {
-      if (activeDueDate < todayStr) {
+    const targetStatus = updates.status !== undefined ? updates.status : currentData.status;
+    if (targetStatus !== 'Completed') {
+      if (activeDueDate < todayStr && targetStatus === 'Assigned') {
         updates.status = 'Overdue';
-      } else if (updates.status === 'Overdue') {
-        // If it was overdue but date pushed forward, revert to Assigned/In Progress
-        updates.status = currentData.status === 'Overdue' ? 'Assigned' : currentData.status;
+      } else if (activeDueDate >= todayStr && targetStatus === 'Overdue') {
+        // If it was overdue but date pushed forward, revert to Assigned
+        updates.status = 'Assigned';
       }
     }
 
