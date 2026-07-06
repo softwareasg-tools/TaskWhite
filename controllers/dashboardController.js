@@ -19,7 +19,10 @@ exports.getDashboard = async (req, res) => {
     let allTasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
     // My View Toggle Logic
-    if (req.query.view === 'my') {
+    const viewAccess = req.session.user.view_access;
+    const isMyView = req.query.view === 'my' || viewAccess === 'my_only';
+    
+    if (isMyView) {
       allTasks = allTasks.filter(t => t.assigned_user_id === userId || t.created_by === userId);
     }
 

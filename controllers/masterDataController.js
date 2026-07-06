@@ -243,7 +243,8 @@ exports.apiCreateUser = async (req, res) => {
     const newDoc = {
       name,
       email,
-      role: role || 'Member',
+      role: req.body.role || 'Member',
+      view_access: req.body.view_access || 'org_and_my',
       organization_id: req.session.user.organization_id,
       status: 'Active',
       created_at: FieldValue.serverTimestamp()
@@ -308,7 +309,8 @@ exports.apiBulkCreateUsers = async (req, res) => {
         const docData = {
           name: member.name,
           email: member.email,
-          role: role || 'Member',
+          role: member.role || role || 'Member',
+          view_access: member.view_access || req.body.view_access || 'org_and_my',
           organization_id: orgId,
           status: 'Active',
           created_at: FieldValue.serverTimestamp()

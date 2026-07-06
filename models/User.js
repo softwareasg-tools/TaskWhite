@@ -43,6 +43,10 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     defaultValue: 'Member' // Owner, Admin, Member
   },
+  view_access: {
+    type: DataTypes.STRING,
+    defaultValue: 'org_and_my' // org_and_my, my_only
+  },
   email_notifications_enabled: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
