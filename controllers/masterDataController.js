@@ -497,7 +497,7 @@ exports.getTaskArchives = async (req, res) => {
     // Fetch org settings to get archive_tasks_days
     const orgDoc = await db.collection('organizations').doc(orgId).get();
     const orgData = orgDoc.exists ? orgDoc.data() : {};
-    const archiveRule = orgData.archive_tasks_days || 'Never';
+    const archiveRule = orgData.archive_tasks_days || '30';
 
     // Fetch archived tasks
     const snapshot = await db.collection('tasks')

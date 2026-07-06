@@ -13,8 +13,9 @@ function initCronJobs() {
       const orgSettings = {};
       orgsSnap.forEach(doc => {
         const data = doc.data();
-        if (data.archive_tasks_days && data.archive_tasks_days !== 'Never') {
-          orgSettings[doc.id] = parseInt(data.archive_tasks_days, 10);
+        const rule = data.archive_tasks_days || '30';
+        if (rule !== 'Never') {
+          orgSettings[doc.id] = parseInt(rule, 10);
         }
       });
 

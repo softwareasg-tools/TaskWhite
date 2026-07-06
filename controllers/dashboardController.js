@@ -195,7 +195,7 @@ exports.getDashboard = async (req, res) => {
 
     // Fetch organization settings for archiveRule
     const orgDoc = await db.collection('organizations').doc(orgId).get();
-    const archiveRule = (orgDoc.exists && orgDoc.data().archive_tasks_days) ? orgDoc.data().archive_tasks_days : 'Never';
+    const archiveRule = (orgDoc.exists && orgDoc.data().archive_tasks_days) ? orgDoc.data().archive_tasks_days : '30';
 
     res.render('pages/dashboard', {
       stats: { totalTasks, assigned, inProgress, completed, overdue },
