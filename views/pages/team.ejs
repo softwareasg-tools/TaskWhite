@@ -111,12 +111,12 @@
                 <div class="opacity-75 small" style="font-size: 0.75rem;"><%= member.email %></div>
               </div>
               <div class="d-flex flex-column align-items-end gap-1">
-                <select class="form-select form-select-sm border opacity-75 px-2 py-0" style="font-size: 0.65rem; height: 24px; padding-right: 20px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'role', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
+                <select class="form-select form-select-sm border opacity-75 py-0 ps-2" style="font-size: 0.65rem; height: 24px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'role', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
                   <option value="Member" <%= member.role === 'Member' ? 'selected' : '' %>>Member</option>
                   <option value="Admin" <%= member.role === 'Admin' ? 'selected' : '' %>>Admin</option>
                   <option value="Owner" <%= member.role === 'Owner' ? 'selected' : '' %>>Owner</option>
                 </select>
-                <select class="form-select form-select-sm border opacity-75 px-2 py-0" style="font-size: 0.65rem; height: 24px; padding-right: 20px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'view_access', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
+                <select class="form-select form-select-sm border opacity-75 py-0 ps-2" style="font-size: 0.65rem; height: 24px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'view_access', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
                   <option value="org_and_my" <%= (!member.view_access || member.view_access === 'org_and_my') ? 'selected' : '' %>>Org + My View</option>
                   <option value="my_only" <%= member.view_access === 'my_only' ? 'selected' : '' %>>My View Only</option>
                 </select>
