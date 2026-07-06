@@ -212,8 +212,9 @@
     });
 
     // Global helper to reload with a success message
-    function reloadWithSuccess(message = 'Action completed successfully!') {
+    function reloadWithSuccess(message = 'Action completed successfully!', taskId = null) {
       sessionStorage.setItem('flashMessage', message);
+      if (taskId) sessionStorage.setItem('highlightTask', taskId);
       window.location.reload();
     }
 

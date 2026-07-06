@@ -1030,7 +1030,7 @@
         if (payload.status === 'Completed') {
           triggerCompleteEffects(taskId);
         } else {
-          reloadWithSuccess('Action completed successfully!');
+          reloadWithSuccess('Action completed successfully!', taskId);
         }
       } else {
         errorDiv.innerText = data.error || 'Failed to update task.';
@@ -1291,7 +1291,7 @@
         });
         const data = await response.json();
         if (response.ok) {
-          reloadWithSuccess('Action completed successfully!');
+          reloadWithSuccess('Action completed successfully!', data.taskId);
         } else {
           errorDiv.innerText = data.error || 'Failed to create task.';
           errorDiv.style.display = 'block';
@@ -1916,6 +1916,23 @@
           }, 50);
         });
       });
+    }
+    // Highlight newly created or edited task
+    const highlightTaskId = sessionStorage.getItem('highlightTask');
+    if (highlightTaskId) {
+      sessionStorage.removeItem('highlightTask');
+      // Find the row via the checkbox value
+      const checkbox = document.querySelector(`.row-checkbox[value="${highlightTaskId}"]`);
+      if (checkbox) {
+        const tr = checkbox.closest('tr');
+        if (tr) {
+          tr.style.backgroundColor = '#d4edda';
+          tr.style.transition = 'background-color 1s ease-out';
+          setTimeout(() => {
+            tr.style.backgroundColor = '';
+          }, 10000);
+        }
+      }
     }
   });
 </script>

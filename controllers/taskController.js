@@ -103,10 +103,10 @@ exports.createTask = async (req, res) => {
       }
     }
 
-    await db.collection('tasks').add(taskData);
+    const docRef = await db.collection('tasks').add(taskData);
     
     if (req.xhr || (req.headers.accept && req.headers.accept.indexOf('json') > -1)) {
-      return res.json({ success: true });
+      return res.json({ success: true, taskId: docRef.id });
     }
     res.redirect('/dashboard');
   } catch (err) {
@@ -212,7 +212,7 @@ exports.updateTask = async (req, res) => {
       }
     }
 
-    res.json({ success: true, message: 'Task updated successfully' });
+    res.json({ success: true, taskId: req.params.id, message: 'Task updated successfully' });
   } catch (err) {
     console.error('Update Task Error:', err);
     res.status(500).json({ error: 'Server Error' });
