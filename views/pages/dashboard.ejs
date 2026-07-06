@@ -211,6 +211,42 @@
   [data-bs-theme="dark"] .task-selected {
     background-color: rgba(135, 206, 235, 0.15) !important;
   }
+  .task-complete-anim {
+    position: relative;
+    overflow: hidden;
+  }
+  .task-complete-anim::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 0%;
+    background-color: skyblue;
+    z-index: 0;
+    animation: fillSkyBlue 0.5s ease-out forwards;
+  }
+  .task-complete-anim > * {
+    position: relative;
+    z-index: 1;
+  }
+  .task-complete-anim-fadeout::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0; width: 100%;
+    background-color: skyblue;
+    z-index: 0;
+    animation: fadeOutWhite 2s ease-out forwards;
+  }
+  .task-complete-anim-fadeout > * {
+    position: relative;
+    z-index: 1;
+  }
+  @keyframes fillSkyBlue {
+    to { width: 100%; }
+  }
+  @keyframes fadeOutWhite {
+    from { background-color: skyblue; opacity: 1; }
+    to { background-color: transparent; opacity: 0; }
+  }
 </style>
 <div class="mb-4 d-flex align-items-center">
   <hr class="flex-grow-1 text-muted opacity-25 m-0">
@@ -293,6 +329,8 @@
             <th onclick="sortTable(2)" style="cursor: pointer;">Assigned To <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th onclick="sortTable(3)" style="cursor: pointer;">Due Date <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th onclick="sortTable(4)" style="cursor: pointer;">Status <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(5)" style="cursor: pointer;">Created <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(6)" style="cursor: pointer;">Updated <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th class="text-end">Actions</th>
           </tr>
         </thead>
@@ -324,6 +362,8 @@
                   <span class="badge badge-outline">Assigned</span>
                 <% } %>
               </td>
+              <td class="small text-muted"><%= task.createdAt ? new Date(task.createdAt).toLocaleDateString() : '-' %></td>
+              <td class="small text-muted"><%= task.updatedAt ? new Date(task.updatedAt).toLocaleDateString() : '-' %></td>
               <td class="text-end">
                 <i class="bi bi-pencil text-muted me-3"></i>
                 <i class="bi bi-trash text-danger" onclick="deleteTask(event, '<%= task.id %>', '<%= (task.TaskType ? task.TaskType.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', '<%= (task.Client ? task.Client.name : `-`).replace(/\x27/g, '\\\'').replace(/\x22/g, '\\\"') %>', <%= task.assigned_user_id ? 'true' : 'false' %>, '<%= task.status %>')" style="cursor: pointer;"></i>
@@ -987,7 +1027,11 @@
       });
       const data = await response.json();
       if (response.ok) {
-        reloadWithSuccess('Action completed successfully!');
+        if (payload.status === 'Completed') {
+          triggerCompleteEffects(taskId);
+        } else {
+          reloadWithSuccess('Action completed successfully!');
+        }
       } else {
         errorDiv.innerText = data.error || 'Failed to update task.';
         errorDiv.style.display = 'block';
@@ -1032,11 +1076,11 @@
   document.addEventListener('DOMContentLoaded', () => {
     // Initialize Flatpickr
     if (typeof flatpickr !== 'undefined') {
-      flatpickr("#due_date_input", { dateFormat: "Y-m-d", allowInput: true });
-      flatpickr("#repeat_end_date", { dateFormat: "Y-m-d", allowInput: true });
-      flatpickr("#filter_start_date", { dateFormat: "Y-m-d", allowInput: true });
-      flatpickr("#filter_end_date", { dateFormat: "Y-m-d", allowInput: true });
-      flatpickr("#edit_due_date_input", { dateFormat: "Y-m-d", allowInput: true });
+      flatpickr("#due_date_input", { dateFormat: "Y-m-d", allowInput: false });
+      flatpickr("#repeat_end_date", { dateFormat: "Y-m-d", allowInput: false });
+      flatpickr("#filter_start_date", { dateFormat: "Y-m-d", allowInput: false });
+      flatpickr("#filter_end_date", { dateFormat: "Y-m-d", allowInput: false });
+      flatpickr("#edit_due_date_input", { dateFormat: "Y-m-d", allowInput: false });
     }
 
     const searchInput = document.getElementById('dashboardSearch');
@@ -1539,6 +1583,94 @@
   // --- KEYBOARD SHORTCUTS ---
   let currentFocusedTaskIndex = -1;
 
+  function playChingSound() {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1200, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1600, ctx.currentTime + 0.1);
+      gainNode.gain.setValueAtTime(0, ctx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      osc.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.5);
+    } catch(e) { console.warn(e); }
+  }
+
+  const globalArchiveRule = '<%= archiveRule %>';
+
+  function triggerCompleteEffects(taskId) {
+    if (typeof confetti !== 'undefined') {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    }
+    playChingSound();
+    
+    let row = null;
+    let taskText = 'Task';
+    
+    if (taskId) {
+      const rows = document.querySelectorAll('.dashboard-task-row');
+      rows.forEach(r => {
+        const cb = r.querySelector('.row-checkbox');
+        if (cb && cb.value === taskId) {
+          row = r;
+          // Extract text for toast: Client Name - Task Name
+          const clientCell = r.querySelector('td:nth-child(2)');
+          const taskCell = r.querySelector('td:nth-child(3)');
+          const clientName = clientCell ? clientCell.innerText.trim() : '';
+          const taskName = taskCell ? taskCell.innerText.trim() : '';
+          if (clientName && taskName) taskText = `${clientName} - ${taskName}`;
+          else if (taskName) taskText = taskName;
+        }
+      });
+    }
+
+    if (row) {
+      row.classList.add('task-complete-anim');
+      
+      if (globalArchiveRule === '0') {
+        setTimeout(() => {
+          row.classList.remove('task-complete-anim');
+          row.classList.add('task-complete-anim-fadeout');
+          setTimeout(() => {
+            row.style.display = 'none'; // hide it
+            showToast(`${taskText} has been moved to archives`, 'success');
+            // Inform backend to archive immediately
+            fetch(`/tasks/${taskId}/archive-immediate`, { method: 'POST' }).then(() => {
+              // Optionally reload after a while or just let the user continue
+              setTimeout(() => reloadWithSuccess('Task moved to archives!'), 1500);
+            });
+          }, 500);
+        }, 5000);
+      } else {
+        setTimeout(() => {
+          row.classList.remove('task-complete-anim');
+          row.classList.add('task-complete-anim-fadeout');
+          setTimeout(() => {
+            row.classList.remove('task-complete-anim-fadeout');
+            reloadWithSuccess('Task status updated!');
+          }, 2000);
+        }, 500);
+      }
+    } else {
+      if (globalArchiveRule === '0') {
+        setTimeout(() => {
+          fetch(`/tasks/${taskId}/archive-immediate`, { method: 'POST' }).then(() => {
+            reloadWithSuccess('Task moved to archives!');
+          });
+        }, 5000);
+      } else {
+        setTimeout(() => reloadWithSuccess('Task status updated!'), 1500);
+      }
+    }
+  }
+
   async function quickMarkComplete(taskId) {
     const task = allTasks.find(t => t.id === taskId);
     if (!task) return;
@@ -1562,7 +1694,11 @@
         body: JSON.stringify(payload)
       });
       if (response.ok) {
-        reloadWithSuccess('Task status updated!');
+        if (newStatus === 'Completed') {
+          triggerCompleteEffects(taskId);
+        } else {
+          reloadWithSuccess('Task status updated!');
+        }
       }
     } catch(err) {
       console.error(err);
@@ -1690,7 +1826,13 @@
     if (e.key === 'c' || e.key === 'n') {
       e.preventDefault();
       const newTaskBtn = document.querySelector('[data-bs-target="#newTaskModal"]');
-      if (newTaskBtn) newTaskBtn.click();
+      if (newTaskBtn) {
+        newTaskBtn.click();
+        setTimeout(() => {
+          const clientSelectBtn = document.getElementById('clientSelectBtn');
+          if (clientSelectBtn) clientSelectBtn.focus();
+        }, 300);
+      }
     } else if (e.key === '/') {
       e.preventDefault();
       const searchInput = document.getElementById('dashboardSearch');
@@ -1708,8 +1850,8 @@
       }
     } else if (e.key === 'f') {
       e.preventDefault();
-      const statusFilter = document.querySelector('select[name="status"]'); 
-      if (statusFilter) statusFilter.focus();
+      const clientFilter = document.querySelector('select[name="client_id"]'); 
+      if (clientFilter) clientFilter.focus();
     }
   });
 

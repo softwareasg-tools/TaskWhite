@@ -10,6 +10,7 @@ router.put('/tasks/:id', requireAuth, express.json(), taskController.updateTask)
 router.delete('/tasks/:id', requireAuth, taskController.deleteTask);
 router.post('/tasks/:id/restore', requireAuth, taskController.restoreTask);
 router.post('/tasks/:id/permanent', requireAuth, taskController.permanentDeleteTask);
+router.post('/tasks/:id/archive-immediate', requireAuth, taskController.archiveImmediateTask);
 router.get('/tasks/export', requireAuth, taskController.exportTasks);
 
 module.exports = router;

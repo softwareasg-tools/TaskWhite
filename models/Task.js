@@ -61,6 +61,10 @@ const Task = sequelize.define('Task', {
   deleted_at: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+  completed_at: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
 }, {
   tableName: 'tasks',

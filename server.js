@@ -84,6 +84,10 @@ app.use(passport.session());
 // Start Server
 const PORT = process.env.PORT || 14000;
 
+// Initialize Cron Jobs
+const { initCronJobs } = require('./scripts/cronJobs');
+initCronJobs();
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

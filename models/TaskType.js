@@ -14,6 +14,10 @@ const TaskType = sequelize.define('TaskType', {
   name: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  auto_delete_days: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   }
 }, {
   tableName: 'task_types',

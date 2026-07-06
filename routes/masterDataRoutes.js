@@ -9,8 +9,11 @@ router.get('/clients', requireAuth, masterDataController.getClients);
 router.get('/team', requireAuth, masterDataController.getTeam);
 router.get('/task-types', requireAuth, masterDataController.getTaskTypes);
 router.get('/recycle-bin', requireAuth, masterDataController.getRecycleBin);
+router.get('/task-archives', requireAuth, masterDataController.getTaskArchives);
 router.get('/settings', requireAuth, masterDataController.getSettings);
 router.post('/settings/profile', requireAuth, masterDataController.updateProfile);
+router.post('/api/settings/archive-rule', requireAuth, express.json(), masterDataController.updateArchiveRule);
+router.post('/tasks/:id/unarchive', requireAuth, masterDataController.unarchiveTask);
 
 router.get('/templates', requireAuth, templateController.getTemplates);
 

@@ -488,3 +488,82 @@ exports.apiUpdateUser = async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 };
+
+exports.getTaskArchives = async (req, res) => {
+  try {
+    const db = require('firebase-admin/firestore').getFirestore();
+    const orgId = req.session.user.organization_id;
+    
+    // Fetch org settings to get archive_tasks_days
+    const orgDoc = await db.collection('organizations').doc(orgId).get();
+    const orgData = orgDoc.exists ? orgDoc.data() : {};
+    const archiveRule = orgData.archive_tasks_days || 'Never';
+
+    // Fetch archived tasks
+    const snapshot = await db.collection('tasks')
+      .where('organization_id', '==', orgId)
+      .where('is_archived', '==', true)
+      .get();
+      
+    let tasks = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(task => task.deleted_at === null || task.deleted_at === undefined);
+    
+    // Fetch related master data in parallel
+    const [clientsSnap, typesSnap, usersSnap] = await Promise.all([
+      db.collection('clients').where('organization_id', '==', orgId).get(),
+      db.collection('task_types').where('organization_id', '==', orgId).get(),
+      db.collection('users').where('organization_id', '==', orgId).get()
+    ]);
+    
+    const clientMap = {}; clientsSnap.forEach(d => clientMap[d.id] = { id: d.id, ...d.data() });
+    const typeMap = {}; typesSnap.forEach(d => typeMap[d.id] = { id: d.id, ...d.data() });
+    const userMap = {}; usersSnap.forEach(d => userMap[d.id] = { id: d.id, ...d.data() });
+    
+    tasks = tasks.map(t => ({
+      ...t,
+      Client: t.client_id ? clientMap[t.client_id] : null,
+      TaskType: t.task_type_id ? typeMap[t.task_type_id] : null,
+      Assignee: t.assigned_user_id ? userMap[t.assigned_user_id] : null
+    }));
+
+    res.render('pages/task-archives', { tasks, archiveRule });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(`Error loading task archives: ${err.message}`);
+  }
+};
+
+exports.updateArchiveRule = async (req, res) => {
+  try {
+    const db = require('firebase-admin/firestore').getFirestore();
+    const { archive_rule } = req.body;
+    
+    if (!['0', 'Never', '30', '60', '90'].includes(archive_rule)) {
+      return res.status(400).json({ error: 'Invalid archive rule' });
+    }
+
+    await db.collection('organizations').doc(req.session.user.organization_id).update({
+      archive_tasks_days: archive_rule
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+exports.unarchiveTask = async (req, res) => {
+  try {
+    const db = require('firebase-admin/firestore').getFirestore();
+    await db.collection('tasks').doc(req.params.id).update({
+      is_archived: false,
+      updated_at: require('firebase-admin/firestore').FieldValue.serverTimestamp()
+    });
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};

@@ -1,0 +1,105 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <div class="section-subtitle">ARCHIVES</div>
+    <h1 class="page-title">Task Archives</h1>
+    <p class="text-muted mb-0">
+      <% if (archiveRule === 'Never') { %>
+        Completed tasks are not currently set to auto-archive.
+      <% } else if (archiveRule === '0') { %>
+        Completed tasks land here immediately (after 5 seconds).
+      <% } else { %>
+        Completed tasks land here after <%= archiveRule %> days.
+      <% } %>
+    </p>
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <label class="text-muted small fw-bold mb-0 text-nowrap">AUTO-ARCHIVE RULE:</label>
+    <select class="form-select form-select-sm" id="archiveRuleSelect" style="width: auto;" onchange="updateArchiveRule(this.value)">
+      <option value="Never" <%= archiveRule === 'Never' ? 'selected' : '' %>>Never</option>
+      <option value="0" <%= archiveRule === '0' ? 'selected' : '' %>>Immediately (5s delay)</option>
+      <option value="30" <%= archiveRule === '30' ? 'selected' : '' %>>30 days (Recommended)</option>
+      <option value="60" <%= archiveRule === '60' ? 'selected' : '' %>>60 days</option>
+      <option value="90" <%= archiveRule === '90' ? 'selected' : '' %>>90 days</option>
+    </select>
+  </div>
+</div>
+
+<div class="card mb-5">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th>Client</th>
+            <th>Task</th>
+            <th>Assigned To</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (tasks.length === 0) { %>
+            <tr><td colspan="6" class="text-center text-muted p-4">Archive is empty.</td></tr>
+          <% } %>
+          <% tasks.forEach(task => { %>
+            <tr>
+              <td class="fw-bold"><%= task.Client ? task.Client.name : '-' %></td>
+              <td><%= task.TaskType ? task.TaskType.name : '-' %></td>
+              <td><%= task.Assignee ? task.Assignee.name : '-' %></td>
+              <td><%= formatAppDate(task.due_date) %></td>
+              <td>
+                <span class="badge badge-outline text-secondary border-secondary">Archived</span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-link text-decoration-none p-0 me-3" onclick="unarchiveTask('<%= task.id %>')">
+                  <i class="bi bi-arrow-counterclockwise"></i> Unarchive
+                </button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function unarchiveTask(taskId) {
+    if (!confirm('Are you sure you want to unarchive this task? It will return to the dashboard.')) return;
+    try {
+      const response = await fetch(`/tasks/${taskId}/unarchive`, {
+        method: 'POST'
+      });
+      if (response.ok) {
+        reloadWithSuccess('Task unarchived successfully!');
+      } else {
+        showToast('Failed to unarchive task.', 'danger');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Error unarchiving task.', 'danger');
+    }
+  }
+
+  async function updateArchiveRule(rule) {
+    try {
+      const response = await fetch('/api/settings/archive-rule', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ archive_rule: rule })
+      });
+      
+      if (response.ok) {
+        reloadWithSuccess('Archive rule updated successfully!');
+      } else {
+        showToast('Failed to update archive rule.', 'danger');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Error updating archive rule.', 'danger');
+    }
+  }
+</script>

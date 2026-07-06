@@ -13,7 +13,9 @@ exports.getTasks = async (req, res) => {
       .where('deleted_at', '==', null)
       .get();
       
-    let tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Filter out orphaned tasks (whose task type was deleted) and archived tasks
+    let tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                             .filter(task => !task.is_archived);
     
     // Sort tasks by due_date ascending
     tasks.sort((a, b) => {
@@ -43,11 +45,17 @@ exports.getTasks = async (req, res) => {
       Assignee: t.assigned_user_id ? userMap[t.assigned_user_id] : null
     }));
 
-    const clients = clientsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const taskTypes = typesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Fetch organization settings
+    const orgDoc = await db.collection('organizations').doc(orgId).get();
+    const archiveRule = (orgDoc.exists && orgDoc.data().archive_tasks_days) ? orgDoc.data().archive_tasks_days : 'Never';
 
-    res.render('pages/tasks', { tasks, clients, taskTypes, users });
+    res.render('pages/dashboard', { 
+      tasks, 
+      clients: clientsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })),
+      taskTypes: typesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })),
+      team: usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })),
+      archiveRule
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');
@@ -284,6 +292,30 @@ exports.permanentDeleteTask = async (req, res) => {
     
     if (doc.exists && doc.data().organization_id === orgId) {
       await docRef.delete();
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ error: 'Task not found' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+exports.archiveImmediateTask = async (req, res) => {
+  try {
+    const { getFirestore } = require('firebase-admin/firestore');
+    const db = getFirestore();
+    const orgId = req.session.user.organization_id;
+    
+    const docRef = db.collection('tasks').doc(req.params.id);
+    const doc = await docRef.get();
+    
+    if (doc.exists && doc.data().organization_id === orgId) {
+      await docRef.update({
+        is_archived: true,
+        updated_at: require('firebase-admin/firestore').FieldValue.serverTimestamp()
+      });
       res.json({ success: true });
     } else {
       res.status(404).json({ error: 'Task not found' });

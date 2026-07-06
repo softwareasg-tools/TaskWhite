@@ -14,6 +14,8 @@
   <!-- Flatpickr -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/css/style.css">
   
@@ -73,6 +75,11 @@
             <li class="nav-item">
               <a class="nav-link <%= currentPath === '/dashboard' || currentPath.startsWith('/tasks') ? 'active' : '' %>" href="/dashboard">
                 <i class="bi bi-grid-1x2"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link <%= currentPath === '/task-archives' ? 'active' : '' %>" href="/task-archives">
+                <i class="bi bi-archive"></i> Task Archives
               </a>
             </li>
             <li class="nav-item">
@@ -137,6 +144,10 @@
           <i class="bi bi-plus-lg"></i>
         </a>
       </div>
+      <a href="/task-archives" class="bottom-nav-item <%= currentPath === '/task-archives' ? 'active' : '' %>">
+        <i class="bi bi-archive"></i>
+        <span>Archives</span>
+      </a>
       <a href="/recycle-bin" class="bottom-nav-item <%= currentPath === '/recycle-bin' ? 'active' : '' %>">
         <i class="bi bi-trash"></i>
         <span>Trash</span>
