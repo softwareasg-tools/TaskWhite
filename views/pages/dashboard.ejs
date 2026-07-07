@@ -1671,7 +1671,7 @@
     } catch(e) { console.error(e); }
   }
 
-  async function refreshDashboardTable(taskIdToHighlight = null) {
+  async function refreshDashboardTable(taskIdToHighlight = null, completedTaskIds = null) {
     try {
       const res = await fetch(window.location.href);
       const html = await res.text();
@@ -1910,15 +1910,17 @@
         }
         return;
       }
-      if (e.key === 'Enter') {
-        // Do not intercept Enter for SELECT, BUTTON elements, and tagInputField
-        if (e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON' && e.target.id !== 'tagInputField') {
+      if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) {
+        if (e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'TEXTAREA' && e.target.id !== 'tagInputField') {
           e.preventDefault();
           const form = activeModal.querySelector('form');
           if (form) {
             const submitBtn = form.querySelector('button[type="submit"]');
             if (submitBtn) submitBtn.click();
           }
+          return;
+        } else if (e.target.tagName === 'SELECT') {
+          e.preventDefault(); // Prevent Enter from auto-submitting form natively when on SELECT
           return;
         }
       }
