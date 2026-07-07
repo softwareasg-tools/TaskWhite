@@ -1263,7 +1263,12 @@
 
       if (monthlyDay && monthlyDay >= 1 && monthlyDay <= 31) {
         detected = { frequency: 'monthly', interval: 1, monthlyType: 'dayOfMonth', monthlyDay: monthlyDay, desc: `Monthly on day ${monthlyDay}` };
-      } else if (text.includes('every day') || text === 'daily') {
+      } else if (text.includes('every year') || text === 'yearly' || text === 'annually') {
+        detected = { frequency: 'yearly', interval: 1, desc: 'Every year' };
+      } else if (text.match(/every (\d+) years/)) {
+        const years = parseInt(text.match(/every (\d+) years/)[1], 10);
+        detected = { frequency: 'yearly', interval: years, desc: `Every ${years} years` };
+      } else if (text.includes('every day') || text === 'daily' || text === 'everyday') {
         detected = { frequency: 'daily', interval: 1, desc: 'Every day' };
       } else if (text.match(/every (\d+) days/)) {
         const days = parseInt(text.match(/every (\d+) days/)[1], 10);
