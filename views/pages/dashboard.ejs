@@ -1224,7 +1224,7 @@
     };
 
     window.parseNLPRepeat = function(text) {
-      text = text.toLowerCase().trim();
+      text = text.toLowerCase().trim().replace(/\s+/g, ' ');
       const feedback = document.getElementById('nlpFeedback');
       const freqSelect = document.getElementById('repeat_frequency');
       const intervalInput = document.getElementById('repeat_interval');
@@ -1236,7 +1236,34 @@
       
       let detected = null;
       
-      if (text.includes('every day') || text === 'daily') {
+      const dayOfMonthRegexes = [
+        /(?:on\s+)?(?:the\s+)?(\d+)(?:st|nd|rd|th)?\s+(?:of\s+)?(?:every|each|the)\s+month/,
+        /monthly[\s,]*(?:on\s+)?(?:the\s+)?(\d+)(?:st|nd|rd|th)?/,
+        /every\s+month[\s,]*(?:on\s+)?(?:the\s+)?(\d+)(?:st|nd|rd|th)?/,
+        /every\s+(\d+)(?:st|nd|rd|th)\s+(?:of\s+)?(?:the\s+)?month/,
+        /every\s+(\d+)(?:st|nd|rd|th)$/,
+        /^(\d+)(?:st|nd|rd|th)$/
+      ];
+      
+      let monthlyDay = null;
+      for (const r of dayOfMonthRegexes) {
+        const m = text.match(r);
+        if (m) { monthlyDay = parseInt(m[1], 10); break; }
+      }
+
+      const daysOfWeek = [
+        {name: 'monday', code: 'MO'},
+        {name: 'tuesday', code: 'TU'},
+        {name: 'wednesday', code: 'WE'},
+        {name: 'thursday', code: 'TH'},
+        {name: 'friday', code: 'FR'},
+        {name: 'saturday', code: 'SA'},
+        {name: 'sunday', code: 'SU'}
+      ];
+
+      if (monthlyDay && monthlyDay >= 1 && monthlyDay <= 31) {
+        detected = { frequency: 'monthly', interval: 1, monthlyType: 'dayOfMonth', monthlyDay: monthlyDay, desc: `Monthly on day ${monthlyDay}` };
+      } else if (text.includes('every day') || text === 'daily') {
         detected = { frequency: 'daily', interval: 1, desc: 'Every day' };
       } else if (text.match(/every (\d+) days/)) {
         const days = parseInt(text.match(/every (\d+) days/)[1], 10);
@@ -1246,32 +1273,22 @@
       } else if (text.match(/every (\d+) weeks/)) {
         const weeks = parseInt(text.match(/every (\d+) weeks/)[1], 10);
         detected = { frequency: 'weekly', interval: weeks, desc: `Every ${weeks} weeks` };
-      } else if (text.includes('every friday') || text === 'friday') {
-        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['FR'], desc: 'Weekly on Friday' };
-      } else if (text.includes('every monday') || text === 'monday') {
-        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['MO'], desc: 'Weekly on Monday' };
-      } else if (text.includes('every tuesday') || text === 'tuesday') {
-        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['TU'], desc: 'Weekly on Tuesday' };
-      } else if (text.includes('every wednesday') || text === 'wednesday') {
-        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['WE'], desc: 'Weekly on Wednesday' };
-      } else if (text.includes('every thursday') || text === 'thursday') {
-        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['TH'], desc: 'Weekly on Thursday' };
-      } else if (text.includes('every saturday') || text === 'saturday') {
-        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['SA'], desc: 'Weekly on Saturday' };
-      } else if (text.includes('every sunday') || text === 'sunday') {
-        detected = { frequency: 'weekly', interval: 1, weeklyDays: ['SU'], desc: 'Weekly on Sunday' };
       } else if (text.includes('every month') || text === 'monthly') {
         detected = { frequency: 'monthly', interval: 1, monthlyType: 'dayOfMonth', desc: 'Every month' };
       } else if (text.match(/every (\d+) months/)) {
         const months = parseInt(text.match(/every (\d+) months/)[1], 10);
         detected = { frequency: 'monthly', interval: months, monthlyType: 'dayOfMonth', desc: `Every ${months} months` };
-      } else if (text.match(/monthly on the (\d+)/)) {
-        const day = parseInt(text.match(/monthly on the (\d+)/)[1], 10);
-        detected = { frequency: 'monthly', interval: 1, monthlyType: 'dayOfMonth', monthlyDay: day, desc: `Monthly on day ${day}` };
       } else if (text.includes('last friday')) {
         detected = { frequency: 'monthly', interval: 1, monthlyType: 'dayOfWeek', monthlyWeek: 'last', monthlyDayOfWeek: 'FR', desc: 'Monthly on last Friday' };
       } else if (text.includes('first monday')) {
         detected = { frequency: 'monthly', interval: 1, monthlyType: 'dayOfWeek', monthlyWeek: 'first', monthlyDayOfWeek: 'MO', desc: 'Monthly on first Monday' };
+      } else {
+        for (const d of daysOfWeek) {
+          if (text.includes(`every ${d.name}`) || text === d.name || text.includes(`weekly on ${d.name}`)) {
+            detected = { frequency: 'weekly', interval: 1, weeklyDays: [d.code], desc: `Weekly on ${d.name.charAt(0).toUpperCase() + d.name.slice(1)}` };
+            break;
+          }
+        }
       }
       
       if (detected) {
