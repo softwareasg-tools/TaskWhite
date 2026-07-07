@@ -192,13 +192,13 @@
       modals.forEach(modal => {
         modal.addEventListener('shown.bs.modal', function () {
           // Focus the primary action button (btn-primary, btn-danger, or btn-dark)
-          const primaryBtn = modal.querySelector('.modal-footer .btn-primary, .modal-footer .btn-danger, .modal-footer .btn-dark, .modal-footer button[type="submit"]');
-          if (primaryBtn) {
-            primaryBtn.focus();
+          // Focus the first input field, select, or textarea
+          const firstInput = modal.querySelector('input:not([type="hidden"]), select, textarea');
+          if (firstInput) {
+            firstInput.focus();
           } else {
-            // Fallback to the first focusable element
-            const focusable = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-            if (focusable) focusable.focus();
+            const primaryBtn = modal.querySelector('.modal-footer .btn-primary, .modal-footer .btn-danger, .modal-footer .btn-dark, .modal-footer button[type="submit"]');
+            if (primaryBtn) primaryBtn.focus();
           }
         });
       });
@@ -270,7 +270,7 @@
       setTimeout(() => {
         toastEl.style.opacity = '0';
         setTimeout(() => toastEl.remove(), 300);
-      }, 5000);
+      }, 10000);
     }
   </script>
 

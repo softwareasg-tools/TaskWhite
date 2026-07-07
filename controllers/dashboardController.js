@@ -186,20 +186,12 @@ exports.getDashboard = async (req, res) => {
       Assignee: t.assigned_user_id ? userMap[t.assigned_user_id] : null
     }));
     
-    // Sort tasks: Completed first (by updated_at desc), then others by due_date ascending
+    // Sort tasks: purely by due_date ascending, then by updated_at descending
     mappedTasks.sort((a, b) => {
-      const aComp = a.status === 'Completed' ? 1 : 0;
-      const bComp = b.status === 'Completed' ? 1 : 0;
-      if (aComp !== bComp) {
-        return bComp - aComp;
-      }
-      if (a.status === 'Completed') {
-        const getMs = (t) => {
-          if (t.updated_at && t.updated_at._seconds) return t.updated_at._seconds;
-          if (t.created_at && t.created_at._seconds) return t.created_at._seconds;
-          return 0;
-        };
-        return getMs(b) - getMs(a);
+      if (!a.due_date && !b.due_date) {
+         const aTime = a.updated_at?._seconds || a.created_at?._seconds || 0;
+         const bTime = b.updated_at?._seconds || b.created_at?._seconds || 0;
+         return bTime - aTime;
       }
       if (!a.due_date) return 1;
       if (!b.due_date) return -1;

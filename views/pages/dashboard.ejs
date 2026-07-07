@@ -352,7 +352,7 @@
             <th onclick="sortTable(1)" style="cursor: pointer;">Client <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th onclick="sortTable(1)" style="cursor: pointer;">Task <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th onclick="sortTable(2)" style="cursor: pointer;">Assigned To <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(3)" style="cursor: pointer;">Due Date <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(3)" style="cursor: pointer; color: var(--bs-primary) !important;">Due Date <i class="bi bi-sort-down ms-1" style="font-size: 1em;"></i></th>
             <th onclick="sortTable(4)" style="cursor: pointer;">Status <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
             <th onclick="sortByActionDate()" class="text-end" style="cursor: pointer;">Actions <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
           </tr>
@@ -1929,11 +1929,17 @@
     const activeModal = document.querySelector('.modal.show');
     if (activeModal && e.target.closest('.modal.show')) {
       if (e.key === 'Enter') {
+        if (e.ctrlKey || e.metaKey) {
+           e.preventDefault();
+           const form = activeModal.querySelector('form');
+           if (form) form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+           return;
+        }
         if (e.target.closest('select')) {
            return; // Let browser natively handle Enter on select dropdowns (open/close/select)
         }
-        if (e.target.tagName === 'TEXTAREA' && !e.ctrlKey && !e.metaKey) {
-           return; // Let user type newlines in textareas unless Ctrl+Enter
+        if (e.target.tagName === 'TEXTAREA') {
+           return; // Let user type newlines in textareas
         }
         if (e.target.id === 'tagInputField') {
            return; // Let the tag input process the tag on Enter
