@@ -1870,14 +1870,7 @@
     if (tasksToComplete.length === 0 && tasksToRevert.length === 0) return;
 
     const updateTask = async (task, newStatus) => {
-      const payload = {
-        status: newStatus,
-        client_id: task.client_id || '',
-        task_type_id: task.task_type_id || '',
-        assigned_user_id: task.assigned_user_id || '',
-        due_date: task.due_date || '',
-        tags: (task.tags || []).join(', ')
-      };
+      const payload = { status: newStatus };
       const response = await fetch('/tasks/' + task.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -1887,14 +1880,22 @@
     };
 
     const promises = [];
-    tasksToComplete.forEach(t => promises.push(updateTask(t, 'Completed')));
-    tasksToRevert.forEach(t => promises.push(updateTask(t, 'In Progress')));
+    let action = 'complete';
+    if (tasksToComplete.length === 0 && tasksToRevert.length > 0) {
+      action = 'revert';
+    }
+
+    if (action === 'complete') {
+      tasksToComplete.forEach(t => promises.push(updateTask(t, 'Completed')));
+    } else {
+      tasksToRevert.forEach(t => promises.push(updateTask(t, 'In Progress')));
+    }
     
     await Promise.all(promises);
 
-    if (tasksToComplete.length > 0) {
+    if (action === 'complete') {
       triggerCompleteEffects(tasksToComplete.map(t => t.id));
-    } else if (tasksToRevert.length > 0) {
+    } else {
       showToast('Task statuses reverted!', 'success');
       refreshDashboardTable();
     }
