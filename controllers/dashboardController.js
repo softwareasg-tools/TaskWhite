@@ -186,14 +186,24 @@ exports.getDashboard = async (req, res) => {
       Assignee: t.assigned_user_id ? userMap[t.assigned_user_id] : null
     }));
     
-    // Sort tasks by updated_at descending
+    // Sort tasks: Completed first (by updated_at desc), then others by due_date ascending
     mappedTasks.sort((a, b) => {
-      const getMs = (t) => {
-        if (t.updated_at && t.updated_at._seconds) return t.updated_at._seconds;
-        if (t.created_at && t.created_at._seconds) return t.created_at._seconds;
-        return 0;
-      };
-      return getMs(b) - getMs(a);
+      const aComp = a.status === 'Completed' ? 1 : 0;
+      const bComp = b.status === 'Completed' ? 1 : 0;
+      if (aComp !== bComp) {
+        return bComp - aComp;
+      }
+      if (a.status === 'Completed') {
+        const getMs = (t) => {
+          if (t.updated_at && t.updated_at._seconds) return t.updated_at._seconds;
+          if (t.created_at && t.created_at._seconds) return t.created_at._seconds;
+          return 0;
+        };
+        return getMs(b) - getMs(a);
+      }
+      if (!a.due_date) return 1;
+      if (!b.due_date) return -1;
+      return a.due_date.localeCompare(b.due_date);
     });
 
     // Fetch organization settings for archiveRule
