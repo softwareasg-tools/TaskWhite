@@ -598,7 +598,7 @@
 
         <div class="mb-3">
           <label class="form-label text-muted small fw-bold">STATUS</label>
-          <select id="edit_status_input" class="form-select">
+          <select id="edit_status_input" class="form-select" data-autofocus="true">
             <option value="Assigned">Assigned</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
@@ -1835,7 +1835,6 @@
            
            setTimeout(() => {
               if (t.row.parentNode) {
-                 tbody.prepend(t.row);
                  t.row.style.opacity = '1';
                  t.row.style.transform = 'scale(1)';
                  t.row.style.backgroundColor = 'rgba(135, 206, 235, 0.2)';
