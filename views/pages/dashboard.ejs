@@ -349,12 +349,12 @@
         <thead class="bg-light">
           <tr>
             <th style="width: 40px;"><input type="checkbox" class="form-check-input master-checkbox" onchange="toggleAllCheckboxes(event)"></th>
-            <th onclick="sortTable(1)" style="cursor: pointer;">Client <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(1)" style="cursor: pointer;">Task <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(2)" style="cursor: pointer;">Assigned To <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortTable(3)" style="cursor: pointer; color: var(--bs-primary) !important;">Due Date <i class="bi bi-sort-down ms-1" style="font-size: 1em;"></i></th>
-            <th onclick="sortTable(4)" style="cursor: pointer;">Status <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
-            <th onclick="sortByActionDate()" class="text-end" style="cursor: pointer;">Actions <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(1)" data-col="1" class="sort-header" style="cursor: pointer;">Client <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(2)" data-col="2" class="sort-header" style="cursor: pointer;">Task <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(3)" data-col="3" class="sort-header" style="cursor: pointer;">Assigned To <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortTable(4)" data-col="4" class="sort-header" style="cursor: pointer; color: var(--bs-primary) !important;">Due Date <i class="bi bi-sort-down ms-1" style="font-size: 1em;"></i></th>
+            <th onclick="sortTable(5)" data-col="5" class="sort-header" style="cursor: pointer;">Status <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
+            <th onclick="sortByActionDate()" data-col="6" class="sort-header text-end" style="cursor: pointer;">Actions <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
           </tr>
         </thead>
         <tbody>
@@ -1102,6 +1102,30 @@
     });
 
     rows.forEach(r => tbody.appendChild(r));
+    updateSortVisuals(6, currentSortDir);
+  }
+
+  
+  function updateSortVisuals(colIndex, dir) {
+    const headers = document.querySelectorAll('th.sort-header');
+    headers.forEach(th => {
+      th.style.color = ''; // Reset color
+      const icon = th.querySelector('i.bi');
+      if (icon) {
+        icon.className = 'bi bi-arrow-down-up text-muted ms-1';
+        icon.style.fontSize = '0.8em';
+      }
+    });
+
+    const activeTh = document.querySelector(`th.sort-header[data-col="${colIndex}"]`);
+    if (activeTh) {
+      activeTh.style.setProperty('color', 'var(--bs-primary)', 'important');
+      const icon = activeTh.querySelector('i.bi');
+      if (icon) {
+        icon.className = dir === 'asc' ? 'bi bi-sort-down ms-1' : 'bi bi-sort-up ms-1';
+        icon.style.fontSize = '1em';
+      }
+    }
   }
 
   function sortTable(n) {
@@ -1128,6 +1152,7 @@
     });
 
     tbody.append(...rows);
+    updateSortVisuals(n, currentSortDir);
   }
 
   // Reactive Search
