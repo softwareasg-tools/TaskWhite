@@ -344,13 +344,6 @@ exports.exportTasks = async (req, res) => {
     const snapshot = await query.get();
     let tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    // Sort tasks by due_date ascending
-    tasks.sort((a, b) => {
-      if (!a.due_date) return 1;
-      if (!b.due_date) return -1;
-      return a.due_date.localeCompare(b.due_date);
-    });
-
     const [clientsSnap, typesSnap, usersSnap] = await Promise.all([
       db.collection('clients').where('organization_id', '==', orgId).get(),
       db.collection('task_types').where('organization_id', '==', orgId).get(),
@@ -374,6 +367,7 @@ exports.exportTasks = async (req, res) => {
 
     const searchTerm = req.query.search ? req.query.search.toLowerCase() : '';
     
+    let exportRows = [];
     tasks.forEach(task => {
       const clientName = task.client_id && clientMap[task.client_id] ? clientMap[task.client_id].name : '-';
       const taskName = task.task_type_id && typeMap[task.task_type_id] ? typeMap[task.task_type_id].name : '-';
@@ -384,14 +378,38 @@ exports.exportTasks = async (req, res) => {
         if (!rowText.includes(searchTerm)) return;
       }
 
-      worksheet.addRow({
+      exportRows.push({
         client: clientName,
         task: taskName,
         assignee: assigneeName,
-        due_date: task.due_date,
-        status: task.status
+        due_date: task.due_date || '',
+        status: task.status || ''
       });
     });
+
+    // Apply sorting to match the client table
+    const sortColIdx = req.query.sortCol ? parseInt(req.query.sortCol, 10) : 3;
+    const sortDir = req.query.sortDir === 'desc' ? -1 : 1;
+    
+    exportRows.sort((a, b) => {
+      let valA = '';
+      let valB = '';
+      
+      if (sortColIdx === 0) { valA = a.client; valB = b.client; }
+      else if (sortColIdx === 1) { valA = a.task; valB = b.task; }
+      else if (sortColIdx === 2) { valA = a.assignee; valB = b.assignee; }
+      else if (sortColIdx === 3) { valA = a.due_date; valB = b.due_date; }
+      else if (sortColIdx === 4) { valA = a.status; valB = b.status; }
+      
+      valA = valA.toLowerCase();
+      valB = valB.toLowerCase();
+      
+      if (valA < valB) return -1 * sortDir;
+      if (valA > valB) return 1 * sortDir;
+      return 0;
+    });
+
+    exportRows.forEach(row => worksheet.addRow(row));
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=' + 'TasksExport.xlsx');

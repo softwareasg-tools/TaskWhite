@@ -1010,6 +1010,10 @@
     if (searchInput && searchInput.value) {
       query.set('search', searchInput.value);
     }
+    if (typeof currentSortCol !== 'undefined') {
+      query.set('sortCol', currentSortCol);
+      query.set('sortDir', currentSortDir || 'asc');
+    }
     window.location.href = '/tasks/export?' + query.toString();
   }
 
