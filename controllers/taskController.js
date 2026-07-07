@@ -372,11 +372,22 @@ exports.exportTasks = async (req, res) => {
       { header: 'Status', key: 'status', width: 15 }
     ];
 
+    const searchTerm = req.query.search ? req.query.search.toLowerCase() : '';
+    
     tasks.forEach(task => {
+      const clientName = task.client_id && clientMap[task.client_id] ? clientMap[task.client_id].name : '-';
+      const taskName = task.task_type_id && typeMap[task.task_type_id] ? typeMap[task.task_type_id].name : '-';
+      const assigneeName = task.assigned_user_id && userMap[task.assigned_user_id] ? userMap[task.assigned_user_id].name : '-';
+      
+      if (searchTerm) {
+        const rowText = `${clientName} ${taskName} ${assigneeName} ${task.due_date} ${task.status}`.toLowerCase();
+        if (!rowText.includes(searchTerm)) return;
+      }
+
       worksheet.addRow({
-        client: task.client_id && clientMap[task.client_id] ? clientMap[task.client_id].name : '-',
-        task: task.task_type_id && typeMap[task.task_type_id] ? typeMap[task.task_type_id].name : '-',
-        assignee: task.assigned_user_id && userMap[task.assigned_user_id] ? userMap[task.assigned_user_id].name : '-',
+        client: clientName,
+        task: taskName,
+        assignee: assigneeName,
         due_date: task.due_date,
         status: task.status
       });

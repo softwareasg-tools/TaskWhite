@@ -1005,8 +1005,12 @@
   }
 
   function exportExcel() {
-    const query = window.location.search;
-    window.location.href = '/tasks/export' + query;
+    const query = new URLSearchParams(window.location.search);
+    const searchInput = document.getElementById('dashboardSearch');
+    if (searchInput && searchInput.value) {
+      query.set('search', searchInput.value);
+    }
+    window.location.href = '/tasks/export?' + query.toString();
   }
 
   let editTaskModalObj = null;
