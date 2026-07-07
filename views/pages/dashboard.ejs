@@ -1680,7 +1680,21 @@
       
       const newTbody = doc.querySelector('.table tbody');
       const oldTbody = document.querySelector('.table tbody');
-      if (newTbody && oldTbody) oldTbody.innerHTML = newTbody.innerHTML;
+      
+      if (taskIdToHighlight && (!completedTaskIds || completedTaskIds.length === 0)) {
+        // ONLY replace the edited row to prevent the entire table from re-sorting or breaking filter views!
+        const newRowCheckbox = newTbody.querySelector(`.row-checkbox[value="${taskIdToHighlight}"]`);
+        const oldRowCheckbox = oldTbody.querySelector(`.row-checkbox[value="${taskIdToHighlight}"]`);
+        if (newRowCheckbox && oldRowCheckbox) {
+          const newRow = newRowCheckbox.closest('tr');
+          const oldRow = oldRowCheckbox.closest('tr');
+          if (newRow && oldRow) {
+            oldRow.outerHTML = newRow.outerHTML;
+          }
+        }
+      } else {
+        if (newTbody && oldTbody) oldTbody.innerHTML = newTbody.innerHTML;
+      }
       if (typeof syncCheckboxStyles === 'function') syncCheckboxStyles();
       
       const searchInput = document.getElementById('dashboardSearch');
@@ -1805,7 +1819,7 @@
         }, 500);
       }, 3000);
     } else {
-      // Start climbing animation after 3 seconds
+      // Start completed row movement
       setTimeout(() => {
         const tbody = document.querySelector('.table tbody');
         if (!tbody) {
@@ -1813,51 +1827,27 @@
           return;
         }
         
-        let currentTargetY = tbody.getBoundingClientRect().top + window.scrollY;
-        
         tasksToAnimate.forEach(t => {
-          const rect = t.row.getBoundingClientRect();
-          const clone = t.row.cloneNode(true);
-          
-          // Fix widths to prevent collapse
-          const originalCells = t.row.querySelectorAll('td, th');
-          const cloneCells = clone.querySelectorAll('td, th');
-          for (let i = 0; i < originalCells.length; i++) {
-             cloneCells[i].style.width = originalCells[i].getBoundingClientRect().width + 'px';
-          }
-          
-          clone.style.position = 'absolute';
-          clone.style.left = rect.left + window.scrollX + 'px';
-          clone.style.top = rect.top + window.scrollY + 'px';
-          clone.style.width = rect.width + 'px';
-          clone.style.zIndex = '9999';
-          clone.style.backgroundColor = 'rgba(135, 206, 235, 0.8)';
-          clone.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
-          clone.classList.remove('task-complete-anim');
-          clone.classList.add('task-linger-blue-anim');
-          document.body.appendChild(clone);
-          
-          t.row.style.visibility = 'hidden';
-          
-          requestAnimationFrame(() => {
-            clone.style.transition = 'top 1s cubic-bezier(0.25, 1, 0.5, 1), background-color 3s ease-out';
-            clone.style.top = currentTargetY + 'px';
-            clone.style.backgroundColor = 'rgba(135, 206, 235, 0.1)';
-          });
-          
-          currentTargetY += rect.height; // Next task stacks below
-          
-          // Cleanup clone after animation (3 seconds linger)
-          setTimeout(() => {
-            if(clone.parentNode) clone.parentNode.removeChild(clone);
-          }, 3000);
+           t.row.classList.remove('task-complete-anim');
+           t.row.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+           t.row.style.opacity = '0';
+           t.row.style.transform = 'scale(0.95)';
+           
+           setTimeout(() => {
+              if (t.row.parentNode) {
+                 tbody.prepend(t.row);
+                 t.row.style.opacity = '1';
+                 t.row.style.transform = 'scale(1)';
+                 t.row.style.backgroundColor = 'rgba(135, 206, 235, 0.2)';
+              }
+           }, 500);
         });
 
-        // Refresh table after 3 seconds animation / linger completes
+        // Refresh table fully after animation completes
         setTimeout(() => {
           showToast(taskIds.length > 1 ? `${taskIds.length} tasks marked completed!` : 'Task status updated!', 'success');
           refreshDashboardTable(null, taskIds);
-        }, 3000);
+        }, 1500);
         
       }, 3000);
     }
@@ -1938,28 +1928,26 @@
     // Handle Enter and Ctrl+Enter inside active modal inputs/selects BEFORE ignoring generic shortcuts
     const activeModal = document.querySelector('.modal.show');
     if (activeModal && e.target.closest('.modal.show')) {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      if (e.key === 'Enter') {
+        if (e.target.closest('select')) {
+           return; // Let browser natively handle Enter on select dropdowns (open/close/select)
+        }
+        if (e.target.tagName === 'TEXTAREA' && !e.ctrlKey && !e.metaKey) {
+           return; // Let user type newlines in textareas unless Ctrl+Enter
+        }
+        if (e.target.id === 'tagInputField') {
+           return; // Let the tag input process the tag on Enter
+        }
+        if (e.target.tagName === 'BUTTON') {
+           return; // Let standard button behavior occur
+        }
+        
         e.preventDefault();
         const form = activeModal.querySelector('form');
         if (form) {
-          const submitBtn = form.querySelector('button[type="submit"]');
-          if (submitBtn) submitBtn.click();
+           form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
         }
         return;
-      }
-      if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) {
-        if (!e.target.closest('select') && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'TEXTAREA' && e.target.id !== 'tagInputField') {
-          e.preventDefault();
-          const form = activeModal.querySelector('form');
-          if (form) {
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn) submitBtn.click();
-          }
-          return;
-        } else if (e.target.closest('select')) {
-          e.preventDefault(); // Prevent Enter from auto-submitting form natively when on SELECT or OPTION inside select
-          return;
-        }
       }
     }
 
