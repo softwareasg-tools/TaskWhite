@@ -129,6 +129,7 @@
   <% } %>
 
   <% if (user) { %>
+    <div class="bottom-nav-spacer d-lg-none" style="height: 80px;"></div>
     <!-- Mobile Bottom Navigation -->
     <nav class="bottom-nav d-flex d-lg-none">
       <a href="/dashboard" class="bottom-nav-item <%= currentPath === '/dashboard' || currentPath.startsWith('/tasks') ? 'active' : '' %>">
