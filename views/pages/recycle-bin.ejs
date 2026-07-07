@@ -1,9 +1,16 @@
-<div class="mb-4">
-  <div class="section-subtitle">TRASH</div>
-  <h1 class="page-title">Recycle Bin</h1>
-  <p class="text-muted mb-0">Restore deleted tasks freely. Permanent deletion requires the owner password.</p>
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+  <div>
+    <div class="section-subtitle">TRASH</div>
+    <h1 class="page-title mb-0">Recycle Bin</h1>
+    <p class="text-muted mb-0 mt-1">Restore deleted tasks freely. Permanent deletion requires the owner password.</p>
+  </div>
+  <div class="w-100" style="max-width: 400px;">
+    <div class="input-group">
+      <span class="input-group-text bg-transparent"><i class="bi bi-search text-muted"></i></span>
+      <input type="text" id="recycleSearch" class="form-control" placeholder="Search trash..." onkeyup="searchTable('recycleSearch')">
+    </div>
+  </div>
 </div>
-
 <div class="card mb-5">
   <div class="card-body p-0">
     <div class="table-responsive d-none d-md-block">
