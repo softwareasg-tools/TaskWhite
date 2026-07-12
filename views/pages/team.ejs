@@ -102,28 +102,28 @@
       <div class="d-flex flex-column gap-3">
         <% team.forEach(member => { %>
           <div class="p-3 border rounded shadow-sm bg-surface">
-            <div class="d-flex justify-content-between align-items-start mb-2">
+            <div class="d-flex flex-column gap-2 mb-2">
               <div>
                 <h6 class="fw-bold mb-1 ">
                   <i class="bi bi-person-circle text-muted me-1"></i>
                   <%= member.name %>
                 </h6>
-                <div class="text-muted small" style="font-size: 0.75rem;"><%= member.email %></div>
+                <div class="text-muted small text-break" style="font-size: 0.75rem;"><%= member.email %></div>
               </div>
-              <div class="d-flex flex-column align-items-end gap-1">
-                <select class="form-select form-select-sm border text-muted py-0 ps-2" style="font-size: 0.65rem; height: 24px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'role', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
+              <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
+                <select class="form-select form-select-sm border text-muted py-0 px-2" style="font-size: 0.7rem; height: 28px; width: auto; min-width: 90px;" onchange="updateUserAccess('<%= member.id %>', 'role', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
                   <option value="Member" <%= member.role === 'Member' ? 'selected' : '' %>>Member</option>
                   <option value="Admin" <%= member.role === 'Admin' ? 'selected' : '' %>>Admin</option>
                   <option value="Owner" <%= member.role === 'Owner' ? 'selected' : '' %>>Owner</option>
                 </select>
-                <select class="form-select form-select-sm border text-muted py-0 ps-2" style="font-size: 0.65rem; height: 24px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'view_access', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
+                <select class="form-select form-select-sm border text-muted py-0 px-2" style="font-size: 0.7rem; height: 28px; width: auto; min-width: 120px;" onchange="updateUserAccess('<%= member.id %>', 'view_access', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
                   <option value="org_and_my" <%= (!member.view_access || member.view_access === 'org_and_my') ? 'selected' : '' %>>Org + My View</option>
                   <option value="my_only" <%= member.view_access === 'my_only' ? 'selected' : '' %>>My View Only</option>
                 </select>
                 <% if (member.status === 'Active') { %>
-                  <span class="badge badge-outline text-success border-success px-2 py-0.5" style="font-size: 0.65rem;">Active</span>
+                  <span class="badge badge-outline text-success border-success px-2 py-1" style="font-size: 0.7rem;">Active</span>
                 <% } else { %>
-                  <span class="badge badge-outline text-muted border-secondary px-2 py-0.5" style="font-size: 0.65rem;">Inactive</span>
+                  <span class="badge badge-outline text-muted border-secondary px-2 py-1" style="font-size: 0.7rem;">Inactive</span>
                 <% } %>
               </div>
             </div>
