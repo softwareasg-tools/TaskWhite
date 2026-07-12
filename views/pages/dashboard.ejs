@@ -102,13 +102,21 @@
           <hr class="text-muted ">
           
           <div class="mb-4">
-            <label class="form-label fw-bold  small">Task Types</label>
-            <select name="task_type_id" class="form-select form-select-sm">
-              <option value="">All Tasks</option>
+            <label class="form-label fw-bold small">Task Types</label>
+            <div class="filter-checkbox-list" style="max-height: 200px; overflow-y: auto;">
+              <% 
+                let selectedTypes = [];
+                if (query.task_type_id) {
+                  selectedTypes = Array.isArray(query.task_type_id) ? query.task_type_id : [query.task_type_id];
+                }
+              %>
               <% taskTypes.forEach(type => { %>
-                <option value="<%= type.id %>" <%= query.task_type_id == type.id ? 'selected' : '' %>><%= type.name %></option>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="task_type_id" value="<%= type.id %>" id="filter_type_<%= type.id %>" <%= selectedTypes.includes(type.id) ? 'checked' : '' %>>
+                  <label class="form-check-label text-muted small" for="filter_type_<%= type.id %>"><%= type.name %></label>
+                </div>
               <% }) %>
-            </select>
+            </div>
           </div>
 
           <hr class="text-muted ">
@@ -127,13 +135,21 @@
           <hr class="text-muted ">
           
           <div class="mb-2">
-            <label class="form-label fw-bold  small">Tags</label>
-            <select name="tag" class="form-select form-select-sm">
-              <option value="">All Tags</option>
+            <label class="form-label fw-bold small">Tags</label>
+            <div class="filter-checkbox-list" style="max-height: 200px; overflow-y: auto;">
+              <% 
+                let selectedTags = [];
+                if (query.tag) {
+                  selectedTags = Array.isArray(query.tag) ? query.tag : [query.tag];
+                }
+              %>
               <% availableTags.forEach(tag => { %>
-                <option value="<%= tag %>" <%= query.tag === tag ? 'selected' : '' %>><%= tag %></option>
+                <div class="form-check">
+                  <input class="form-check-input sidebar-tag-checkbox" type="checkbox" name="tag" value="<%= tag %>" id="filter_tag_<%= Buffer.from(tag).toString('hex') %>" <%= selectedTags.includes(tag) ? 'checked' : '' %>>
+                  <label class="form-check-label text-muted small" for="filter_tag_<%= Buffer.from(tag).toString('hex') %>"><%= tag %></label>
+                </div>
               <% }) %>
-            </select>
+            </div>
           </div>
 
           <!-- Hidden Submit Button (triggered via JS) -->
@@ -370,8 +386,17 @@
                 <div class="fw-medium "><%= task.TaskType ? task.TaskType.name : '-' %></div>
                 <% if (task.tags && task.tags.length > 0) { %>
                   <div class="mt-1 d-flex gap-1 flex-wrap">
-                    <% task.tags.forEach(tag => { %>
-                      <span class="badge bg-surface text-secondary border px-2 py-1" style="font-size: 0.65rem;"><%= tag %></span>
+                    <% task.tags.forEach(tag => { 
+                      let isActive = false;
+                      if (query.tag) {
+                        let activeTags = Array.isArray(query.tag) ? query.tag : [query.tag];
+                        isActive = activeTags.includes(tag);
+                      }
+                      const style = isActive ? 'background: var(--primary) !important; color: white !important; border-color: var(--primary) !important;' : 'background: var(--surface); color: var(--text-muted);';
+                    %>
+                      <span class="badge rounded-pill border px-2 py-1 fw-normal tag-pill-clickable" style="cursor: pointer; font-size: 0.65rem; <%= style %>" onclick="event.stopPropagation(); toggleTagFilter('<%= tag.replace(/'/g, "\\'") %>')">
+                        <%= tag %>
+                      </span>
                     <% }) %>
                   </div>
                 <% } %>
@@ -964,6 +989,19 @@
       document.querySelector('#taskTypeSelectBtn span').innerText = name;
       document.querySelector('#taskTypeSelectBtn span').classList.remove('text-muted');
     }
+  }
+
+
+  function toggleTagFilter(tagVal) {
+    // Find the corresponding checkbox in the sidebar
+    const checkboxes = document.querySelectorAll('.sidebar-tag-checkbox');
+    for (let cb of checkboxes) {
+      if (cb.value === tagVal) {
+        cb.checked = !cb.checked;
+        break;
+      }
+    }
+    submitDashboardFilters();
   }
 
   async function handleInlineCreateCustom(type, event) {

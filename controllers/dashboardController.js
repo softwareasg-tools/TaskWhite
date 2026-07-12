@@ -108,10 +108,12 @@ exports.getDashboard = async (req, res) => {
       filteredTasks = filteredTasks.filter(t => t.assigned_user_id === req.query.user_id);
     }
     if (req.query.task_type_id) {
-      filteredTasks = filteredTasks.filter(t => t.task_type_id === req.query.task_type_id);
+      let types = Array.isArray(req.query.task_type_id) ? req.query.task_type_id : [req.query.task_type_id];
+      filteredTasks = filteredTasks.filter(t => types.includes(t.task_type_id));
     }
     if (req.query.tag) {
-      filteredTasks = filteredTasks.filter(t => t.tags && t.tags.includes(req.query.tag));
+      let tags = Array.isArray(req.query.tag) ? req.query.tag : [req.query.tag];
+      filteredTasks = filteredTasks.filter(t => t.tags && tags.some(tag => t.tags.includes(tag)));
     }
     if (req.query.status) {
       filteredTasks = filteredTasks.filter(t => t.status === req.query.status);
@@ -168,7 +170,8 @@ exports.getDashboard = async (req, res) => {
     // Chart Data - Tasks by Task Type
     let chartTaskTypes = taskTypes;
     if (req.query.task_type_id) {
-      chartTaskTypes = taskTypes.filter(t => t.id === req.query.task_type_id);
+      let types = Array.isArray(req.query.task_type_id) ? req.query.task_type_id : [req.query.task_type_id];
+      chartTaskTypes = taskTypes.filter(t => types.includes(t.id));
     }
     const typeLabels = [];
     const typeData = [];
