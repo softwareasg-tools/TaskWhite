@@ -107,8 +107,10 @@
         
         <div class="mb-3">
           <label for="templateTaskType" class="form-label text-muted small fw-bold">TASK <span class="text-danger">*</span></label>
-          <select id="templateTaskType" class="form-select" required>
+          <select id="templateTaskType" class="form-select" required onchange="handleTaskTypeChange(this)">
             <option value="">Select Task...</option>
+            <option value="ADD_NEW" class="fw-bold text-primary" style="color: var(--primary); font-weight: bold;">+ Add New Task</option>
+            <option disabled>──────────</option>
             <% taskTypes.forEach(type => { %>
               <option value="<%= type.id %>"><%= type.name %></option>
             <% }) %>
@@ -213,6 +215,36 @@
     } catch (err) {
       console.error(err);
       showToast('Error deleting template.', 'danger');
+    }
+  }
+
+  async function handleTaskTypeChange(selectElem) {
+    if (selectElem.value === 'ADD_NEW') {
+      let name = prompt('Enter new Task name:');
+      if (!name || name.trim() === '') {
+        selectElem.value = '';
+        return;
+      }
+      try {
+        const res = await fetch('/api/task-types', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: name.trim() })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          const newOption = new Option(data.taskType.name, data.taskType.id, true, true);
+          selectElem.add(newOption);
+          showToast('Task added successfully', 'success');
+        } else {
+          showToast(data.error || 'Failed to create task', 'danger');
+          selectElem.value = '';
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Server error', 'danger');
+        selectElem.value = '';
+      }
     }
   }
 </script>
