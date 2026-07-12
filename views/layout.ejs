@@ -48,7 +48,9 @@
       applyTheme(newTheme);
       localStorage.setItem('theme_override', newTheme);
       const switchEl = document.getElementById('themeSwitch');
+      const switchMobileEl = document.getElementById('themeSwitchMobile');
       if(switchEl) switchEl.checked = !isDark;
+      if(switchMobileEl) switchMobileEl.checked = !isDark;
     }
 
     function resetThemeToSystem() {
@@ -102,14 +104,14 @@
                 <li><a class="dropdown-item" href="/task-types">Tasks</a></li>
                 <li><a class="dropdown-item" href="/templates">Global Templates</a></li>
                 <li><a class="dropdown-item" href="/settings">Settings</a></li>
-                <li>
-                  <div class="dropdown-item d-flex justify-content-between align-items-center" onclick="toggleTheme(event)" style="cursor: pointer;">
-                    <span><i class="bi bi-moon-stars me-1"></i> Dark Mode</span>
-                    <div class="form-check form-switch mb-0">
-                      <input class="form-check-input" type="checkbox" id="themeSwitch" style="pointer-events: none;">
+                  <li>
+                    <div class="dropdown-item d-flex justify-content-between align-items-center w-100 gap-3" onclick="toggleTheme(event)" style="cursor: pointer;">
+                      <span><i class="bi bi-moon-stars me-1"></i> Dark</span>
+                      <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" id="themeSwitch" style="pointer-events: none;">
+                      </div>
                     </div>
-                  </div>
-                </li>
+                  </li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="/logout">Logout</a></li>
               </ul>
@@ -164,8 +166,8 @@
           <li><a class="dropdown-item" href="/templates">Global Templates</a></li>
           <li><a class="dropdown-item" href="/settings">Settings</a></li>
           <li>
-            <div class="dropdown-item d-flex justify-content-between align-items-center" onclick="toggleTheme(event)" style="cursor: pointer;">
-              <span><i class="bi bi-moon-stars me-1"></i> Dark Mode</span>
+            <div class="dropdown-item d-flex justify-content-between align-items-center w-100 gap-3" onclick="toggleTheme(event)" style="cursor: pointer;">
+              <span><i class="bi bi-moon-stars me-1"></i> Dark</span>
               <div class="form-check form-switch mb-0">
                 <input class="form-check-input" type="checkbox" id="themeSwitchMobile" style="pointer-events: none;">
               </div>
