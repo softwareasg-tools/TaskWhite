@@ -20,7 +20,7 @@
     <!-- Desktop Table View -->
     <div class="table-responsive d-none d-md-block">
       <table class="table table-hover mb-0">
-        <thead class="bg-light">
+        <thead class="bg-surface">
           <tr>
             <th style="width: 40px;"><input type="checkbox" class="form-check-input master-checkbox" onchange="toggleAllCheckboxes(event)"></th>
             <th onclick="sortTable(1)" style="cursor: pointer;">Client <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
@@ -73,7 +73,7 @@
     <!-- Mobile Tile View -->
     <div class="d-block d-md-none">
       <% if (tasks.length === 0) { %>
-        <div class="text-center opacity-75 p-4 bg-surface rounded border">No tasks found.</div>
+        <div class="text-center text-muted p-4 bg-surface rounded border">No tasks found.</div>
       <% } %>
       <div class="d-flex flex-column gap-3">
         <% tasks.forEach(task => { 
@@ -90,9 +90,9 @@
               <h6 class="fw-bold mb-0"><%= typeName %></h6>
               <span class="badge bg-transparent border <%= badgeClass %>" style="font-size: 0.65rem;"><%= task.status %></span>
             </div>
-            <div class="opacity-75 small mb-2"><%= clientName %> &middot; <%= assigneeName %></div>
+            <div class="text-muted small mb-2"><%= clientName %> &middot; <%= assigneeName %></div>
             <div class="d-flex justify-content-between align-items-center mt-2 border-top pt-2">
-              <span class="opacity-75 small" style="font-size: 0.75rem;"><i class="bi bi-calendar-event me-1"></i><%= formatAppDate(task.due_date) %></span>
+              <span class="text-muted small" style="font-size: 0.75rem;"><i class="bi bi-calendar-event me-1"></i><%= formatAppDate(task.due_date) %></span>
             </div>
           </div>
         <% }) %>

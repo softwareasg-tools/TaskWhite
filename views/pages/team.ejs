@@ -38,7 +38,7 @@
     <!-- Desktop Table View -->
     <div class="table-responsive d-none d-md-block">
       <table class="table table-hover mb-0">
-        <thead class="bg-light">
+        <thead class="bg-surface">
           <tr>
             <th style="width: 40px;"><input type="checkbox" class="form-check-input master-checkbox" onchange="toggleAllCheckboxes(event)"></th>
             <th onclick="sortTable(1)" style="cursor: pointer;">Name <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
@@ -97,7 +97,7 @@
     <!-- Mobile Tile List View -->
     <div class="d-block d-md-none">
       <% if (team.length === 0) { %>
-        <div class="text-center opacity-75 p-4 bg-surface rounded border">No team members found.</div>
+        <div class="text-center text-muted p-4 bg-surface rounded border">No team members found.</div>
       <% } %>
       <div class="d-flex flex-column gap-3">
         <% team.forEach(member => { %>
@@ -105,25 +105,25 @@
             <div class="d-flex justify-content-between align-items-start mb-2">
               <div>
                 <h6 class="fw-bold mb-1 ">
-                  <i class="bi bi-person-circle opacity-75 me-1"></i>
+                  <i class="bi bi-person-circle text-muted me-1"></i>
                   <%= member.name %>
                 </h6>
-                <div class="opacity-75 small" style="font-size: 0.75rem;"><%= member.email %></div>
+                <div class="text-muted small" style="font-size: 0.75rem;"><%= member.email %></div>
               </div>
               <div class="d-flex flex-column align-items-end gap-1">
-                <select class="form-select form-select-sm border opacity-75 py-0 ps-2" style="font-size: 0.65rem; height: 24px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'role', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
+                <select class="form-select form-select-sm border text-muted py-0 ps-2" style="font-size: 0.65rem; height: 24px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'role', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
                   <option value="Member" <%= member.role === 'Member' ? 'selected' : '' %>>Member</option>
                   <option value="Admin" <%= member.role === 'Admin' ? 'selected' : '' %>>Admin</option>
                   <option value="Owner" <%= member.role === 'Owner' ? 'selected' : '' %>>Owner</option>
                 </select>
-                <select class="form-select form-select-sm border opacity-75 py-0 ps-2" style="font-size: 0.65rem; height: 24px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'view_access', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
+                <select class="form-select form-select-sm border text-muted py-0 ps-2" style="font-size: 0.65rem; height: 24px; width: fit-content;" onchange="updateUserAccess('<%= member.id %>', 'view_access', this.value)" <%= (user.role === 'Owner' || user.role === 'Admin') ? '' : 'disabled' %>>
                   <option value="org_and_my" <%= (!member.view_access || member.view_access === 'org_and_my') ? 'selected' : '' %>>Org + My View</option>
                   <option value="my_only" <%= member.view_access === 'my_only' ? 'selected' : '' %>>My View Only</option>
                 </select>
                 <% if (member.status === 'Active') { %>
                   <span class="badge badge-outline text-success border-success px-2 py-0.5" style="font-size: 0.65rem;">Active</span>
                 <% } else { %>
-                  <span class="badge badge-outline opacity-75 border-secondary px-2 py-0.5" style="font-size: 0.65rem;">Inactive</span>
+                  <span class="badge badge-outline text-muted border-secondary px-2 py-0.5" style="font-size: 0.65rem;">Inactive</span>
                 <% } %>
               </div>
             </div>
@@ -154,30 +154,30 @@
         
         <div class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="bulkAddTeamToggle" onchange="toggleBulkAddTeam()">
-          <label class="form-check-label opacity-75 small fw-bold" for="bulkAddTeamToggle">BULK ADD MODE</label>
+          <label class="form-check-label text-muted small fw-bold" for="bulkAddTeamToggle">BULK ADD MODE</label>
         </div>
 
         <div id="singleTeamMode">
           <div class="mb-3">
-            <label for="memberName" class="form-label opacity-75 small fw-bold">FULL NAME <span class="text-danger">*</span></label>
+            <label for="memberName" class="form-label text-muted small fw-bold">FULL NAME <span class="text-danger">*</span></label>
             <input type="text" id="memberName" class="form-control" placeholder="e.g. John Doe">
           </div>
           <div class="mb-3">
-            <label for="memberEmail" class="form-label opacity-75 small fw-bold">EMAIL ADDRESS <span class="text-danger">*</span></label>
+            <label for="memberEmail" class="form-label text-muted small fw-bold">EMAIL ADDRESS <span class="text-danger">*</span></label>
             <input type="email" id="memberEmail" class="form-control" placeholder="e.g. john@company.com">
           </div>
         </div>
 
         <div id="bulkTeamMode" style="display: none;">
           <div class="mb-3">
-            <label for="bulkTeamInput" class="form-label opacity-75 small fw-bold">TEAM MEMBERS (Name, Email) <span class="text-danger">*</span></label>
+            <label for="bulkTeamInput" class="form-label text-muted small fw-bold">TEAM MEMBERS (Name, Email) <span class="text-danger">*</span></label>
             <textarea id="bulkTeamInput" class="form-control" rows="6" placeholder="John Doe, john@company.com&#10;Jane Smith, jane@company.com"></textarea>
-            <small class="opacity-75 d-block mt-1">One member per line, separated by a comma.</small>
+            <small class="text-muted d-block mt-1">One member per line, separated by a comma.</small>
           </div>
         </div>
 
         <div class="mb-3">
-          <label for="memberRole" class="form-label opacity-75 small fw-bold">ROLE</label>
+          <label for="memberRole" class="form-label text-muted small fw-bold">ROLE</label>
           <select id="memberRole" class="form-select">
             <option value="Member">Member</option>
             <option value="Admin">Admin</option>
@@ -185,13 +185,13 @@
           </select>
         </div>
         <div class="mb-3">
-          <label for="memberViewAccess" class="form-label opacity-75 small fw-bold">VIEW ACCESS</label>
+          <label for="memberViewAccess" class="form-label text-muted small fw-bold">VIEW ACCESS</label>
           <select id="memberViewAccess" class="form-select">
             <option value="org_and_my">Org View + My View</option>
             <option value="my_only">My View Only</option>
           </select>
         </div>
-        <p class="opacity-75 small mb-0"><i class="bi bi-info-circle"></i> New members will receive a Magic Link via email to join the workspace instantly.</p>
+        <p class="text-muted small mb-0"><i class="bi bi-info-circle"></i> New members will receive a Magic Link via email to join the workspace instantly.</p>
       </div>
       <div class="modal-footer border-top-0 pt-0">
         <button type="button" class="btn btn-link text-decoration-none  fw-medium" data-bs-dismiss="modal">Cancel</button>
@@ -211,7 +211,7 @@
       </div>
       <div class="modal-body py-3">
         <div id="deleteUserDetails" class="fw-bold mb-2" style="color: #111;"></div>
-        <p class="opacity-75 small mb-0">Are you sure you want to delete this team member? This will permanently affect tasks assigned to them.</p>
+        <p class="text-muted small mb-0">Are you sure you want to delete this team member? This will permanently affect tasks assigned to them.</p>
       </div>
       <div class="modal-footer border-top-0 pt-0 justify-content-end gap-2">
         <button type="button" class="btn btn-link text-decoration-none  fw-medium" data-bs-dismiss="modal">Cancel</button>

@@ -27,7 +27,7 @@
     <!-- Desktop Table View -->
     <div class="table-responsive d-none d-md-block">
       <table class="table table-hover mb-0">
-        <thead class="bg-light">
+        <thead class="bg-surface">
           <tr>
             <th style="width: 40px;"><input type="checkbox" class="form-check-input master-checkbox" onchange="toggleAllCheckboxes(event)"></th>
             <th onclick="sortTable(1)" style="cursor: pointer;">Task Name <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8em;"></i></th>
@@ -59,14 +59,14 @@
     <!-- Mobile Tile List View -->
     <div class="d-block d-md-none">
       <% if (taskTypes.length === 0) { %>
-        <div class="text-center opacity-75 p-4 bg-surface rounded border">No tasks found.</div>
+        <div class="text-center text-muted p-4 bg-surface rounded border">No tasks found.</div>
       <% } %>
       <div class="d-flex flex-column gap-3">
         <% taskTypes.forEach(type => { %>
           <div class="p-3 border rounded shadow-sm bg-surface">
             <div class="d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center">
-                <i class="bi bi-tag opacity-75 me-2"></i>
+                <i class="bi bi-tag text-muted me-2"></i>
                 <h6 class="fw-bold mb-0 "><%= type.name %></h6>
               </div>
               <button class="btn btn-link text-decoration-none text-danger p-0" onclick="confirmDeleteTaskType('<%= type.id %>', '<%= type.name.replace(/'/g, "\\'") %>')">
@@ -93,19 +93,19 @@
         
         <div class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" id="bulkAddTaskTypeToggle" onchange="toggleBulkAddTaskType()">
-          <label class="form-check-label opacity-75 small fw-bold" for="bulkAddTaskTypeToggle">BULK ADD MODE</label>
+          <label class="form-check-label text-muted small fw-bold" for="bulkAddTaskTypeToggle">BULK ADD MODE</label>
         </div>
 
         <div id="singleTaskTypeMode">
           <div class="mb-3">
-            <label for="taskTypeNameInput" class="form-label opacity-75 small fw-bold">TASK NAME <span class="text-danger">*</span></label>
+            <label for="taskTypeNameInput" class="form-label text-muted small fw-bold">TASK NAME <span class="text-danger">*</span></label>
             <input type="text" id="taskTypeNameInput" class="form-control" placeholder="e.g. Video Editing">
           </div>
         </div>
 
         <div id="bulkTaskTypeMode" style="display: none;">
           <div class="mb-3">
-            <label for="bulkTaskTypeInput" class="form-label opacity-75 small fw-bold">TASK NAMES (ONE PER LINE) <span class="text-danger">*</span></label>
+            <label for="bulkTaskTypeInput" class="form-label text-muted small fw-bold">TASK NAMES (ONE PER LINE) <span class="text-danger">*</span></label>
             <textarea id="bulkTaskTypeInput" class="form-control" rows="6" placeholder="Video Editing&#10;Logo Design&#10;Copywriting"></textarea>
           </div>
         </div>
@@ -129,10 +129,10 @@
       <div class="modal-body">
         <div id="aiGenerateError" class="alert alert-danger small py-2" style="display: none;"></div>
         
-        <p class="opacity-75 small mb-3">Save hours of setup! Let AI automatically populate standard tasks for your specific industry.</p>
+        <p class="text-muted small mb-3">Save hours of setup! Let AI automatically populate standard tasks for your specific industry.</p>
         
         <div class="mb-3">
-          <label for="aiIndustryInput" class="form-label opacity-75 small fw-bold">YOUR INDUSTRY <span class="text-danger">*</span></label>
+          <label for="aiIndustryInput" class="form-label text-muted small fw-bold">YOUR INDUSTRY <span class="text-danger">*</span></label>
           <input type="text" id="aiIndustryInput" class="form-control form-control-lg" placeholder="e.g. Law Firm, Architecture, Podcast Agency">
         </div>
       </div>
@@ -154,7 +154,7 @@
       </div>
       <div class="modal-body py-3">
         <div id="deleteTaskTypeDetails" class="fw-bold mb-2" style="color: #111;"></div>
-        <p class="opacity-75 small mb-0">Are you sure you want to delete this task? This will permanently affect dashboard tasks using it.</p>
+        <p class="text-muted small mb-0">Are you sure you want to delete this task? This will permanently affect dashboard tasks using it.</p>
       </div>
       <div class="modal-footer border-top-0 pt-0 justify-content-end gap-2">
         <button type="button" class="btn btn-link text-decoration-none  fw-medium" data-bs-dismiss="modal">Cancel</button>

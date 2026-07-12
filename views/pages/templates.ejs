@@ -19,7 +19,7 @@
     <!-- Desktop Table View -->
     <div class="table-responsive d-none d-md-block">
       <table class="table table-hover mb-0">
-        <thead class="bg-light">
+        <thead class="bg-surface">
           <tr>
             <th>Task Name</th>
             <th>Frequency</th>
@@ -39,9 +39,9 @@
               </td>
               <td>
                 <% if (temp.recurrence_rule && temp.recurrence_rule.frequency === 'monthly') { %>
-                  <span class="badge bg-light  border">Monthly (on day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
+                  <span class="badge bg-surface  border">Monthly (on day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
                 <% } else { %>
-                  <span class="badge bg-light  border">Recurring</span>
+                  <span class="badge bg-surface  border">Recurring</span>
                 <% } %>
               </td>
               <td>
@@ -61,7 +61,7 @@
     <!-- Mobile Tile List View -->
     <div class="d-block d-md-none">
       <% if (templates.length === 0) { %>
-        <div class="text-center opacity-75 p-4 bg-surface rounded border">No global templates configured.</div>
+        <div class="text-center text-muted p-4 bg-surface rounded border">No global templates configured.</div>
       <% } %>
       <div class="d-flex flex-column gap-3">
         <% templates.forEach(temp => { %>
@@ -72,13 +72,13 @@
                   <i class="bi bi-file-earmark-check text-primary me-1"></i>
                   <%= temp.TaskType ? temp.TaskType.name : 'Unknown' %>
                 </h6>
-                <div class="opacity-75 small" style="font-size: 0.75rem;">Assignee: <%= temp.Assignee ? temp.Assignee.name : '-' %></div>
+                <div class="text-muted small" style="font-size: 0.75rem;">Assignee: <%= temp.Assignee ? temp.Assignee.name : '-' %></div>
               </div>
               <div class="d-flex flex-column align-items-end gap-1">
                 <% if (temp.recurrence_rule && temp.recurrence_rule.frequency === 'monthly') { %>
-                  <span class="badge bg-light  border" style="font-size: 0.65rem;">Monthly (day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
+                  <span class="badge bg-surface  border" style="font-size: 0.65rem;">Monthly (day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
                 <% } else { %>
-                  <span class="badge bg-light  border" style="font-size: 0.65rem;">Recurring</span>
+                  <span class="badge bg-surface  border" style="font-size: 0.65rem;">Recurring</span>
                 <% } %>
               </div>
             </div>
@@ -106,7 +106,7 @@
         <div id="addTemplateError" class="alert alert-danger small py-2" style="display: none;"></div>
         
         <div class="mb-3">
-          <label for="templateTaskType" class="form-label opacity-75 small fw-bold">TASK <span class="text-danger">*</span></label>
+          <label for="templateTaskType" class="form-label text-muted small fw-bold">TASK <span class="text-danger">*</span></label>
           <select id="templateTaskType" class="form-select" required>
             <option value="">Select Task...</option>
             <% taskTypes.forEach(type => { %>
@@ -116,7 +116,7 @@
         </div>
 
         <div class="mb-3">
-          <label for="templateAssignee" class="form-label opacity-75 small fw-bold">DEFAULT ASSIGNEE</label>
+          <label for="templateAssignee" class="form-label text-muted small fw-bold">DEFAULT ASSIGNEE</label>
           <select id="templateAssignee" class="form-select">
             <option value="">Unassigned</option>
             <% users.forEach(user => { %>
@@ -126,17 +126,17 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label opacity-75 small fw-bold">RECURRENCE</label>
-          <div class="p-3 bg-light rounded border">
+          <label class="form-label text-muted small fw-bold">RECURRENCE</label>
+          <div class="p-3 bg-surface rounded border">
             <div class="row g-2">
               <div class="col-6">
-                <label class="form-label opacity-75 small" style="font-size: 0.7rem;">FREQUENCY</label>
+                <label class="form-label text-muted small" style="font-size: 0.7rem;">FREQUENCY</label>
                 <select id="template_freq" class="form-select form-select-sm" disabled>
                   <option value="monthly">Monthly</option>
                 </select>
               </div>
               <div class="col-6">
-                <label class="form-label opacity-75 small" style="font-size: 0.7rem;">DAY OF MONTH</label>
+                <label class="form-label text-muted small" style="font-size: 0.7rem;">DAY OF MONTH</label>
                 <input type="number" id="template_day" class="form-control form-control-sm" min="1" max="31" value="20" required>
               </div>
             </div>
