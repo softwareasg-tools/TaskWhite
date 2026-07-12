@@ -528,20 +528,20 @@
 <!-- Keyboard Shortcuts Floating Footer -->
 <div id="shortcutFooter" class="d-none d-md-flex position-fixed bottom-0 start-50 translate-middle-x mb-4 py-2 px-4 shadow align-items-center justify-content-center gap-4" style="background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 30px; z-index: 1050; opacity: 0.95; backdrop-filter: blur(8px); transition: all 0.3s ease;">
   <div class="shortcut-default d-flex gap-4">
-    <span class="small text-muted fw-bold"><kbd class="bg-surface text-dark border">C</kbd> New Task</span>
-    <span class="small text-muted fw-bold"><kbd class="bg-surface text-dark border">/</kbd> Search</span>
-    <span class="small text-muted fw-bold"><kbd class="bg-surface text-dark border">V</kbd> Toggle View</span>
-    <span class="small text-muted fw-bold"><kbd class="bg-surface text-dark border">F</kbd> Filters</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-surface border">C</kbd> New Task</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-surface border">/</kbd> Search</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-surface border">V</kbd> Toggle View</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-surface border">F</kbd> Filters</span>
   </div>
   <div class="shortcut-row-focus d-none gap-4">
-    <span class="small text-muted fw-bold"><kbd class="bg-surface text-dark border">E</kbd> Edit</span>
-    <span class="small text-muted fw-bold"><kbd class="bg-surface text-dark border">M</kbd> Mark Complete</span>
-    <span class="small text-muted fw-bold"><kbd class="bg-surface text-dark border">Space</kbd> Select</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-surface border">E</kbd> Edit</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-surface border">M</kbd> Mark Complete</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-surface border">Space</kbd> Select</span>
     <span class="small text-muted fw-bold"><kbd class="bg-surface text-danger border border-danger">Del</kbd> Delete</span>
   </div>
   <div class="shortcut-modal d-none gap-4">
-    <span class="small text-muted fw-bold"><kbd class="bg-surface text-dark border">Ctrl + Enter</kbd> Save</span>
-    <span class="small text-muted fw-bold"><kbd class="bg-surface text-dark border">Esc</kbd> Cancel</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-surface border">Ctrl + Enter</kbd> Save</span>
+    <span class="small text-muted fw-bold"><kbd class="bg-surface border">Esc</kbd> Cancel</span>
   </div>
 </div>
 
@@ -2120,11 +2120,10 @@
       e.preventDefault();
       const searchInput = document.getElementById('dashboardSearch');
       if (searchInput) searchInput.focus();
-    } else if (e.key === 'v') {
+    } else if (e.key.toLowerCase() === 'v') {
       e.preventDefault();
-      const urlParams = new URLSearchParams(window.location.search);
-      const currentView = urlParams.get('task_view') || 'list';
-      if (currentView === 'list') {
+      const listView = document.getElementById('listView');
+      if (listView && !listView.classList.contains('d-none')) {
         const calBtn = document.querySelector('.btnCalendarView');
         if(calBtn) calBtn.click();
       } else {

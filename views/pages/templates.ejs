@@ -107,14 +107,23 @@
         
         <div class="mb-3">
           <label for="templateTaskType" class="form-label text-muted small fw-bold">TASK <span class="text-danger">*</span></label>
-          <select id="templateTaskType" class="form-select" required onchange="handleTaskTypeChange(this)">
-            <option value="">Select Task...</option>
-            <option value="ADD_NEW" class="fw-bold text-primary" style="color: var(--primary); font-weight: bold;">+ Add New Task</option>
-            <option disabled>──────────</option>
-            <% taskTypes.forEach(type => { %>
-              <option value="<%= type.id %>"><%= type.name %></option>
-            <% }) %>
-          </select>
+          <div class="dropdown">
+            <button class="form-select text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="templateTaskTypeBtn">
+              <span class="text-muted">Select Task...</span>
+            </button>
+            <ul class="dropdown-menu w-100 shadow-sm border-0 py-2" style="max-height: 300px; overflow-y: auto;">
+              <li>
+                <a class="dropdown-item fw-bold text-primary py-2 d-flex align-items-center gap-2" style="background-color: var(--bg-subtle);" href="#" onclick="handleInlineCreateCustom('task_type', event)">
+                  <i class="bi bi-plus-circle-fill"></i> Add New Task
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <% taskTypes.forEach(type => { %>
+                <li><a class="dropdown-item py-2" href="#" onclick="selectDropdownOption('task_type', '<%= type.id %>', '<%= type.name.replace(/\x27/g, '\\\'') %>', event)"><%= type.name %></a></li>
+              <% }) %>
+            </ul>
+            <input type="hidden" id="templateTaskType" required>
+          </div>
         </div>
 
         <div class="mb-3">
@@ -218,33 +227,38 @@
     }
   }
 
-  async function handleTaskTypeChange(selectElem) {
-    if (selectElem.value === 'ADD_NEW') {
-      let name = prompt('Enter new Task name:');
-      if (!name || name.trim() === '') {
-        selectElem.value = '';
-        return;
+
+  function selectDropdownOption(type, id, name, e) {
+    if(e) e.preventDefault();
+    if(type === 'task_type') {
+      const btn = document.getElementById('templateTaskTypeBtn');
+      if (btn) btn.innerHTML = '<span>' + name + '</span>';
+      const hidden = document.getElementById('templateTaskType');
+      if (hidden) hidden.value = id;
+    }
+  }
+
+  async function handleInlineCreateCustom(type, event) {
+    if (event) event.preventDefault();
+    let name = prompt('Enter new Task name:');
+    if (!name || name.trim() === '') return;
+    try {
+      const res = await fetch('/api/task-types', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim() })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        selectDropdownOption('task_type', data.taskType.id, data.taskType.name);
+        showToast('Task added successfully', 'success');
+        setTimeout(() => location.reload(), 1000); // Reload to show in list
+      } else {
+        showToast(data.error || 'Failed to create task', 'danger');
       }
-      try {
-        const res = await fetch('/api/task-types', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: name.trim() })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          const newOption = new Option(data.taskType.name, data.taskType.id, true, true);
-          selectElem.add(newOption);
-          showToast('Task added successfully', 'success');
-        } else {
-          showToast(data.error || 'Failed to create task', 'danger');
-          selectElem.value = '';
-        }
-      } catch (err) {
-        console.error(err);
-        showToast('Server error', 'danger');
-        selectElem.value = '';
-      }
+    } catch (err) {
+      console.error(err);
+      showToast('Server error', 'danger');
     }
   }
 </script>
