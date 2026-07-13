@@ -362,4 +362,10 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   background-color: var(--surface) !important;
 }
 
+
+  /* Dropdown hover for desktop */
+  .nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+  }
 }
