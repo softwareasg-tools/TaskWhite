@@ -269,7 +269,8 @@
       <div class="col-md-6 col-lg-3">
         <div class="card h-100 border shadow-sm rounded-4 p-4 text-center bg-surface">
           <h5 class="fw-bold text-muted mb-1">Free</h5>
-          <div class="display-5 fw-bold mb-2">₹0</div>
+          <div class="display-5 fw-bold mb-0">₹0</div>
+          <div class="text-transparent small mb-2 annual-calc" style="font-size: 0.8rem; display: block; user-select: none; color: transparent !important;">(placeholder)</div>
           <div class="text-muted small mb-4">Up to 3 users</div>
           <hr class="">
           <ul class="list-unstyled text-start small text-muted mb-4">
@@ -286,7 +287,8 @@
         <div class="card h-100 border shadow-sm rounded-4 p-4 text-center border-dark position-relative" style="background: var(--card-bg);">
           <div class="position-absolute top-0 start-50 translate-middle badge rounded bg-dark">Popular</div>
           <h5 class="fw-bold text-muted mb-1 mt-2">Starter</h5>
-          <div class="display-5 fw-bold mb-2">₹<span class="price-val" data-monthly="499" data-annual="4,990">4,990</span><span class="fs-6 text-muted price-suffix">/yr</span></div>
+          <div class="display-5 fw-bold mb-0">₹<span class="price-val" data-monthly="499" data-annual="4,990">4,990</span><span class="fs-6 text-muted price-suffix">/yr</span></div>
+          <div class="text-muted small mb-2 annual-calc" style="font-size: 0.8rem; display: block;">(equivalent to ₹416/mo)</div>
           <div class="text-muted small mb-4">Up to 5 users</div>
           <hr class="">
           <ul class="list-unstyled text-start small text-muted mb-4">
@@ -301,7 +303,8 @@
       <div class="col-md-6 col-lg-3">
         <div class="card h-100 border shadow-sm rounded-4 p-4 text-center bg-surface">
           <h5 class="fw-bold text-muted mb-1">Growth</h5>
-          <div class="display-5 fw-bold mb-2">₹<span class="price-val" data-monthly="1,499" data-annual="14,990">14,990</span><span class="fs-6 text-muted price-suffix">/yr</span></div>
+          <div class="display-5 fw-bold mb-0">₹<span class="price-val" data-monthly="1,499" data-annual="14,990">14,990</span><span class="fs-6 text-muted price-suffix">/yr</span></div>
+          <div class="text-muted small mb-2 annual-calc" style="font-size: 0.8rem; display: block;">(equivalent to ₹1,249/mo)</div>
           <div class="text-muted small mb-4">Up to 15 users</div>
           <hr class="">
           <ul class="list-unstyled text-start small text-muted mb-4">
@@ -316,7 +319,8 @@
       <div class="col-md-6 col-lg-3">
         <div class="card h-100 border shadow-sm rounded-4 p-4 text-center bg-surface">
           <h5 class="fw-bold text-muted mb-1">Pro</h5>
-          <div class="display-5 fw-bold mb-2">₹<span class="price-val" data-monthly="3,999" data-annual="39,990">39,990</span><span class="fs-6 text-muted price-suffix">/yr</span></div>
+          <div class="display-5 fw-bold mb-0">₹<span class="price-val" data-monthly="3,999" data-annual="39,990">39,990</span><span class="fs-6 text-muted price-suffix">/yr</span></div>
+          <div class="text-muted small mb-2 annual-calc" style="font-size: 0.8rem; display: block;">(equivalent to ₹3,333/mo)</div>
           <div class="text-muted small mb-4">Up to 50 users</div>
           <hr class="">
           <ul class="list-unstyled text-start small text-muted mb-4">
@@ -523,6 +527,11 @@
         
         priceSuffixes.forEach(el => {
           el.innerText = isAnnual ? '/yr' : '/mo';
+        });
+        
+        const annualCalcs = document.querySelectorAll('.annual-calc');
+        annualCalcs.forEach(el => {
+          el.style.display = isAnnual ? 'block' : 'none';
         });
       });
     }
