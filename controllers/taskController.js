@@ -160,6 +160,11 @@ exports.updateTask = async (req, res) => {
     
     // Auto-update status based on due date if it's not marked Completed
     const targetStatus = updates.status !== undefined ? updates.status : currentData.status;
+    
+    if (activeDueDate < todayStr && (targetStatus === 'Assigned' || targetStatus === 'In Progress')) {
+      return res.status(400).json({ error: 'The task due date needs to be extended to modify the status as assigned or in progress.' });
+    }
+    
     if (targetStatus !== 'Completed') {
       if (activeDueDate < todayStr && targetStatus === 'Assigned') {
         updates.status = 'Overdue';
