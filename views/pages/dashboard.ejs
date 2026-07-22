@@ -1641,7 +1641,7 @@
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     
     if (targetDateStr < todayStr) {
-      alert("Tasks can only be moved to a future date.");
+      alert(`Tasks can only be moved to a future date. (You dragged to ${targetDateStr}, but today is ${todayStr})`);
       return;
     }
     
@@ -1678,6 +1678,13 @@
     const el = document.createElement('div');
     el.className = `calendar-day ${isOtherMonth ? 'other-month' : ''}`;
     if (selectedDateString === dateStr) el.classList.add('active-day');
+    
+    const now = new Date();
+    const todayStrCell = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    if (dateStr === todayStrCell) {
+      el.style.border = '2px solid var(--bs-primary)';
+      el.style.boxShadow = 'inset 0 0 0 1px rgba(13, 110, 253, 0.2)';
+    }
     
     el.addEventListener('dragover', (e) => { 
       e.preventDefault(); 
