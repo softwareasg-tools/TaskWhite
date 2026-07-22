@@ -7,6 +7,7 @@ const expressLayouts = require('express-ejs-layouts');
 const helmet = require('helmet');
 
 const app = express();
+app.set('trust proxy', 1); // Trust first proxy (Nginx) to fix express-rate-limit ERR_ERL_UNEXPECTED_X_FORWARDED_FOR
 
 // Security Headers
 app.use(helmet({
