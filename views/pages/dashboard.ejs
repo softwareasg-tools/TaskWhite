@@ -868,6 +868,23 @@
     </form>
   </div>
 </div>
+<!-- Custom Dialog Modal -->
+<div class="modal fade" id="customDialogModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="customDialogTitle">Notice</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-4" id="customDialogMessage" style="font-size: 1.05rem;">
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="customDialogCancelBtn" style="display:none;">Cancel</button>
+        <button type="button" class="btn btn-primary px-4" id="customDialogConfirmBtn">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   let activeDeleteTaskId = null;
@@ -1562,6 +1579,7 @@
   let selectedDateString = null;
 
   function switchTaskView(view) {
+    sessionStorage.setItem('activeTaskView', view);
     const listBtns = document.querySelectorAll('.btnListView');
     const calBtns = document.querySelectorAll('.btnCalendarView');
     const listView = document.getElementById('listView');
@@ -1580,6 +1598,12 @@
       renderCalendar();
     }
   }
+
+  // Restore active view on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const activeView = sessionStorage.getItem('activeTaskView') || 'list';
+    if (activeView === 'calendar') switchTaskView('calendar');
+  });
 
   function changeMonth(delta) {
     currentMonth += delta;
@@ -1629,6 +1653,54 @@
     e.dataTransfer.setData('text/plain', taskId); 
   };
 
+  // Custom Dialog Logic
+  function showCustomAlert(message, title = "Notice") {
+    document.getElementById('customDialogTitle').innerText = title;
+    document.getElementById('customDialogMessage').innerText = message;
+    document.getElementById('customDialogCancelBtn').style.display = 'none';
+    document.getElementById('customDialogConfirmBtn').innerText = 'OK';
+    
+    const confirmBtn = document.getElementById('customDialogConfirmBtn');
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    const modalEl = document.getElementById('customDialogModal');
+    const modal = new bootstrap.Modal(modalEl);
+    
+    newConfirmBtn.onclick = () => { modal.hide(); };
+    modal.show();
+  }
+
+  function showCustomConfirm(message, title = "Confirm Action") {
+    return new Promise((resolve) => {
+      document.getElementById('customDialogTitle').innerText = title;
+      document.getElementById('customDialogMessage').innerText = message;
+      document.getElementById('customDialogCancelBtn').style.display = 'inline-block';
+      document.getElementById('customDialogConfirmBtn').innerText = 'Accept';
+      
+      const confirmBtn = document.getElementById('customDialogConfirmBtn');
+      const cancelBtn = document.getElementById('customDialogCancelBtn');
+      
+      const newConfirmBtn = confirmBtn.cloneNode(true);
+      const newCancelBtn = cancelBtn.cloneNode(true);
+      confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+      cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+      
+      const modalEl = document.getElementById('customDialogModal');
+      const modal = new bootstrap.Modal(modalEl);
+      
+      newConfirmBtn.onclick = () => { resolve(true); modal.hide(); };
+      newCancelBtn.onclick = () => { resolve(false); modal.hide(); };
+      
+      modalEl.addEventListener('hidden.bs.modal', function onHidden() {
+        resolve(false);
+        modalEl.removeEventListener('hidden.bs.modal', onHidden);
+      });
+      
+      modal.show();
+    });
+  }
+
   window.handleCalendarDrop = async function(e, targetDateStr) {
     e.preventDefault();
     e.stopPropagation();
@@ -1641,12 +1713,12 @@
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     
     if (targetDateStr < todayStr) {
-      alert(`Tasks can only be moved to a future date. (You dragged to ${targetDateStr}, but today is ${todayStr})`);
+      showCustomAlert(`Tasks can only be moved to a future date. (You dragged to ${targetDateStr}, but today is ${todayStr})`, "Invalid Date");
       return;
     }
     
     if (draggedTask.status === 'Overdue') {
-      const confirmMove = confirm("You are moving an overdue task to a future date. Its status will change to assigned. Accept or cancel?");
+      const confirmMove = await showCustomConfirm("You are moving an overdue task to a future date. Its status will change to assigned. Accept or cancel?", "Status Change Warning");
       if (!confirmMove) return;
     }
     
@@ -1660,10 +1732,10 @@
         window.location.reload(); 
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to update task.");
+        showCustomAlert(data.error || "Failed to update task.", "Error");
       }
     } catch(err) {
-      alert("An error occurred.");
+      showCustomAlert("An error occurred.", "Error");
     }
   };
 
