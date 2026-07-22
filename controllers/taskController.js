@@ -286,13 +286,6 @@ exports.permanentDeleteTask = async (req, res) => {
       return res.status(403).json({ error: 'Only Owners can permanently delete tasks.' });
     }
 
-    // Since we disabled local passwords and are purely using magic links now,
-    // we can either check a master fallback or skip the password check for owners in the new architecture.
-    // For now, let's just accept the fallback 'Ashwin123' as was previously done for OAuth.
-    if (password !== 'Ashwin123') {
-      return res.status(400).json({ error: 'Incorrect password' });
-    }
-
     const docRef = db.collection('tasks').doc(req.params.id);
     const doc = await docRef.get();
     

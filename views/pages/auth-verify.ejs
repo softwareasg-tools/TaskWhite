@@ -62,10 +62,11 @@
       
       statusDiv.innerHTML = '<div class="spinner-border spinner-border-sm me-2" role="status"></div> Finalizing workspace...';
       
+      const idToken = await user.getIdToken();
       const res = await fetch('/api/auth/post-login-routing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email, name: user.displayName || '', firebaseUserId: user.uid })
+        body: JSON.stringify({ idToken, name: user.displayName || '' })
       });
       const data = await res.json();
       

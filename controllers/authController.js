@@ -7,8 +7,8 @@ const transporter = nodemailer.createTransport({
   port: process.env.SMTP_PORT || 465,
   secure: true,
   auth: {
-    user: process.env.SMTP_USER || 'test@example.com',
-    pass: process.env.SMTP_PASS || 'password'
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
   }
 });
 
@@ -95,8 +95,19 @@ exports.sendMagicLink = async (req, res) => {
 
 exports.postLoginRouting = async (req, res) => {
   try {
-    const { email, name, firebaseUserId } = req.body;
-    if (!email) return res.status(400).json({ error: 'Email missing' });
+    const { idToken, name } = req.body;
+    if (!idToken) return res.status(400).json({ error: 'Authentication token missing' });
+
+    let decodedToken;
+    try {
+      decodedToken = await getAuth().verifyIdToken(idToken);
+    } catch(err) {
+      return res.status(401).json({ error: 'Invalid authentication token' });
+    }
+
+    const email = decodedToken.email;
+    const firebaseUserId = decodedToken.uid;
+    if (!email) return res.status(400).json({ error: 'Email missing from token' });
 
     const db = getFirestore();
     

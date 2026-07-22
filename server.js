@@ -4,9 +4,14 @@ const path = require('path');
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
 const expressLayouts = require('express-ejs-layouts');
-
+const helmet = require('helmet');
 
 const app = express();
+
+// Security Headers
+app.use(helmet({
+  contentSecurityPolicy: false, // Disabling CSP temporarily to avoid breaking existing inline scripts/styles without a full audit
+}));
 
 // Middleware
 app.use(express.json());
@@ -22,10 +27,15 @@ app.set('layout', 'layout');
 // Sessions
 app.use(session({
   store: new SQLiteStore({ dir: __dirname, db: 'sessions.sqlite' }),
-  secret: 'taskwhite_super_secret',
+  secret: process.env.SESSION_SECRET || 'taskwhite_fallback_secret_xyz',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days
+  cookie: { 
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  }
 }));
 
 function formatAppDate(dateVal) {
