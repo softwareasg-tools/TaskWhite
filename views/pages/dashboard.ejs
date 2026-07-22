@@ -1622,6 +1622,49 @@
     }
   }
 
+  let draggedTask = null;
+  window.handleTaskDragStart = function(e, taskId, taskStatus, originalDate) {
+    draggedTask = { id: taskId, status: taskStatus, date: originalDate };
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', taskId); 
+  };
+
+  window.handleCalendarDrop = async function(e, targetDateStr) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+    
+    if (!draggedTask) return;
+    if (draggedTask.date === targetDateStr) return; 
+    
+    const todayStr = new Date().toISOString().split('T')[0];
+    
+    if (targetDateStr < todayStr) {
+      alert("Tasks can only be moved to a future date.");
+      return;
+    }
+    
+    if (draggedTask.status === 'Overdue') {
+      const confirmMove = confirm("You are moving an overdue task to a future date. Its status will change to assigned. Accept or cancel?");
+      if (!confirmMove) return;
+    }
+    
+    try {
+      const res = await fetch(`/tasks/${draggedTask.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ due_date: targetDateStr })
+      });
+      if (res.ok) {
+        window.location.reload(); 
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to update task.");
+      }
+    } catch(err) {
+      alert("An error occurred.");
+    }
+  };
+
   function createDayCell(year, month, day, isOtherMonth) {
     // Handle month overflow/underflow internally for date string matching
     let adjYear = year;
@@ -1634,6 +1677,10 @@
     const el = document.createElement('div');
     el.className = `calendar-day ${isOtherMonth ? 'other-month' : ''}`;
     if (selectedDateString === dateStr) el.classList.add('active-day');
+    
+    el.ondragover = (e) => { e.preventDefault(); el.classList.add('drag-over'); };
+    el.ondragleave = (e) => { el.classList.remove('drag-over'); };
+    el.ondrop = (e) => handleCalendarDrop(e, dateStr);
     
     el.innerHTML = `<div class="calendar-day-number">${day}</div>`;
     
@@ -1650,7 +1697,7 @@
           if (t.status === 'Completed') dotColor = '#1e8e3e';
           else if (t.status === 'Overdue') dotColor = '#d93025';
           else if (t.status === 'In Progress') dotColor = '#1a73e8';
-          dotsHtml += `<span style="width: 5px; height: 5px; border-radius: 50%; background-color: ${dotColor}; display: inline-block;"></span>`;
+          dotsHtml += `<span style="width: 5px; height: 5px; border-radius: 50%; background-color: ${dotColor}; display: inline-block;" draggable="true" ondragstart="handleTaskDragStart(event, '${t.id}', '${t.status}', '${t.due_date}')"></span>`;
         });
         dotsHtml += '</div>';
         el.innerHTML += dotsHtml;
@@ -1664,7 +1711,7 @@
         else if (t.status === 'In Progress') bgClass = 'bg-primary text-white';
         
         const title = t.TaskType ? t.TaskType.name : 'Task';
-        el.innerHTML += `<div class="calendar-task-bar ${bgClass}">${title}</div>`;
+        el.innerHTML += `<div class="calendar-task-bar ${bgClass}" draggable="true" ondragstart="handleTaskDragStart(event, '${t.id}', '${t.status}', '${t.due_date}')">${title}</div>`;
       });
       
       if (dayTasks.length > 3) {
