@@ -1631,12 +1631,14 @@
 
   window.handleCalendarDrop = async function(e, targetDateStr) {
     e.preventDefault();
+    e.stopPropagation();
     e.currentTarget.classList.remove('drag-over');
     
     if (!draggedTask) return;
     if (draggedTask.date === targetDateStr) return; 
     
-    const todayStr = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     
     if (targetDateStr < todayStr) {
       alert("Tasks can only be moved to a future date.");
@@ -1666,7 +1668,6 @@
   };
 
   function createDayCell(year, month, day, isOtherMonth) {
-    // Handle month overflow/underflow internally for date string matching
     let adjYear = year;
     let adjMonth = month;
     if (adjMonth < 0) { adjMonth = 11; adjYear--; }
@@ -1678,32 +1679,51 @@
     el.className = `calendar-day ${isOtherMonth ? 'other-month' : ''}`;
     if (selectedDateString === dateStr) el.classList.add('active-day');
     
-    el.ondragover = (e) => { e.preventDefault(); el.classList.add('drag-over'); };
-    el.ondragleave = (e) => { el.classList.remove('drag-over'); };
-    el.ondrop = (e) => handleCalendarDrop(e, dateStr);
+    el.addEventListener('dragover', (e) => { 
+      e.preventDefault(); 
+      e.stopPropagation();
+      el.classList.add('drag-over'); 
+    });
+    el.addEventListener('dragleave', (e) => { 
+      el.classList.remove('drag-over'); 
+    });
+    el.addEventListener('drop', (e) => handleCalendarDrop(e, dateStr));
+    el.addEventListener('click', (e) => {
+      // Prevent click if we dropped something
+      selectDay(dateStr, dayTasks);
+    });
     
     el.innerHTML = `<div class="calendar-day-number">${day}</div>`;
     
-    // Find tasks for this day
     const dayTasks = allTasks.filter(t => t.due_date === dateStr);
     
-    // Responsive: Draw simple dots on mobile (<768px wide) instead of text blocks
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
       if (dayTasks.length > 0) {
-        let dotsHtml = '<div class="d-flex justify-content-center gap-1 mt-auto flex-wrap">';
+        const dotsContainer = document.createElement('div');
+        dotsContainer.className = 'd-flex justify-content-center gap-1 mt-auto flex-wrap';
         dayTasks.slice(0, 3).forEach(t => {
-          let dotColor = '#6b7280'; // text-muted
+          let dotColor = '#6b7280';
           if (t.status === 'Completed') dotColor = '#1e8e3e';
           else if (t.status === 'Overdue') dotColor = '#d93025';
           else if (t.status === 'In Progress') dotColor = '#1a73e8';
-          dotsHtml += `<span style="width: 5px; height: 5px; border-radius: 50%; background-color: ${dotColor}; display: inline-block;" draggable="true" ondragstart="handleTaskDragStart(event, '${t.id}', '${t.status}', '${t.due_date}')"></span>`;
+          
+          const dotEl = document.createElement('span');
+          dotEl.style.width = '5px';
+          dotEl.style.height = '5px';
+          dotEl.style.borderRadius = '50%';
+          dotEl.style.backgroundColor = dotColor;
+          dotEl.style.display = 'inline-block';
+          dotEl.draggable = true;
+          dotEl.addEventListener('dragstart', (e) => {
+            e.stopPropagation();
+            window.handleTaskDragStart(e, t.id, t.status, t.due_date);
+          });
+          dotsContainer.appendChild(dotEl);
         });
-        dotsHtml += '</div>';
-        el.innerHTML += dotsHtml;
+        el.appendChild(dotsContainer);
       }
     } else {
-      // Desktop: Display up to 3 task text bars
       dayTasks.slice(0, 3).forEach(t => {
         let bgClass = 'bg-secondary text-white';
         if (t.status === 'Completed') bgClass = 'bg-success text-white';
@@ -1711,15 +1731,31 @@
         else if (t.status === 'In Progress') bgClass = 'bg-primary text-white';
         
         const title = t.TaskType ? t.TaskType.name : 'Task';
-        el.innerHTML += `<div class="calendar-task-bar ${bgClass}" draggable="true" ondragstart="handleTaskDragStart(event, '${t.id}', '${t.status}', '${t.due_date}')">${title}</div>`;
+        const taskEl = document.createElement('div');
+        taskEl.className = `calendar-task-bar ${bgClass}`;
+        taskEl.draggable = true;
+        taskEl.textContent = title;
+        taskEl.addEventListener('dragstart', (e) => {
+          e.stopPropagation();
+          window.handleTaskDragStart(e, t.id, t.status, t.due_date);
+        });
+        
+        // Prevent clicking task bar from selecting day immediately to avoid conflicts
+        taskEl.addEventListener('click', (e) => e.stopPropagation());
+        
+        el.appendChild(taskEl);
       });
       
       if (dayTasks.length > 3) {
-        el.innerHTML += `<div class="text-muted" style="font-size:0.65rem; font-weight:600;">+${dayTasks.length - 3} more</div>`;
+        const moreEl = document.createElement('div');
+        moreEl.className = 'text-muted';
+        moreEl.style.fontSize = '0.65rem';
+        moreEl.style.fontWeight = '600';
+        moreEl.textContent = `+${dayTasks.length - 3} more`;
+        el.appendChild(moreEl);
       }
     }
     
-    el.onclick = () => selectDay(dateStr, dayTasks);
     return el;
   }
 
