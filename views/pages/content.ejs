@@ -1,0 +1,102 @@
+<%- contentFor('body') %>
+
+<div class="container py-5 mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      
+      <!-- Generated Schema Markup -->
+      <% if (frontmatter.schema) { %>
+      <script type="application/ld+json">
+        <%- JSON.stringify(frontmatter.schema) %>
+      </script>
+      <% } %>
+
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page"><%= title %></li>
+        </ol>
+      </nav>
+
+      <div class="content-wrapper bg-white shadow-sm rounded-4 p-4 p-md-5">
+        <div class="markdown-content">
+          <%- htmlContent %>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<style>
+  .markdown-content h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #1a1a1a;
+  }
+  .markdown-content h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: #2a2a2a;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 0.5rem;
+  }
+  .markdown-content h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .markdown-content p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #4a4a4a;
+    margin-bottom: 1.5rem;
+  }
+  .markdown-content ul, .markdown-content ol {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #4a4a4a;
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+  }
+  .markdown-content li {
+    margin-bottom: 0.5rem;
+  }
+  .markdown-content strong {
+    font-weight: 600;
+    color: #2a2a2a;
+  }
+  .markdown-content blockquote {
+    border-left: 4px solid #0d6efd;
+    padding-left: 1rem;
+    margin-left: 0;
+    color: #555;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0 4px 4px 0;
+  }
+  .markdown-content table {
+    width: 100%;
+    margin-bottom: 2rem;
+    border-collapse: collapse;
+  }
+  .markdown-content table th, .markdown-content table td {
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+  }
+  .markdown-content table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+  }
+  .markdown-content a {
+    color: #0d6efd;
+    text-decoration: none;
+  }
+  .markdown-content a:hover {
+    text-decoration: underline;
+  }
+</style>

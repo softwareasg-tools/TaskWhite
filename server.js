@@ -85,6 +85,8 @@ app.use('/', authRoutes);
 app.use('/', dashboardRoutes);
 app.use('/', taskRoutes);
 app.use('/', masterDataRoutes);
+const contentRoutes = require('./routes/contentRoutes');
+app.use('/', contentRoutes);
 
 // Passport
 const passport = require('passport');
