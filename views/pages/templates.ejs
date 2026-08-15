@@ -140,7 +140,7 @@
           <label class="form-label text-muted small fw-bold">RECURRENCE</label>
           <div class="p-3 bg-surface rounded border">
             <div class="row g-2">
-              <div class="col-4">
+              <div class="col-12 col-sm-4">
                 <label class="form-label text-muted small" style="font-size: 0.7rem;">FREQUENCY</label>
                 <select id="template_freq" class="form-select form-select-sm" onchange="handleFreqChange()">
                   <option value="weekly">Weekly</option>
@@ -149,7 +149,7 @@
                   <option value="yearly">Yearly</option>
                 </select>
               </div>
-              <div class="col-4" id="template_month_container" style="display: none;">
+              <div class="col-12 col-sm-4" id="template_month_container" style="display: none;">
                 <label class="form-label text-muted small" style="font-size: 0.7rem;">MONTH</label>
                 <select id="template_month" class="form-select form-select-sm">
                   <option value="1">Jan</option>
@@ -166,7 +166,7 @@
                   <option value="12">Dec</option>
                 </select>
               </div>
-              <div class="col-4" id="template_day_container">
+              <div class="col-12 col-sm-4" id="template_day_container">
                 <label id="template_day_label" class="form-label text-muted small" style="font-size: 0.7rem;">DAY OF MONTH</label>
                 <input type="number" id="template_day" class="form-control form-control-sm" min="1" max="31" value="20" required>
               </div>
@@ -193,18 +193,18 @@
     if (val === 'weekly') {
       dayLabel.innerText = 'DAY OF WEEK (1-7)';
       monthContainer.style.display = 'none';
-      freqContainer.className = 'col-6';
-      dayContainer.className = 'col-6';
+      freqContainer.className = 'col-12 col-sm-6';
+      dayContainer.className = 'col-12 col-sm-6';
     } else if (val === 'yearly') {
       dayLabel.innerText = 'DAY OF MONTH';
       monthContainer.style.display = 'block';
-      freqContainer.className = 'col-4';
-      dayContainer.className = 'col-4';
+      freqContainer.className = 'col-12 col-sm-4';
+      dayContainer.className = 'col-12 col-sm-4';
     } else {
       dayLabel.innerText = 'DAY OF MONTH';
       monthContainer.style.display = 'none';
-      freqContainer.className = 'col-6';
-      dayContainer.className = 'col-6';
+      freqContainer.className = 'col-12 col-sm-6';
+      dayContainer.className = 'col-12 col-sm-6';
     }
   }
 
