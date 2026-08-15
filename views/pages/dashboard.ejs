@@ -45,7 +45,7 @@
         <% } %>
       </div>
       <div class="card-body p-3" id="sidebarFiltersContainer">
-        <form id="filterForm" method="GET" action="/dashboard" onchange="submitDashboardFilters()">
+        <form id="filterForm" method="GET" action="/dashboard">
           <% if (query.view) { %>
             <input type="hidden" name="view" value="<%= query.view %>">
           <% } %>
