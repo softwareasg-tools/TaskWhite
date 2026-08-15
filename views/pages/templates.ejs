@@ -240,7 +240,7 @@
 
   async function handleInlineCreateCustom(type, event) {
     if (event) event.preventDefault();
-    let name = await customPrompt('Enter new Task name:');
+    let name = prompt('Enter new Task name:');
     if (!name || name.trim() === '') return;
     try {
       const res = await fetch('/api/task-types', {
