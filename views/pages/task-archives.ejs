@@ -102,7 +102,8 @@
 
 <script>
   async function unarchiveTask(taskId) {
-    if (!confirm('Are you sure you want to unarchive this task? It will return to the dashboard.')) return;
+    const ok = await customConfirm('Are you sure you want to unarchive this task? It will return to the dashboard.', 'Unarchive Task');
+    if (!ok) return;
     try {
       const response = await fetch(`/tasks/${taskId}/unarchive`, {
         method: 'POST'

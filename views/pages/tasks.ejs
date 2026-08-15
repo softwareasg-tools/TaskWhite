@@ -243,7 +243,8 @@
     }
 
     if (idsToTrash.length > 0) {
-      if (confirm(`Move ${idsToTrash.length} task(s) to recycle bin?`)) {
+      const ok = await customConfirm(`Move ${idsToTrash.length} task(s) to recycle bin?`, 'Move to Recycle Bin');
+      if (ok) {
         executeBulkTrash(idsToTrash);
       }
     }

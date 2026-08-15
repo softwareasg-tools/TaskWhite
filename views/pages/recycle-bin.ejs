@@ -122,7 +122,8 @@
   let deleteModalObj = null;
 
   async function restoreTask(taskId) {
-    if (!confirm('Are you sure you want to restore this task?')) return;
+    const ok = await customConfirm('Are you sure you want to restore this task?', 'Restore Task');
+    if (!ok) return;
     try {
       const response = await fetch(`/tasks/${taskId}/restore`, {
         method: 'POST'

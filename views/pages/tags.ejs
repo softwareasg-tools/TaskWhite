@@ -185,7 +185,8 @@ async function handleRenameTag(e) {
 }
 
 async function confirmDeleteTag(tag) {
-  if (confirm(`Are you sure you want to delete the tag "${tag}"? It will be removed from all tasks.`)) {
+  const ok = await customConfirm(`Are you sure you want to delete the tag "${tag}"? It will be removed from all tasks.`, 'Delete Tag');
+  if (ok) {
     try {
       const res = await fetch(`/api/tags/${encodeURIComponent(tag)}`, {
         method: 'DELETE'
@@ -193,11 +194,11 @@ async function confirmDeleteTag(tag) {
       if (res.ok) {
         window.location.reload();
       } else {
-        alert('Error deleting tag');
+        showToast('Error deleting tag', 'danger');
       }
     } catch (err) {
       console.error(err);
-      alert('Error deleting tag');
+      showToast('Error deleting tag', 'danger');
     }
   }
 }
