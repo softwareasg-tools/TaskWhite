@@ -567,3 +567,117 @@ exports.unarchiveTask = async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 };
+
+exports.getTags = async (req, res) => {
+  try {
+    const db = require('firebase-admin/firestore').getFirestore();
+    const orgId = req.session.user.organization_id;
+    
+    const snapshot = await db.collection('tasks')
+      .where('organization_id', '==', orgId)
+      .where('deleted_at', '==', null)
+      .get();
+      
+    const tagCounts = {};
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.tags && Array.isArray(data.tags) && !data.is_archived) {
+        data.tags.forEach(tag => {
+          tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+        });
+      }
+    });
+
+    const tags = Object.keys(tagCounts).map(name => ({
+      name,
+      count: tagCounts[name]
+    })).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
+    res.render('pages/tags', { tags });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error');
+  }
+};
+
+exports.deleteTag = async (req, res) => {
+  try {
+    const db = require('firebase-admin/firestore').getFirestore();
+    const FieldValue = require('firebase-admin/firestore').FieldValue;
+    const orgId = req.session.user.organization_id;
+    const tagToDelete = req.params.tag;
+    
+    const snapshot = await db.collection('tasks')
+      .where('organization_id', '==', orgId)
+      .where('tags', 'array-contains', tagToDelete)
+      .get();
+      
+    let batch = db.batch();
+    let count = 0;
+    
+    snapshot.forEach(doc => {
+      batch.update(doc.ref, {
+        tags: FieldValue.arrayRemove(tagToDelete),
+        updated_at: FieldValue.serverTimestamp()
+      });
+      count++;
+    });
+    
+    if (count > 0) {
+      await batch.commit();
+    }
+    
+    res.json({ success: true, count });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+exports.renameTag = async (req, res) => {
+  try {
+    const db = require('firebase-admin/firestore').getFirestore();
+    const FieldValue = require('firebase-admin/firestore').FieldValue;
+    const orgId = req.session.user.organization_id;
+    const { oldTag, newTag } = req.body;
+    
+    if (!oldTag || !newTag || oldTag === newTag) {
+      return res.status(400).json({ error: 'Invalid tag names' });
+    }
+    
+    const snapshot = await db.collection('tasks')
+      .where('organization_id', '==', orgId)
+      .where('tags', 'array-contains', oldTag)
+      .get();
+      
+    let count = 0;
+    let batch = db.batch();
+    
+    for (const doc of snapshot.docs) {
+      const currentTags = doc.data().tags || [];
+      const newTags = currentTags.filter(t => t !== oldTag);
+      if (!newTags.includes(newTag)) newTags.push(newTag);
+      
+      batch.update(doc.ref, {
+        tags: newTags,
+        updated_at: FieldValue.serverTimestamp()
+      });
+      count++;
+      
+      if (count % 400 === 0) {
+         await batch.commit();
+         batch = db.batch();
+      }
+    }
+    
+    if (count % 400 !== 0 && count > 0) {
+      await batch.commit();
+    }
+    
+    res.json({ success: true, count });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
