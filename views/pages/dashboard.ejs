@@ -79,7 +79,7 @@
           
           <div class="mb-4">
             <label class="form-label fw-bold  small">Clients</label>
-            <select name="client_id" class="form-select form-select-sm">
+            <select name="client_id" class="form-select form-select-sm" onchange="submitDashboardFilters()">
               <option value="">All Clients</option>
               <% clients.forEach(client => { %>
                 <option value="<%= client.id %>" <%= query.client_id == client.id ? 'selected' : '' %>><%= client.name %></option>
@@ -91,7 +91,7 @@
           
           <div class="mb-4">
             <label class="form-label fw-bold  small">Team Members</label>
-            <select name="user_id" class="form-select form-select-sm">
+            <select name="user_id" class="form-select form-select-sm" onchange="submitDashboardFilters()">
               <option value="">All Members</option>
               <% users.forEach(u => { %>
                 <option value="<%= u.id %>" <%= query.user_id == u.id ? 'selected' : '' %>><%= u.name %></option>
@@ -112,7 +112,7 @@
               %>
               <% taskTypes.forEach(type => { %>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="task_type_id" value="<%= type.id %>" id="filter_type_<%= type.id %>" <%= selectedTypes.includes(type.id) ? 'checked' : '' %>>
+                  <input class="form-check-input" type="checkbox" name="task_type_id" value="<%= type.id %>" id="filter_type_<%= type.id %>" <%= selectedTypes.includes(type.id) ? 'checked' : '' %> onchange="submitDashboardFilters()">
                   <label class="form-check-label text-muted small" for="filter_type_<%= type.id %>"><%= type.name %></label>
                 </div>
               <% }) %>
@@ -145,7 +145,7 @@
               %>
               <% availableTags.forEach(tag => { %>
                 <div class="form-check">
-                  <input class="form-check-input sidebar-tag-checkbox" type="checkbox" name="tag" value="<%= tag %>" id="filter_tag_<%= Buffer.from(tag).toString('hex') %>" <%= selectedTags.includes(tag) ? 'checked' : '' %>>
+                  <input class="form-check-input sidebar-tag-checkbox" type="checkbox" name="tag" value="<%= tag %>" id="filter_tag_<%= Buffer.from(tag).toString('hex') %>" <%= selectedTags.includes(tag) ? 'checked' : '' %> onchange="submitDashboardFilters()">
                   <label class="form-check-label text-muted small" for="filter_tag_<%= Buffer.from(tag).toString('hex') %>"><%= tag %></label>
                 </div>
               <% }) %>
@@ -1005,6 +1005,7 @@
       // clear the inputs when hidden
       document.querySelector('input[name="start_date"]').value = '';
       document.querySelector('input[name="end_date"]').value = '';
+      submitDashboardFilters();
     }
   }
 
@@ -1242,8 +1243,8 @@
     if (typeof flatpickr !== 'undefined') {
       flatpickr("#due_date_input", { dateFormat: "Y-m-d", allowInput: false, disableMobile: true });
       flatpickr("#repeat_end_date", { dateFormat: "Y-m-d", allowInput: false, disableMobile: true });
-      flatpickr("#filter_start_date", { dateFormat: "Y-m-d", allowInput: false, disableMobile: true });
-      flatpickr("#filter_end_date", { dateFormat: "Y-m-d", allowInput: false, disableMobile: true });
+      flatpickr("#filter_start_date", { dateFormat: "Y-m-d", allowInput: false, disableMobile: true, onChange: submitDashboardFilters });
+      flatpickr("#filter_end_date", { dateFormat: "Y-m-d", allowInput: false, disableMobile: true, onChange: submitDashboardFilters });
       flatpickr("#edit_due_date_input", { dateFormat: "Y-m-d", allowInput: false, disableMobile: true });
     }
 
