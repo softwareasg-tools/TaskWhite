@@ -625,12 +625,8 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label text-muted small fw-bold">TAGS</label>
-          <div id="editTagInputContainer" class="form-control d-flex flex-wrap gap-1 align-items-center" style="min-height: 42px; cursor: text; background: transparent;" onclick="document.getElementById('edit_tags_input').focus()">
-            <input type="text" id="edit_tags_input" class="border-0 shadow-none p-0 flex-grow-1 bg-transparent text-body" style="outline: none; min-width: 100px;" placeholder="Type and press comma...">
-          </div>
-          <input type="hidden" name="tags" id="editHiddenTagsInput">
-          <small class="text-muted" style="font-size: 0.7rem;">Press comma (,) or Enter to add a tag.</small>
+          <label class="form-label text-muted small fw-bold">TAGS (Comma separated)</label>
+          <input type="text" id="edit_tags_input" class="form-control" placeholder="e.g. podcast, urgent">
         </div>
 
         <div class="mb-3">
@@ -1099,13 +1095,8 @@
     document.getElementById('edit_task_type_id_input').value = task.task_type_id || '';
     document.getElementById('edit_assigned_user_id_input').value = task.assigned_user_id || '';
     document.getElementById('edit_due_date_input').value = task.due_date || '';
-    
-    // Update Edit Tags UI
-    window.editCurrentTags = task.tags || [];
-    if (typeof window.renderEditTags === 'function') {
-      window.renderEditTags();
-    }
-    
+    document.getElementById('edit_tags_input').value = (task.tags || []).join(', ');
+
     editTaskModalObj.show();
       setTimeout(() => {
         const statusInput = document.getElementById('edit_status_input');
@@ -1125,7 +1116,7 @@
       task_type_id: document.getElementById('edit_task_type_id_input').value,
       assigned_user_id: document.getElementById('edit_assigned_user_id_input').value,
       due_date: document.getElementById('edit_due_date_input').value,
-      tags: document.getElementById('editHiddenTagsInput').value
+      tags: document.getElementById('edit_tags_input').value
     };
 
     try {
@@ -1945,7 +1936,7 @@
 
   async function refreshDashboardTable(taskIdToHighlight = null, completedTaskIds = null) {
     try {
-      const res = await fetch(window.location.href, { cache: 'no-store' });
+      const res = await fetch(window.location.href);
       const html = await res.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
@@ -2419,50 +2410,6 @@
         }
       }
     }
-
-    // Edit Task Tags Logic
-    const editTagInputField = document.getElementById('edit_tags_input');
-    const editTagInputContainer = document.getElementById('editTagInputContainer');
-    const editHiddenTagsInput = document.getElementById('editHiddenTagsInput');
-    window.editCurrentTags = [];
-    
-    window.renderEditTags = function() {
-      if (editTagInputContainer) {
-        editTagInputContainer.querySelectorAll('.visual-tag').forEach(el => el.remove());
-        window.editCurrentTags.forEach((tag, index) => {
-          const span = document.createElement('span');
-          span.className = 'visual-tag badge bg-surface text-dark border d-flex align-items-center gap-1 px-2 py-1';
-          span.innerHTML = `<span>${tag}</span> <i class="bi bi-x-circle-fill text-muted" style="cursor:pointer;" onclick="removeEditTag(${index})"></i>`;
-          editTagInputContainer.insertBefore(span, editTagInputField);
-        });
-      }
-      if (editHiddenTagsInput) {
-        editHiddenTagsInput.value = JSON.stringify(window.editCurrentTags);
-      }
-    };
-    
-    window.removeEditTag = function(index) {
-      window.editCurrentTags.splice(index, 1);
-      window.renderEditTags();
-    };
-    
-    if (editTagInputField) {
-      editTagInputField.addEventListener('keydown', function(e) {
-        if (e.key === ',' || e.key === 'Enter') {
-          e.preventDefault();
-          const val = this.value.trim().replace(/,/g, '');
-          if (val && !window.editCurrentTags.includes(val)) {
-            window.editCurrentTags.push(val);
-            window.renderEditTags();
-          }
-          this.value = '';
-        } else if (e.key === 'Backspace' && this.value === '' && window.editCurrentTags.length > 0) {
-          window.editCurrentTags.pop();
-          window.renderEditTags();
-        }
-      });
-    }
-
   }); // End DOMContentLoaded
 </script>
 
