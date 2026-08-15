@@ -2226,11 +2226,11 @@
         if (e.target.tagName === 'TEXTAREA') {
            return; // Let user type newlines in textareas
         }
-        if (e.target.id === 'tagInputField') {
+        if (e.target.id === 'tagInputField' || e.target.id === 'edit_tags_input') {
            return; // Let the tag input process the tag on Enter
         }
-        if (e.target.tagName === 'BUTTON') {
-           return; // Let standard button behavior occur
+        if (e.target.tagName === 'BUTTON' || e.target.closest('.dropdown') || e.target.closest('.dropdown-menu') || e.target.classList.contains('dropdown-item')) {
+           return; // Let standard button and dropdown item behavior occur
         }
         
         e.preventDefault();

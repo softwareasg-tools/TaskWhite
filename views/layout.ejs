@@ -380,6 +380,10 @@
         modalEl.addEventListener('hidden.bs.modal', () => {
           finalize(null);
           modalEl.remove();
+          if (document.querySelector('.modal.show')) {
+            document.body.classList.add('modal-open');
+            document.body.style.overflow = 'hidden';
+          }
         });
         
         modal.show();
