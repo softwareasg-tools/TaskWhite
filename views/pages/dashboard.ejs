@@ -214,14 +214,15 @@
     transition: transform 0.3s ease;
   }
   .keyboard-focused {
-    background-color: rgba(13, 110, 253, 0.05) !important;
+    background-color: rgba(13, 110, 253, 0.1) !important;
     outline: none !important;
+  }
+  .keyboard-focused td:first-child {
     box-shadow: inset 4px 0 0 0 var(--bs-primary) !important;
   }
   [data-bs-theme="dark"] .keyboard-focused {
-    background-color: rgba(13, 110, 253, 0.15) !important;
+    background-color: rgba(13, 110, 253, 0.2) !important;
     outline: none !important;
-    box-shadow: inset 4px 0 0 0 var(--bs-primary) !important;
   }
   .task-selected {
     background-color: rgba(135, 206, 235, 0.2) !important;
