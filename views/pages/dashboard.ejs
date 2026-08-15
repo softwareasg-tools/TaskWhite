@@ -216,6 +216,10 @@
   .keyboard-focused {
     background-color: rgba(13, 110, 253, 0.1) !important;
     outline: none !important;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
   }
   .keyboard-focused td:first-child {
     box-shadow: inset 4px 0 0 0 var(--bs-primary) !important;
@@ -223,6 +227,7 @@
   [data-bs-theme="dark"] .keyboard-focused {
     background-color: rgba(13, 110, 253, 0.2) !important;
     outline: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
   }
   .task-selected {
     background-color: rgba(135, 206, 235, 0.2) !important;
