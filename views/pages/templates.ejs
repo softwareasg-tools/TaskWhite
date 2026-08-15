@@ -39,9 +39,9 @@
               </td>
               <td>
                 <% if (temp.recurrence_rule && temp.recurrence_rule.frequency === 'monthly') { %>
-                  <span class="badge bg-surface  border">Monthly (on day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
+                  <span class="badge bg-surface text-body border fw-normal px-2 py-1">Monthly (day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
                 <% } else { %>
-                  <span class="badge bg-surface  border">Recurring</span>
+                  <span class="badge bg-surface text-body border fw-normal px-2 py-1">Recurring</span>
                 <% } %>
               </td>
               <td>
@@ -76,9 +76,9 @@
               </div>
               <div class="d-flex flex-column align-items-end gap-1">
                 <% if (temp.recurrence_rule && temp.recurrence_rule.frequency === 'monthly') { %>
-                  <span class="badge bg-surface  border" style="font-size: 0.65rem;">Monthly (day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
+                  <span class="badge bg-surface text-body border fw-normal" style="font-size: 0.65rem;">Monthly (day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
                 <% } else { %>
-                  <span class="badge bg-surface  border" style="font-size: 0.65rem;">Recurring</span>
+                  <span class="badge bg-surface text-body border fw-normal" style="font-size: 0.65rem;">Recurring</span>
                 <% } %>
               </div>
             </div>
