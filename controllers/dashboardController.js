@@ -154,14 +154,40 @@ exports.getDashboard = async (req, res) => {
       filteredTasks = filteredTasks.filter(t => t.status === req.query.status);
     }
 
-    // Extract all unique tags for the filter dropdown (from all org tasks, not just filtered ones)
+    // Fetch master tags collection in parallel with task tags
+    const tagsSnap = await db.collection('tags').where('organization_id', '==', orgId).get();
+
+    // Extract all unique tags for the filter dropdown
     const uniqueTags = new Set();
-    allTasks.forEach(t => {
-      if (t.tags && Array.isArray(t.tags)) {
-        t.tags.forEach(tag => uniqueTags.add(tag));
+    
+    // 1. Master tags collection
+    tagsSnap.docs.forEach(doc => {
+      const data = doc.data();
+      if (data.name && typeof data.name === 'string') {
+        uniqueTags.add(data.name.trim());
       }
     });
-    const availableTags = Array.from(uniqueTags).sort();
+
+    // 2. Task tags (supporting both array and comma-separated string representations)
+    allTasks.forEach(t => {
+      if (t.tags) {
+        if (Array.isArray(t.tags)) {
+          t.tags.forEach(tag => {
+            if (tag && typeof tag === 'string' && tag.trim()) {
+              uniqueTags.add(tag.trim());
+            }
+          });
+        } else if (typeof t.tags === 'string' && t.tags.trim()) {
+          t.tags.split(',').forEach(tag => {
+            if (tag && tag.trim()) {
+              uniqueTags.add(tag.trim());
+            }
+          });
+        }
+      }
+    });
+
+    const availableTags = Array.from(uniqueTags).filter(Boolean).sort();
 
     // KPI Cards
     const totalTasks = filteredTasks.length;
