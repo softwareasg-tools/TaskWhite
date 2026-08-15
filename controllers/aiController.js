@@ -119,10 +119,10 @@ exports.generateTaskTypes = async (req, res) => {
       
       prompt += `\n\nReturn ONLY a valid, raw JSON array of strings. Do not include markdown blocks or any other text.\nExample output format for a valid industry:\n["Draft Contracts", "Client Consultation", "Review Documents", "Court Filing"]`;
 
-      // Set a strict 6-second timeout so requests never hang indefinitely
+      // Set a strict 10-second timeout so requests never hang indefinitely
       const response = await fetch('https://router.bynara.id/v1/chat/completions', {
         method: 'POST',
-        signal: AbortSignal.timeout(6000),
+        signal: AbortSignal.timeout(10000),
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
