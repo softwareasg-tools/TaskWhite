@@ -97,18 +97,19 @@ async function generateTasksFromTemplates(db, orgId, force = false) {
           targetDueDate = `${targetYear}-${String(targetMonth + 1).padStart(2, '0')}-${String(nextActualDay).padStart(2, '0')}`;
         }
       } else if (freq === 'yearly') {
+        const targetMonthIndex = parseInt(rule.yearlyMonth || 12, 10);
         let targetYear = currentYear;
-        const lastDay = new Date(targetYear, 12, 0).getDate();
+        const lastDay = new Date(targetYear, targetMonthIndex, 0).getDate();
         const actualDay = Math.min(targetDay, lastDay);
-        const currentDueDate = `${targetYear}-12-${String(actualDay).padStart(2, '0')}`;
+        const currentDueDate = `${targetYear}-${String(targetMonthIndex).padStart(2, '0')}-${String(actualDay).padStart(2, '0')}`;
         
         if (currentDueDate >= todayStr) {
           targetDueDate = currentDueDate;
         } else {
           targetYear++;
-          const nextLastDay = new Date(targetYear, 12, 0).getDate();
+          const nextLastDay = new Date(targetYear, targetMonthIndex, 0).getDate();
           const nextActualDay = Math.min(targetDay, nextLastDay);
-          targetDueDate = `${targetYear}-12-${String(nextActualDay).padStart(2, '0')}`;
+          targetDueDate = `${targetYear}-${String(targetMonthIndex).padStart(2, '0')}-${String(nextActualDay).padStart(2, '0')}`;
         }
       } else {
         continue;

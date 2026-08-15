@@ -140,16 +140,33 @@
           <label class="form-label text-muted small fw-bold">RECURRENCE</label>
           <div class="p-3 bg-surface rounded border">
             <div class="row g-2">
-              <div class="col-6">
+              <div class="col-4">
                 <label class="form-label text-muted small" style="font-size: 0.7rem;">FREQUENCY</label>
-                <select id="template_freq" class="form-select form-select-sm" onchange="document.getElementById('template_day_label').innerText = this.value === 'weekly' ? 'DAY OF WEEK (1-7)' : 'DAY OF MONTH'">
+                <select id="template_freq" class="form-select form-select-sm" onchange="handleFreqChange()">
                   <option value="weekly">Weekly</option>
                   <option value="monthly" selected>Monthly</option>
                   <option value="quarterly">Quarterly</option>
                   <option value="yearly">Yearly</option>
                 </select>
               </div>
-              <div class="col-6">
+              <div class="col-4" id="template_month_container" style="display: none;">
+                <label class="form-label text-muted small" style="font-size: 0.7rem;">MONTH</label>
+                <select id="template_month" class="form-select form-select-sm">
+                  <option value="1">Jan</option>
+                  <option value="2">Feb</option>
+                  <option value="3">Mar</option>
+                  <option value="4">Apr</option>
+                  <option value="5">May</option>
+                  <option value="6">Jun</option>
+                  <option value="7" selected>Jul</option>
+                  <option value="8">Aug</option>
+                  <option value="9">Sep</option>
+                  <option value="10">Oct</option>
+                  <option value="11">Nov</option>
+                  <option value="12">Dec</option>
+                </select>
+              </div>
+              <div class="col-4" id="template_day_container">
                 <label id="template_day_label" class="form-label text-muted small" style="font-size: 0.7rem;">DAY OF MONTH</label>
                 <input type="number" id="template_day" class="form-control form-control-sm" min="1" max="31" value="20" required>
               </div>
@@ -166,6 +183,31 @@
 </div>
 
 <script>
+  function handleFreqChange() {
+    const val = document.getElementById('template_freq').value;
+    const dayLabel = document.getElementById('template_day_label');
+    const monthContainer = document.getElementById('template_month_container');
+    const dayContainer = document.getElementById('template_day_container');
+    const freqContainer = document.getElementById('template_freq').parentElement;
+
+    if (val === 'weekly') {
+      dayLabel.innerText = 'DAY OF WEEK (1-7)';
+      monthContainer.style.display = 'none';
+      freqContainer.className = 'col-6';
+      dayContainer.className = 'col-6';
+    } else if (val === 'yearly') {
+      dayLabel.innerText = 'DAY OF MONTH';
+      monthContainer.style.display = 'block';
+      freqContainer.className = 'col-4';
+      dayContainer.className = 'col-4';
+    } else {
+      dayLabel.innerText = 'DAY OF MONTH';
+      monthContainer.style.display = 'none';
+      freqContainer.className = 'col-6';
+      dayContainer.className = 'col-6';
+    }
+  }
+
   // Search Templates
   document.getElementById('templateSearch').addEventListener('keyup', function(e) {
     const term = e.target.value.toLowerCase();
@@ -191,14 +233,16 @@
       return;
     }
 
+    const freq = document.getElementById('template_freq').value || 'monthly';
     const payload = {
       task_type_id: taskTypeId,
       assigned_user_id: document.getElementById('templateAssignee').value,
       recurrence_rule: {
-        frequency: document.getElementById('template_freq').value || 'monthly',
+        frequency: freq,
         interval: 1,
         monthlyType: 'dayOfMonth',
         monthlyDay: parseInt(document.getElementById('template_day').value || 20, 10),
+        yearlyMonth: freq === 'yearly' ? parseInt(document.getElementById('template_month').value || 1, 10) : undefined,
         endType: 'never'
       }
     };
