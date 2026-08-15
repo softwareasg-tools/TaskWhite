@@ -17,7 +17,7 @@ The main difference is their foundational design: Smartsheet is a spreadsheet-fi
 
 ## Who is it For?
 
-*   **Choose TaskWhite if:** You want a visual, user-friendly platform that promotes active collaboration. It's perfect for marketing, product, HR, and agile teams who find spreadsheets stifling and want to manage workflows, files, and conversations in one unified space.
+*   **Choose TaskWhite if:** You want a visual, user-friendly platform that promotes active collaboration. It's perfect for marketing, product, HR, and agile teams who find spreadsheets stifling and want to manage workflows, and conversations in one unified space.
 *   **Choose Smartsheet if:** You are managing highly structured, data-heavy projects (like construction, financial forecasting, or complex inventory), rely heavily on custom formulas, and your team is already highly proficient in Excel.
 
 ## Comprehensive Comparison Table

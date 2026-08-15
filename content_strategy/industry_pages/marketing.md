@@ -18,7 +18,7 @@ Marketing teams thrive on creativity and execution, but managing multiple campai
 ## How TaskWhite Can Help
 
 *   **Visual Campaign Tracking:** Use Kanban boards and timelines to visualize the entire lifecycle of a campaign from ideation to execution.
-*   **Centralized Collaboration:** Keep all feedback, files, and approvals in one place with task-level comments and attachments.
+*   **Centralized Collaboration:** Keep all feedback and approvals in one place with task-level comments.
 *   **Clear Accountability:** Assign tasks, set due dates, and create subtasks to break down complex projects into manageable steps.
 *   **Custom Workflows:** Create custom fields to track campaign status, target audience, or budget.
 

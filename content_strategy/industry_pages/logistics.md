@@ -49,7 +49,7 @@ Improve your operational efficiency with these logistics templates:
 A: TaskWhite offers a robust API and various integration options, allowing you to connect it with your core operational software to reduce duplicate data entry.
 
 **Q: How can drivers update their status while on the road?**
-A: Drivers can use the TaskWhite mobile app to quickly change task statuses, add comments regarding delays, or upload photos of signed delivery receipts.
+A: Drivers can use the TaskWhite mobile app to quickly change task statuses, add comments regarding delays.
 
 **Q: Can we track key performance indicators (KPIs) like on-time delivery rates?**
 A: Yes, by utilizing custom fields and dashboard reporting, you can track specific metrics related to task completion times and workflow efficiency.

@@ -31,7 +31,7 @@ Basecamp is highly opinionated software. It organizes work into "Projects," each
 
 ## Collaboration & Communication
 *   **Basecamp:** Communication is its strongest suit. It replaces Slack and email with its Message Boards and Campfire chats. It excels at asynchronous, long-form communication.
-*   **TaskWhite:** Focuses on *contextual* collaboration. Comments, files, and proofing happen directly on the tasks themselves, ensuring communication is always tied to actionable work rather than getting lost in a chat room.
+*   **TaskWhite:** Focuses on *contextual* collaboration. Comments, and proofing happen directly on the tasks themselves, ensuring communication is always tied to actionable work rather than getting lost in a chat room.
 
 ## Mobile Experience
 Both tools offer excellent mobile apps. Basecamp’s app is great for reading updates and chatting. TaskWhite’s app allows for full project management, including updating statuses, logging time, and viewing project boards on the go.

@@ -18,7 +18,7 @@ For Sales Teams, managing leads, tracking follow-ups, and collaborating on propo
 ## How TaskWhite Solves These Challenges
 - **Customizable Dashboards:** Gain immediate visibility into what matters most. Track progress at a glance and ensure alignment with strategic goals.
 - **Automated Workflows:** Reduce manual follow-ups by automating repetitive tasks, allowing Sales Teams to focus on high-impact work.
-- **Centralized Communication:** Keep all discussions, files, and updates attached directly to the relevant tasks to prevent information silos.
+- **Centralized Communication:** Keep all discussions, and updates attached directly to the relevant tasks to prevent information silos.
 - **Real-Time Progress Tracking:** Monitor milestones and deliverables effortlessly, ensuring nothing slips through the cracks.
 
 ## Key Benefits

@@ -93,7 +93,7 @@ Both platforms have heavily invested in AI.
 ## Switching Considerations
 Moving from ClickUp to TaskWhite is a breath of fresh air for teams experiencing feature fatigue. TaskWhite provides an automated importer to bring over your ClickUp tasks, mapping their complex Space/Folder/List hierarchy into TaskWhite’s cleaner Project structure. 
 
-## Frequently Asked Questions (GEO Optimized)
+## Frequently Asked Questions
 
 **Q: Is TaskWhite faster than ClickUp?**
 A: Yes. TaskWhite is specifically optimized for speed and responsiveness, addressing one of the most common complaints users have about ClickUp's heavy interface.

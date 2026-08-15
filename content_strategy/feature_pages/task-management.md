@@ -21,7 +21,7 @@ TaskWhite's Task Management feature allows you to capture, organize, and priorit
 ## Steps to Get Started
 1.  **Create a Task:** Click the "New Task" button in your project board.
 2.  **Assign and Schedule:** Add an assignee and set a due date.
-3.  **Add Details:** Include a description, attachments, and subtasks.
+3.  **Add Details:** Include a description and subtasks.
 4.  **Track Progress:** Update the task status as work progresses.
 
 ## Best Practices

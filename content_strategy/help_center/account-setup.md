@@ -6,7 +6,7 @@ Customizing your TaskWhite account helps you work the way you want. Here’s how
 Update your personal information to help your team recognize you.
 1. Click your avatar in the top right corner.
 2. Select **My Profile**.
-3. Upload a photo, add your job title, and update your bio.
+3. Add your job title, and update your bio.
 
 ## Notification Preferences
 Control how and when you receive updates.

@@ -20,7 +20,7 @@ This roadmap outlines the complete YouTube content strategy for TaskWhite, desig
 * **Demo Sequence:** High-level flythrough of the dashboard, showing a completed project, a quick chat message, and a beautiful report.
 * **Screen Recording Plan:** Cinematic smooth pans (using screen recording tools with zoom/pan capabilities) across the UI. No clicking, just showcasing the clean interface.
 * **Call-to-Action:** "Click the link in the description to start your free 14-day trial of TaskWhite today."
-* **SEO Description:** Discover how TaskWhite can transform your team's productivity. In this video, we explain what TaskWhite is, how it works, and why it's the ultimate alternative to juggling multiple productivity apps.
+* **Description:** Discover how TaskWhite can transform your team's productivity. In this video, we explain what TaskWhite is, how it works, and why it's the ultimate alternative to juggling multiple productivity apps.
 * **Keywords:** TaskWhite overview, productivity app, project management software, TaskWhite review
 * **Tags:** #TaskWhite #Productivity #ProjectManagement #SoftwareReview
 * **Suggested Shorts:** 
@@ -41,7 +41,7 @@ This roadmap outlines the complete YouTube content strategy for TaskWhite, desig
 * **Demo Sequence:** Logging in for the first time, clicking through the avatar settings, toggling dark mode, opening the sidebar menu.
 * **Screen Recording Plan:** Real-time follow-along speed. Highlight clicks with a yellow cursor circle.
 * **Call-to-Action:** "Now that your profile is set, watch our next video on how to create your very first project."
-* **SEO Description:** Just signed up for TaskWhite? This beginner tutorial covers everything you need to know to set up your profile, navigate the interface, and start customizing your workspace.
+* **Description:** Just signed up for TaskWhite? This beginner tutorial covers everything you need to know to set up your profile, navigate the interface, and start customizing your workspace.
 * **Keywords:** TaskWhite tutorial, how to use TaskWhite, TaskWhite setup, beginner guide
 * **Tags:** #TaskWhiteTutorial #BeginnerGuide #ProductivityTools
 * **Suggested Shorts:**
@@ -63,7 +63,7 @@ This roadmap outlines the complete YouTube content strategy for TaskWhite, desig
 * **Demo Sequence:** Click "New Project", type a name ("Website Redesign"), add three tasks, set a deadline for one, and switch from List view to Board view.
 * **Screen Recording Plan:** Focus heavily on the main content area. Use zoom-ins when clicking small icons like the date picker.
 * **Call-to-Action:** "Check out the template library link below to skip the setup and start managing immediately."
-* **SEO Description:** Learn step-by-step how to create and organize your first project in TaskWhite. We cover task creation, deadlines, templates, and switching between List and Kanban views.
+* **Description:** Learn step-by-step how to create and organize your first project in TaskWhite. We cover task creation, deadlines, templates, and switching between List and Kanban views.
 * **Keywords:** TaskWhite projects, TaskWhite kanban, project management tutorial, task organization
 * **Tags:** #TaskWhite #ProjectPlanning #Kanban
 * **Suggested Shorts:**
@@ -85,7 +85,7 @@ This roadmap outlines the complete YouTube content strategy for TaskWhite, desig
 * **Demo Sequence:** Navigating to settings, typing an email, selecting "Member", assigning a task on a board to the new user, and leaving a comment tagging them.
 * **Screen Recording Plan:** Blur out any real emails if used. Use callout text boxes on screen to explain the differences in permissions.
 * **Call-to-Action:** "Invite 3 team members today on our free plan. Link in description."
-* **SEO Description:** Bring your team together in TaskWhite. This tutorial explains how to invite users, manage access permissions, assign tasks, and communicate effectively using mentions.
+* **Description:** Bring your team together in TaskWhite. This tutorial explains how to invite users, manage access permissions, assign tasks, and communicate effectively using mentions.
 * **Keywords:** TaskWhite team collaboration, TaskWhite permissions, assign tasks, team management software
 * **Tags:** #Teamwork #TaskWhite #Collaboration
 * **Suggested Shorts:**
@@ -107,7 +107,7 @@ This roadmap outlines the complete YouTube content strategy for TaskWhite, desig
 * **Demo Sequence:** Hover over sidebar items, use the global search `Cmd+K` to find a task quickly, check the notification bell, and view the personal 'My Work' daily summary.
 * **Screen Recording Plan:** Full screen recording. Highlight keyboard shortcuts on screen (e.g., [Cmd] + [K]) when used.
 * **Call-to-Action:** "Subscribe to the channel so you never miss a TaskWhite tip."
-* **SEO Description:** Get comfortable with the TaskWhite interface. This comprehensive dashboard tour walks you through the sidebar, search bar, notifications, and the personalized 'My Work' section.
+* **Description:** Get comfortable with the TaskWhite interface. This comprehensive dashboard tour walks you through the sidebar, search bar, notifications, and the personalized 'My Work' section.
 * **Keywords:** TaskWhite dashboard, TaskWhite walkthrough, UI tour, TaskWhite features
 * **Tags:** #TaskWhiteTour #ProductivityHacks #SoftwareWalkthrough
 * **Suggested Shorts:**
@@ -133,7 +133,7 @@ This roadmap outlines the complete YouTube content strategy for TaskWhite, desig
 * **Demo Sequence:** Open a large task, create 4 subtasks. Create a red "Urgent" tag. Set one task to "block" another, showing the visual indicator.
 * **Screen Recording Plan:** Focus on the task detail modal. Show the visual color changes when tags are applied.
 * **Call-to-Action:** "Try adding a dependency to your next big project and see how it streamlines your workflow."
-* **SEO Description:** Take your task management to the next level. Learn how to break down complex work using subtasks, organize with custom tags, and set up task dependencies in TaskWhite.
+* **Description:** Take your task management to the next level. Learn how to break down complex work using subtasks, organize with custom tags, and set up task dependencies in TaskWhite.
 * **Keywords:** TaskWhite subtasks, TaskWhite tags, task dependencies, advanced project management
 * **Tags:** #TaskManagement #TaskWhitePro #Workflow
 * **Suggested Shorts:**
@@ -155,7 +155,7 @@ This roadmap outlines the complete YouTube content strategy for TaskWhite, desig
 * **Demo Sequence:** Click "Play" on a task, let it run, stop it. Go to the time tracking tab, manually add 2 hours to a past date, and view the timesheet report.
 * **Screen Recording Plan:** Zoom in on the timer running in the top bar. Show the export to CSV/PDF functionality clearly.
 * **Call-to-Action:** "Start the timer on your next task and see how much more focused you become."
-* **SEO Description:** Discover how to use TaskWhite's native time tracking feature to monitor productivity, generate timesheets, and track billable hours seamlessly.
+* **Description:** Discover how to use TaskWhite's native time tracking feature to monitor productivity, generate timesheets, and track billable hours seamlessly.
 * **Keywords:** TaskWhite time tracking, track hours, timesheet software, productivity timer
 * **Tags:** #TimeTracking #Productivity #TaskWhite
 * **Suggested Shorts:**
@@ -177,7 +177,7 @@ This roadmap outlines the complete YouTube content strategy for TaskWhite, desig
 * **Demo Sequence:** Navigate to Dashboards, create a new one, add a "Tasks by Assignee" pie chart and a "Time Tracked" bar chart. Filter the dashboard to show only "This Week".
 * **Screen Recording Plan:** Showcase the animations of the charts loading. Slow, smooth scrolling through a fully populated dashboard.
 * **Call-to-Action:** "Build your first custom dashboard today to see exactly where your team stands."
-* **SEO Description:** Learn how to visualize your team's workload and project progress using TaskWhite's powerful analytics and custom reporting dashboards.
+* **Description:** Learn how to visualize your team's workload and project progress using TaskWhite's powerful analytics and custom reporting dashboards.
 * **Keywords:** TaskWhite analytics, project reporting, custom dashboards, team workload
 * **Tags:** #DataAnalytics #ProjectReporting #TaskWhite
 * **Suggested Shorts:**
@@ -199,7 +199,7 @@ This roadmap outlines the complete YouTube content strategy for TaskWhite, desig
 * **Demo Sequence:** Go to Automation settings. Create rule: "IF status changes to 'Review', THEN assign to 'Manager'". Show it working live by dragging a card in Kanban.
 * **Screen Recording Plan:** Split screen: Left side shows the automation rule builder, right side shows the action happening automatically on the board.
 * **Call-to-Action:** "Set up just ONE automation today and watch how much time it saves you this week."
-* **SEO Description:** Stop doing repetitive manual work. Learn how to use TaskWhite Automations to create custom rules, trigger actions, and set up recurring tasks to streamline your workflow.
+* **Description:** Stop doing repetitive manual work. Learn how to use TaskWhite Automations to create custom rules, trigger actions, and set up recurring tasks to streamline your workflow.
 * **Keywords:** TaskWhite automations, automate workflow, workflow rules, recurring tasks
 * **Tags:** #WorkflowAutomation #ProductivityHacks #TaskWhite
 * **Suggested Shorts:**
@@ -215,13 +215,12 @@ This roadmap outlines the complete YouTube content strategy for TaskWhite, desig
   * **Intro:** The problem with separate chat apps.
   * **Task Comments:** Contextual discussions.
   * **Direct Messages:** 1-on-1 chats.
-  * **File Sharing:** Uploading and proofing.
   * **Outro:** Keep everything in one place.
 * **Chapter Breakdown:** 0:00 Intro | 1:00 Task-Level Comments | 2:30 Global Direct Messaging | 3:45 Sharing & Previewing Files | 5:00 Notification Management
 * **Demo Sequence:** Leave a comment on a task tagging someone. Open the global chat panel to send a quick DM. Drag and drop a PDF into the chat and open the built-in previewer.
 * **Screen Recording Plan:** Show the real-time nature of chat (two browser windows side-by-side to show instant delivery). 
 * **Call-to-Action:** "Next time you want to ask a question about a project, try using a TaskWhite task comment instead of a separate chat app."
-* **SEO Description:** Centralize your team's communication. Discover how TaskWhite's integrated chat, task comments, and file sharing eliminate the need for endless context switching.
+* **Description:** Centralize your team's communication. Discover how TaskWhite's integrated chat and task comments eliminate the need for endless context switching.
 * **Keywords:** TaskWhite chat, team communication tool, context switching, task comments, file sharing
 * **Tags:** #TeamCommunication #TaskWhite #CollaborationTool
 * **Suggested Shorts:**
