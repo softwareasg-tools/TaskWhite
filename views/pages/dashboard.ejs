@@ -1038,7 +1038,7 @@
     let promptText = type === 'client' ? 'Enter new Client name:' : 'Enter new Task name:';
     let url = type === 'client' ? '/api/clients' : '/api/task-types';
     
-    let name = prompt(promptText);
+    let name = await customPrompt(promptText);
     if (!name || name.trim() === '') {
       return;
     }
