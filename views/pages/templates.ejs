@@ -252,7 +252,15 @@
       if (res.ok) {
         selectDropdownOption('task_type', data.id, data.name);
         showToast('Task added successfully', 'success');
-        setTimeout(() => location.reload(), 1000); // Reload to show in list
+        
+        // Dynamically add to dropdown list without reloading page!
+        const btn = document.getElementById('templateTaskTypeBtn');
+        if (btn && btn.nextElementSibling) {
+          const ul = btn.nextElementSibling;
+          const li = document.createElement('li');
+          li.innerHTML = `<a class="dropdown-item py-2" href="#" onclick="selectDropdownOption('task_type', '${data.id}', '${data.name.replace(/\x27/g, '\\\'')}', event)">${data.name}</a>`;
+          ul.appendChild(li);
+        }
       } else {
         showToast(data.error || 'Failed to create task', 'danger');
       }
