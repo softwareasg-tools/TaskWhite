@@ -39,9 +39,9 @@
               </td>
               <td>
                 <% if (temp.recurrence_rule && temp.recurrence_rule.frequency === 'monthly') { %>
-                  <span class="badge bg-surface  border">Monthly (on day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill fw-semibold shadow-xs" style="font-size: 0.8rem;"><i class="bi bi-arrow-repeat me-1"></i>Monthly (day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
                 <% } else { %>
-                  <span class="badge bg-surface  border">Recurring</span>
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill fw-semibold shadow-xs" style="font-size: 0.8rem;"><i class="bi bi-arrow-repeat me-1"></i>Recurring</span>
                 <% } %>
               </td>
               <td>
@@ -76,9 +76,9 @@
               </div>
               <div class="d-flex flex-column align-items-end gap-1">
                 <% if (temp.recurrence_rule && temp.recurrence_rule.frequency === 'monthly') { %>
-                  <span class="badge bg-surface  border" style="font-size: 0.65rem;">Monthly (day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill fw-semibold" style="font-size: 0.7rem;"><i class="bi bi-arrow-repeat me-1"></i>Monthly (day <%= temp.recurrence_rule.monthlyDay || 20 %>)</span>
                 <% } else { %>
-                  <span class="badge bg-surface  border" style="font-size: 0.65rem;">Recurring</span>
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 rounded-pill fw-semibold" style="font-size: 0.7rem;"><i class="bi bi-arrow-repeat me-1"></i>Recurring</span>
                 <% } %>
               </div>
             </div>
@@ -178,10 +178,18 @@
 
   async function submitAddTemplate() {
     const errorDiv = document.getElementById('addTemplateError');
+    const submitBtn = document.querySelector('#addTemplateModal button[type="submit"]');
     errorDiv.style.display = 'none';
 
+    const taskTypeId = document.getElementById('templateTaskType').value;
+    if (!taskTypeId) {
+      errorDiv.innerText = 'Please select a task from the list.';
+      errorDiv.style.display = 'block';
+      return;
+    }
+
     const payload = {
-      task_type_id: document.getElementById('templateTaskType').value,
+      task_type_id: taskTypeId,
       assigned_user_id: document.getElementById('templateAssignee').value,
       recurrence_rule: {
         frequency: 'monthly',
@@ -193,6 +201,10 @@
     };
 
     try {
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span> Adding...';
+      }
       const response = await fetch('/api/templates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -209,6 +221,11 @@
       console.error(err);
       errorDiv.innerText = 'Server error. Please try again.';
       errorDiv.style.display = 'block';
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Add Template';
+      }
     }
   }
 
@@ -250,9 +267,10 @@
       });
       const data = await res.json();
       if (res.ok) {
-        selectDropdownOption('task_type', data.taskType.id, data.taskType.name);
+        const taskId = data.id || (data.taskType && data.taskType.id);
+        const taskName = data.name || (data.taskType && data.taskType.name) || name.trim();
+        selectDropdownOption('task_type', taskId, taskName);
         showToast('Task added successfully', 'success');
-        setTimeout(() => location.reload(), 1000); // Reload to show in list
       } else {
         showToast(data.error || 'Failed to create task', 'danger');
       }
