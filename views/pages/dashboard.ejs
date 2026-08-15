@@ -1954,9 +1954,22 @@
           if (newRow && oldRow) {
             oldRow.outerHTML = newRow.outerHTML;
           }
+        } else if (newRowCheckbox && !oldRowCheckbox) {
+          // It's a new task, prepend it to the table
+          const newRow = newRowCheckbox.closest('tr');
+          if (newRow) {
+            oldTbody.insertBefore(newRow, oldTbody.firstChild);
+          }
         }
       } else {
         if (newTbody && oldTbody) oldTbody.innerHTML = newTbody.innerHTML;
+      }
+      
+      // Update sidebar tags filter
+      const newSidebar = doc.querySelector('.filter-checkbox-list');
+      const oldSidebar = document.querySelector('.filter-checkbox-list');
+      if (newSidebar && oldSidebar) {
+        oldSidebar.innerHTML = newSidebar.innerHTML;
       }
       if (typeof syncCheckboxStyles === 'function') syncCheckboxStyles();
       
