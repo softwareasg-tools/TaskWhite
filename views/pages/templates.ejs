@@ -142,12 +142,15 @@
             <div class="row g-2">
               <div class="col-6">
                 <label class="form-label text-muted small" style="font-size: 0.7rem;">FREQUENCY</label>
-                <select id="template_freq" class="form-select form-select-sm" disabled>
-                  <option value="monthly">Monthly</option>
+                <select id="template_freq" class="form-select form-select-sm" onchange="document.getElementById('template_day_label').innerText = this.value === 'weekly' ? 'DAY OF WEEK (1-7)' : 'DAY OF MONTH'">
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly" selected>Monthly</option>
+                  <option value="quarterly">Quarterly</option>
+                  <option value="yearly">Yearly</option>
                 </select>
               </div>
               <div class="col-6">
-                <label class="form-label text-muted small" style="font-size: 0.7rem;">DAY OF MONTH</label>
+                <label id="template_day_label" class="form-label text-muted small" style="font-size: 0.7rem;">DAY OF MONTH</label>
                 <input type="number" id="template_day" class="form-control form-control-sm" min="1" max="31" value="20" required>
               </div>
             </div>
@@ -192,7 +195,7 @@
       task_type_id: taskTypeId,
       assigned_user_id: document.getElementById('templateAssignee').value,
       recurrence_rule: {
-        frequency: 'monthly',
+        frequency: document.getElementById('template_freq').value || 'monthly',
         interval: 1,
         monthlyType: 'dayOfMonth',
         monthlyDay: parseInt(document.getElementById('template_day').value || 20, 10),

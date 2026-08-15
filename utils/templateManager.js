@@ -42,26 +42,76 @@ async function generateTasksFromTemplates(db, orgId, force = false) {
     
     for (const template of templates) {
       const rule = template.recurrence_rule;
-      if (!rule || rule.frequency !== 'monthly') continue; 
+      if (!rule || !rule.frequency) continue;
       
+      const freq = rule.frequency;
       const targetDay = parseInt(rule.monthlyDay || 20, 10);
-      
-      // Calculate due date for current month
-      const lastDayOfCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      const actualCurrentDay = Math.min(targetDay, lastDayOfCurrentMonth);
-      const currentDueDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(actualCurrentDay).padStart(2, '0')}`;
-      
       let targetDueDate = null;
-      if (currentDueDate >= todayStr) {
-        // Current month's compliance day hasn't occurred yet, so that's the next upcoming one
-        targetDueDate = currentDueDate;
+      
+      if (freq === 'monthly') {
+        // Calculate due date for current month
+        const lastDayOfCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const actualCurrentDay = Math.min(targetDay, lastDayOfCurrentMonth);
+        const currentDueDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(actualCurrentDay).padStart(2, '0')}`;
+        
+        if (currentDueDate >= todayStr) {
+          targetDueDate = currentDueDate;
+        } else {
+          const nextMonthYear = currentMonth === 11 ? currentYear + 1 : currentYear;
+          const nextMonth = (currentMonth + 1) % 12;
+          const lastDayOfNextMonth = new Date(nextMonthYear, nextMonth + 1, 0).getDate();
+          const actualNextDay = Math.min(targetDay, lastDayOfNextMonth);
+          targetDueDate = `${nextMonthYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(actualNextDay).padStart(2, '0')}`;
+        }
+      } else if (freq === 'weekly') {
+        // targetDay is 1-7 (Mon-Sun)
+        let targetDayOfWeek = targetDay % 7; // JS Date: 0=Sun, 1=Mon, ..., 6=Sat
+        if (targetDayOfWeek === 0 && targetDay === 7) targetDayOfWeek = 0;
+        
+        const currentDayOfWeek = today.getDay();
+        let daysUntil = targetDayOfWeek - currentDayOfWeek;
+        if (daysUntil < 0) daysUntil += 7;
+        
+        const nextDate = new Date(today);
+        nextDate.setDate(today.getDate() + daysUntil);
+        targetDueDate = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
+      } else if (freq === 'quarterly') {
+        const currentQuarter = Math.floor(currentMonth / 3);
+        let targetMonth = (currentQuarter * 3) + 2; // Last month of current quarter
+        
+        const lastDay = new Date(currentYear, targetMonth + 1, 0).getDate();
+        const actualDay = Math.min(targetDay, lastDay);
+        const currentDueDate = `${currentYear}-${String(targetMonth + 1).padStart(2, '0')}-${String(actualDay).padStart(2, '0')}`;
+        
+        if (currentDueDate >= todayStr) {
+          targetDueDate = currentDueDate;
+        } else {
+          targetMonth += 3;
+          let targetYear = currentYear;
+          if (targetMonth > 11) {
+            targetMonth -= 12;
+            targetYear++;
+          }
+          const nextLastDay = new Date(targetYear, targetMonth + 1, 0).getDate();
+          const nextActualDay = Math.min(targetDay, nextLastDay);
+          targetDueDate = `${targetYear}-${String(targetMonth + 1).padStart(2, '0')}-${String(nextActualDay).padStart(2, '0')}`;
+        }
+      } else if (freq === 'yearly') {
+        let targetYear = currentYear;
+        const lastDay = new Date(targetYear, 12, 0).getDate();
+        const actualDay = Math.min(targetDay, lastDay);
+        const currentDueDate = `${targetYear}-12-${String(actualDay).padStart(2, '0')}`;
+        
+        if (currentDueDate >= todayStr) {
+          targetDueDate = currentDueDate;
+        } else {
+          targetYear++;
+          const nextLastDay = new Date(targetYear, 12, 0).getDate();
+          const nextActualDay = Math.min(targetDay, nextLastDay);
+          targetDueDate = `${targetYear}-12-${String(nextActualDay).padStart(2, '0')}`;
+        }
       } else {
-        // Current month's compliance day has already passed, so the next upcoming one is next month
-        const nextMonthYear = currentMonth === 11 ? currentYear + 1 : currentYear;
-        const nextMonth = (currentMonth + 1) % 12;
-        const lastDayOfNextMonth = new Date(nextMonthYear, nextMonth + 1, 0).getDate();
-        const actualNextDay = Math.min(targetDay, lastDayOfNextMonth);
-        targetDueDate = `${nextMonthYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(actualNextDay).padStart(2, '0')}`;
+        continue;
       }
 
       // Self-cleaning: Delete any future compliance tasks that are not the single active upcoming one
