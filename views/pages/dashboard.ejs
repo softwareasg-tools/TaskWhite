@@ -1404,6 +1404,16 @@
       const errorDiv = document.getElementById('addTaskError');
       errorDiv.style.display = 'none';
 
+      // Auto-commit uncommitted tag text (e.g. user typed tag and clicked Create without pressing comma/Enter)
+      if (tagInputField && tagInputField.value.trim() !== '') {
+        const val = tagInputField.value.trim().replace(/,/g, '');
+        if (val && !currentTags.includes(val)) {
+          currentTags.push(val);
+          renderTags();
+        }
+        tagInputField.value = '';
+      }
+
       // Standard single submit via AJAX to support success toast UX
       const payload = {
         client_id: document.getElementById('client_id_input').value,
@@ -1443,6 +1453,8 @@
         if (response.ok) {
           bootstrap.Modal.getInstance(document.getElementById('newTaskModal'))?.hide();
           document.getElementById('newTaskForm').reset();
+          currentTags = [];
+          renderTags();
           showToast('Action completed successfully!', 'success');
           refreshDashboardTable(data.taskId);
         } else {
