@@ -2,14 +2,11 @@ const { Sequelize } = require('sequelize');
 const path = require('path');
 const fs = require('fs');
 
-// Allow overriding the database path via command line argument, default to database.sqlite in current dir
 const dbPath = process.argv[2] || path.join(__dirname, 'database.sqlite');
 console.log('Using database at:', dbPath);
 
 if (!fs.existsSync(dbPath)) {
   console.error(`ERROR: Database file not found at ${dbPath}`);
-  console.error(`Please provide the correct path to your production database.sqlite as an argument.`);
-  console.error(`Example: node shift_dates.js /var/www/taskwhite/database.sqlite`);
   process.exit(1);
 }
 
@@ -19,17 +16,29 @@ const sequelize = new Sequelize({
   logging: false
 });
 
-const Task = sequelize.define('Task', {
-  id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-  status: { type: Sequelize.STRING },
-  due_date: { type: Sequelize.DATEONLY }
-}, {
-  tableName: 'tasks',
-  timestamps: false
-});
-
 async function run() {
   try {
+    const [tables] = await sequelize.query("SELECT name FROM sqlite_master WHERE type='table';");
+    console.log('Tables found in DB:', tables.map(t => t.name));
+
+    const taskTableObj = tables.find(t => t.name.toLowerCase() === 'tasks' || t.name.toLowerCase() === 'task');
+    if (!taskTableObj) {
+      console.error('No tasks/Task table found in this database!');
+      return;
+    }
+
+    const tableName = taskTableObj.name;
+    console.log(`Using table name: "${tableName}"`);
+
+    const Task = sequelize.define('Task', {
+      id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
+      status: { type: Sequelize.STRING },
+      due_date: { type: Sequelize.DATEONLY }
+    }, {
+      tableName: tableName,
+      timestamps: false
+    });
+
     const tasks = await Task.findAll();
     console.log('Found tasks:', tasks.length);
 
@@ -37,11 +46,11 @@ async function run() {
     for (let task of tasks) {
       let day;
       if (task.status === 'Overdue') {
-        day = Math.floor(Math.random() * 14) + 1; // 1 to 14
+        day = Math.floor(Math.random() * 14) + 1;
       } else if (task.status === 'Assigned' || task.status === 'In Progress') {
-        day = Math.floor(Math.random() * 16) + 16; // 16 to 31
+        day = Math.floor(Math.random() * 16) + 16;
       } else {
-        day = Math.floor(Math.random() * 31) + 1; // 1 to 31
+        day = Math.floor(Math.random() * 31) + 1;
       }
       const dateStr = `2026-08-${day.toString().padStart(2, '0')}`;
       
