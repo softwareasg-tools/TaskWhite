@@ -50,16 +50,6 @@ exports.apiCreateTemplate = async (req, res) => {
       return res.status(400).json({ error: 'Task Type and Recurrence Rule are required' });
     }
 
-    // Check if a global template already exists for this task type in this organization
-    const existingSnap = await db.collection('global_templates')
-      .where('organization_id', '==', orgId)
-      .where('task_type_id', '==', task_type_id)
-      .get();
-
-    if (!existingSnap.empty) {
-      return res.status(400).json({ error: 'A global template for this task type already exists.' });
-    }
-
     let parsedTags = [];
     if (tags) {
       if (typeof tags === 'string') {
