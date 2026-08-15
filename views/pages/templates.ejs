@@ -250,7 +250,7 @@
       });
       const data = await res.json();
       if (res.ok) {
-        selectDropdownOption('task_type', data.id, data.name);
+        selectDropdownOption('task_type', data.taskType.id, data.taskType.name);
         showToast('Task added successfully', 'success');
         setTimeout(() => location.reload(), 1000); // Reload to show in list
       } else {
