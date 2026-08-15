@@ -365,18 +365,36 @@ exports.apiBulkCreateUsers = async (req, res) => {
 exports.deleteClient = async (req, res) => {
   try {
     const db = getFirestore();
+    const clientId = req.params.id;
+    const orgId = req.session.user.organization_id;
+
+    const clientDoc = await db.collection('clients').doc(clientId).get();
+    if (!clientDoc.exists || clientDoc.data().organization_id !== orgId) {
+      return res.status(404).json({ error: 'Client not found' });
+    }
+
+    // Soft-delete (move to Recycle Bin) all incomplete tasks for this client
     const tasksSnap = await db.collection('tasks')
-      .where('client_id', '==', req.params.id)
+      .where('organization_id', '==', orgId)
+      .where('client_id', '==', clientId)
       .where('deleted_at', '==', null)
       .get();
-      
-    const activeTasks = tasksSnap.docs.filter(doc => doc.data().status !== 'Completed');
 
-    if (activeTasks.length > 0) {
-      return res.status(400).json({ error: `Cannot delete client. They are linked to ${activeTasks.length} active (incomplete) task(s).` });
-    }
-    
-    await db.collection('clients').doc(req.params.id).delete();
+    let batch = db.batch();
+    let count = 0;
+
+    tasksSnap.forEach(doc => {
+      batch.update(doc.ref, { deleted_at: FieldValue.serverTimestamp() });
+      count++;
+      if (count % 400 === 0) {
+        batch.commit();
+        batch = db.batch();
+      }
+    });
+
+    batch.delete(db.collection('clients').doc(clientId));
+    await batch.commit();
+
     res.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -387,32 +405,52 @@ exports.deleteClient = async (req, res) => {
 exports.deleteTaskType = async (req, res) => {
   try {
     const db = getFirestore();
+    const taskTypeId = req.params.id;
+    const orgId = req.session.user.organization_id;
+
+    const typeDoc = await db.collection('task_types').doc(taskTypeId).get();
+    if (!typeDoc.exists || typeDoc.data().organization_id !== orgId) {
+      return res.status(404).json({ error: 'Task type not found' });
+    }
+
+    // 1. Soft-delete (move to Recycle Bin) all incomplete tasks using this task type
     const tasksSnap = await db.collection('tasks')
-      .where('task_type_id', '==', req.params.id)
+      .where('organization_id', '==', orgId)
+      .where('task_type_id', '==', taskTypeId)
       .where('deleted_at', '==', null)
       .get();
-      
-    const activeTasks = tasksSnap.docs.filter(doc => doc.data().status !== 'Completed');
 
-    if (activeTasks.length > 0) {
-      return res.status(400).json({ error: `Cannot delete task. It is used in ${activeTasks.length} active (incomplete) dashboard task(s).` });
-    }
-    
-    await db.collection('task_types').doc(req.params.id).delete();
-    
-    // Cascade delete any global task templates for this task type
-    const templatesSnap = await db.collection('global_task_templates')
-      .where('task_type_id', '==', req.params.id)
+    let batch = db.batch();
+    let count = 0;
+
+    tasksSnap.forEach(doc => {
+      batch.update(doc.ref, { deleted_at: FieldValue.serverTimestamp() });
+      count++;
+      if (count % 400 === 0) {
+        batch.commit();
+        batch = db.batch();
+      }
+    });
+
+    // 2. Cascade delete global templates using this task type
+    const templatesSnap = await db.collection('global_templates')
+      .where('organization_id', '==', orgId)
+      .where('task_type_id', '==', taskTypeId)
       .get();
-      
-    if (!templatesSnap.empty) {
-      const batch = db.batch();
-      templatesSnap.docs.forEach(doc => {
-        batch.delete(doc.ref);
-      });
-      await batch.commit();
-    }
-    
+
+    templatesSnap.forEach(doc => {
+      batch.delete(doc.ref);
+      count++;
+      if (count % 400 === 0) {
+        batch.commit();
+        batch = db.batch();
+      }
+    });
+
+    // 3. Delete the task type itself
+    batch.delete(db.collection('task_types').doc(taskTypeId));
+    await batch.commit();
+
     res.json({ success: true });
   } catch (err) {
     console.error(err);
