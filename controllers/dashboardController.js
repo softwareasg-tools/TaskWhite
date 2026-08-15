@@ -52,8 +52,26 @@ exports.getDashboard = async (req, res) => {
       await batch.commit();
     }
 
+    // Fetch related master data in parallel
+    const [clientsSnap, typesSnap, usersSnap] = await Promise.all([
+      db.collection('clients').where('organization_id', '==', orgId).get(),
+      db.collection('task_types').where('organization_id', '==', orgId).get(),
+      db.collection('users').where('organization_id', '==', orgId).get()
+    ]);
+    
+    const clients = clientsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const taskTypes = typesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    const clientMap = {}; clients.forEach(d => clientMap[d.id] = d);
+    const typeMap = {}; taskTypes.forEach(d => typeMap[d.id] = d);
+    const userMap = {}; users.forEach(d => userMap[d.id] = d);
+
     // Apply Filters
     let filteredTasks = [...allTasks];
+    
+    // Filter out orphaned tasks (whose task type was deleted)
+    filteredTasks = filteredTasks.filter(t => t.task_type_id && typeMap[t.task_type_id]);
     
     // Time Period Filter
     if (req.query.time) {
@@ -108,8 +126,25 @@ exports.getDashboard = async (req, res) => {
       filteredTasks = filteredTasks.filter(t => t.assigned_user_id === req.query.user_id);
     }
     if (req.query.task_type_id) {
-      let types = Array.isArray(req.query.task_type_id) ? req.query.task_type_id : [req.query.task_type_id];
-      filteredTasks = filteredTasks.filter(t => types.includes(t.task_type_id));
+      let rawTypes = Array.isArray(req.query.task_type_id) ? req.query.task_type_id : [req.query.task_type_id];
+      const targetIds = new Set(rawTypes);
+      const targetNames = new Set();
+
+      rawTypes.forEach(val => {
+        if (typeMap[val]) {
+          targetNames.add(typeMap[val].name.toLowerCase());
+        } else {
+          targetNames.add(val.toLowerCase());
+        }
+      });
+
+      filteredTasks = filteredTasks.filter(t => {
+        if (!t.task_type_id) return false;
+        if (targetIds.has(t.task_type_id)) return true;
+        const typeObj = typeMap[t.task_type_id];
+        if (typeObj && targetNames.has(typeObj.name.toLowerCase())) return true;
+        return false;
+      });
     }
     if (req.query.tag) {
       let tags = Array.isArray(req.query.tag) ? req.query.tag : [req.query.tag];
@@ -135,24 +170,6 @@ exports.getDashboard = async (req, res) => {
     const overdue = filteredTasks.filter(t => t.status === 'Overdue').length;
     const assigned = filteredTasks.filter(t => t.status === 'Assigned').length;
     const statusData = [assigned, inProgress, completed, overdue];
-
-    // Fetch related master data in parallel
-    const [clientsSnap, typesSnap, usersSnap] = await Promise.all([
-      db.collection('clients').where('organization_id', '==', orgId).get(),
-      db.collection('task_types').where('organization_id', '==', orgId).get(),
-      db.collection('users').where('organization_id', '==', orgId).get()
-    ]);
-    
-    const clients = clientsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const taskTypes = typesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
-    const clientMap = {}; clients.forEach(d => clientMap[d.id] = d);
-    const typeMap = {}; taskTypes.forEach(d => typeMap[d.id] = d);
-    const userMap = {}; users.forEach(d => userMap[d.id] = d);
-
-    // Filter out orphaned tasks (whose task type was deleted)
-    filteredTasks = filteredTasks.filter(t => t.task_type_id && typeMap[t.task_type_id]);
 
     // Chart Data - Tasks by Team Member
     let chartUsers = users;

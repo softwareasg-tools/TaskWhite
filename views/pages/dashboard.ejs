@@ -112,7 +112,7 @@
               %>
               <% taskTypes.forEach(type => { %>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="task_type_id" value="<%= type.id %>" id="filter_type_<%= type.id %>" <%= selectedTypes.includes(type.id) ? 'checked' : '' %>>
+                  <input class="form-check-input" type="checkbox" name="task_type_id" value="<%= type.id %>" id="filter_type_<%= type.id %>" <%= (selectedTypes.includes(type.id) || selectedTypes.some(s => s.toLowerCase() === type.name.toLowerCase())) ? 'checked' : '' %> onchange="submitDashboardFilters()">
                   <label class="form-check-label text-muted small" for="filter_type_<%= type.id %>"><%= type.name %></label>
                 </div>
               <% }) %>
