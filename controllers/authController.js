@@ -250,3 +250,23 @@ exports.postSignup = async (req, res) => {
   // Legacy signup is disabled. Use Magic Links.
   res.redirect('/login');
 };
+
+exports.logAuthError = async (req, res) => {
+  try {
+    const { email, error, context } = req.body;
+    const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+    const db = getFirestore();
+    
+    await db.collection('login_errors').add({
+      email: email || 'unknown',
+      error: error || 'unknown',
+      context: context || 'client-verify',
+      timestamp: FieldValue.serverTimestamp(),
+      ip: req.ip || req.connection.remoteAddress
+    });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Failed to log auth error:', err);
+    res.status(500).json({ error: 'Failed to log error' });
+  }
+};

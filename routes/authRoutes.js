@@ -30,6 +30,7 @@ router.post('/signup', authController.postSignup);
 router.get('/auth/verify', authController.getAuthVerify);
 router.post('/api/auth/post-login-routing', express.json(), authLimiter, authController.postLoginRouting);
 router.post('/api/auth/magic-link', express.json(), authLimiter, authController.sendMagicLink);
+router.post('/api/auth/log-error', express.json(), authController.logAuthError);
 
 // OAuth Routes
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

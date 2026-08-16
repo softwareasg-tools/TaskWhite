@@ -95,6 +95,13 @@
       
       errorDiv.innerText = friendlyMsg;
       errorDiv.style.display = 'block';
+      
+      // Log failure to backend
+      fetch('/api/auth/log-error', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailToUse, error: err.code || err.message || 'Unknown verification error' })
+      }).catch(e => console.error('Failed to report error', e));
     }
   }
 
