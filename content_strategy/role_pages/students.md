@@ -18,24 +18,10 @@ For Students, tracking assignments, managing study schedules, and collaborating 
 ## How TaskWhite Solves These Challenges
 - **Customizable Dashboards:** Gain immediate visibility into what matters most. Track progress at a glance and ensure alignment with strategic goals.
 - **Automated Workflows:** Reduce manual follow-ups by automating repetitive tasks, allowing Students to focus on high-impact work.
-- **Centralized Communication:** Keep all discussions, and updates attached directly to the relevant tasks to prevent information silos.
+
 - **Real-Time Progress Tracking:** Monitor milestones and deliverables effortlessly, ensuring nothing slips through the cracks.
 
 ## Key Benefits
 - **Enhanced Productivity:** Spend less time searching for information and more time executing.
 - **Better Alignment:** Ensure everyone involved understands their role and current priorities.
 - **Scalability:** Adapt your workspace as your projects and responsibilities grow.
-
-## Recommended Schema
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "TaskWhite for Students",
-  "description": "Task management and productivity solutions specifically designed for Students.",
-  "publisher": {
-    "@type": "Organization",
-    "name": "TaskWhite"
-  }
-}
-```

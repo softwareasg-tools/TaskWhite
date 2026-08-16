@@ -18,10 +18,8 @@ Agencies juggle multiple clients, diverse projects, and tight deadlines simultan
 ## How TaskWhite Can Help
 
 *   **Client Workspaces:** Organize projects by client to keep deliverables, tasks, and communications compartmentalized.
-*   **Clear Approvals:** Use custom fields and task statuses to track internal reviews and final client approvals.
+*   **Clear Approvals:** Use custom tags and task statuses to track internal reviews and final client approvals.
 *   **Task Dependencies:** Ensure copy is finalized before design begins by linking dependent tasks.
-*   **Centralized Feedback:** Keep all feedback, design files, and discussions attached to the specific task they relate to.
-
 ## Example Workflows
 
 1.  **Website Redesign:** Manage the entire process from wireframing and copywriting to development and QA testing.

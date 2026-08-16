@@ -17,7 +17,7 @@ Consultants often face unique hurdles that can impact project delivery and clien
 *   **Resource Allocation:** Effectively assigning consultants with the right expertise to the right projects without overbooking.
 *   **Client Communication:** Maintaining transparent, organized communication channels with clients and internal teams.
 *   **Time Tracking and Billing:** Accurately tracking billable hours across multiple projects and clients.
-*   **Knowledge Management:** Centralizing project documentation, deliverables, and lessons learned.
+*   **Knowledge Management:** Centralizing project information, deliverables, and lessons learned.
 
 ## How TaskWhite Solves Consulting Challenges
 
@@ -25,14 +25,12 @@ TaskWhite is designed to address the specific needs of consulting workflows:
 
 *   **Customizable Workspaces:** Create dedicated, secure workspaces for each client engagement, keeping data organized and accessible.
 *   **Granular Task Management:** Break down complex projects into actionable tasks, assign owners, set deadlines, and track progress in real-time.
-*   **Time Tracking Integration:** Easily monitor time spent on specific tasks and projects to ensure accurate billing and profitability analysis.
-*   **Collaboration Features:** Foster seamless communication with integrated comments, file sharing, and real-time updates directly within tasks.
 *   **Reporting and Dashboards:** Gain immediate visibility into project health, resource utilization, and team performance with customizable dashboards.
 
 ## Example Consulting Workflows in TaskWhite
 
-*   **Client Onboarding:** Automate the intake process, gather necessary documentation, and establish project timelines smoothly.
-*   **Strategic Planning:** Map out project phases, milestones, and deliverables using Gantt charts or Kanban boards.
+*   **Client Onboarding:** Automate the intake process, gather necessary information, and establish project timelines smoothly.
+*   **Strategic Planning:** Map out project phases, milestones, and deliverables using Gantt charts or Project Boards.
 *   **Deliverable Review:** Implement structured approval processes for reports, presentations, and other critical client deliverables.
 
 ## Consulting Templates Available
@@ -48,8 +46,5 @@ Jumpstart your projects with our pre-built templates:
 **Q: Can I invite clients to view their project progress in TaskWhite?**
 A: Yes, TaskWhite allows you to securely invite guest users with custom permissions, enabling clients to view specific boards or tasks without accessing your internal data.
 
-**Q: Does TaskWhite integrate with our existing CRM and billing tools?**
-A: TaskWhite offers robust integrations and a comprehensive API, allowing you to connect seamlessly with popular CRM, accounting, and communication platforms.
-
-**Q: How secure is our client data on TaskWhite?**
+*Q: How secure is our client data on TaskWhite?**
 A: Security is our priority. TaskWhite employs enterprise-grade encryption, regular security audits, and strict access controls to ensure your sensitive client information remains protected.

@@ -65,6 +65,9 @@ router.get('/features/:feature', (req, res) => {
 
 router.get('/help/:topic', (req, res) => {
   const topic = req.params.topic.toLowerCase().replace(/[^a-z0-9\-]/g, '');
+  if (topic === 'billing') {
+    return res.redirect('/');
+  }
   renderContentPage(res, 'help_center', `${topic}.md`, req);
 });
 

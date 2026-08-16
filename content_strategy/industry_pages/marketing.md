@@ -12,15 +12,15 @@ Marketing teams thrive on creativity and execution, but managing multiple campai
 
 *   **Siloed Communication:** Creative, strategy, and execution teams often work in different tools, leading to miscommunication and delayed approvals.
 *   **Missed Deadlines:** Without clear visibility into dependent tasks, bottlenecks form and campaigns launch late.
-*   **Asset Management:** Finding the latest version of a design or copy document can waste valuable hours.
+*   **Information Management:** Finding the latest version of a design or copy record can waste valuable hours.
 *   **Unclear Prioritization:** When everything is urgent, it's difficult for team members to know what to focus on first.
 
 ## How TaskWhite Can Help
 
-*   **Visual Campaign Tracking:** Use Kanban boards and timelines to visualize the entire lifecycle of a campaign from ideation to execution.
-*   **Centralized Collaboration:** Keep all feedback and approvals in one place with task-level comments.
-*   **Clear Accountability:** Assign tasks, set due dates, and create subtasks to break down complex projects into manageable steps.
-*   **Custom Workflows:** Create custom fields to track campaign status, target audience, or budget.
+*   **Visual Campaign Tracking:** Use Project Boards and timelines to visualize the entire lifecycle of a campaign from ideation to execution.
+*   **Centralized Collaboration:** Keep all feedback and approvals in one place with task-level updates.
+*   **Clear Accountability:** Assign tasks, set due dates, and create tasks to break down complex projects into manageable steps.
+*   **Custom Workflows:** Create custom tags to track campaign status, target audience, or budget.
 
 ## Example Workflows
 
@@ -39,5 +39,4 @@ Marketing teams thrive on creativity and execution, but managing multiple campai
 **Q: Can external freelancers access TaskWhite?**
 A: Yes, you can invite guests to collaborate on specific projects or tasks without giving them access to your entire workspace.
 
-**Q: How does TaskWhite handle proofing and approvals?**
-A: You can use task statuses and custom fields to create a clear review and approval pipeline, attaching assets directly to the relevant task.
+**Q: How does TaskWhite handle proofing and approvals?*

@@ -5,7 +5,7 @@ Welcome to TaskWhite! This guide will walk you through the basics of setting up 
 ## 1. Navigating the Interface
 The TaskWhite interface is designed for simplicity.
 *   **Sidebar:** Access your Home, My Tasks, Projects, and Teams.
-*   **Top Bar:** Global search, notifications, and profile settings.
+*   **Top Bar:** Global search, notifications, and prorecord settings.
 *   **Main View:** Where your project data lives (List, Board, Timeline, etc.).
 
 ## 2. Creating Your First Project
@@ -21,5 +21,5 @@ Tasks represent individual pieces of work.
 *   Assign it to yourself or a team member.
 
 ## Next Steps
-*   [Set up your Account](/help-center/account-setup)
-*   [Invite your Team](/help-center/teams)
+*   [Set up your Account](/help/account-setup)
+*   [Invite your Team](/help/teams)

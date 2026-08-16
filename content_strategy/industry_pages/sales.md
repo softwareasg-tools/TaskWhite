@@ -17,7 +17,7 @@ Closing deals requires persistence, organization, and perfect timing. TaskWhite 
 
 ## How TaskWhite Can Help
 
-*   **Lead Tracking Boards:** Visualize leads moving through different stages using Kanban boards.
+*   **Lead Tracking Boards:** Visualize leads moving through different stages using Project Boards.
 *   **Task Reminders:** Set due dates and recurring tasks to ensure timely follow-ups with prospects.
 *   **Streamlined Handoffs:** Create standardized checklists for onboarding new clients, ensuring all necessary information is collected and shared with the relevant teams.
 *   **Cross-Functional Collaboration:** Easily tag legal or product teams on tasks to get quick answers to prospect questions.

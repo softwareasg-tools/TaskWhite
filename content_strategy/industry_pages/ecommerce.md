@@ -23,10 +23,9 @@ Ecommerce teams must move quickly and accurately to stay competitive:
 
 TaskWhite brings all your ecommerce operations into one organized hub:
 
-*   **Agile Campaign Management:** Use Kanban boards to move marketing assets seamlessly from ideation to drafting, review, and publication.
+*   **Agile Campaign Management:** Use Project Boards to move marketing assets seamlessly from ideation to drafting, review, and publication.
 *   **Product Catalog Workflows:** Track the lifecycle of new SKUs, ensuring all descriptions, images, and pricing are approved before launch.
 *   **Development Sprint Planning:** Manage your development team's backlog, prioritize bug fixes, and plan website enhancements.
-*   **Integration Capabilities:** Connect TaskWhite with your essential tools (like Slack, Google Drive, or customer support platforms) to centralize data.
 *   **Guest Access for Partners:** Securely collaborate with external agencies or freelancers by inviting them only to relevant project boards.
 
 ## Example Ecommerce Workflows in TaskWhite
@@ -46,7 +45,7 @@ Accelerate your online growth with these specialized templates:
 ## Frequently Asked Questions (FAQs)
 
 **Q: Can we use TaskWhite to manage our software development for our custom storefront?**
-A: Yes, TaskWhite supports agile methodologies. You can create Kanban boards for sprint planning, bug tracking, and feature roadmapping.
+A: Yes, TaskWhite supports agile methodologies. You can create Project Boards for sprint planning, bug tracking, and feature roadmapping.
 
 **Q: How does TaskWhite handle collaboration with external marketing agencies?**
 A: You can invite agency members as guest users, giving them access only to specific marketing boards while keeping your internal operational data private.

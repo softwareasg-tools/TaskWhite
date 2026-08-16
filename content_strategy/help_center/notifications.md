@@ -17,7 +17,7 @@ Go to **Settings > Notifications** to toggle alerts for:
 
 ## Do Not Disturb
 Pause notifications when you need to focus.
-*   Click your profile picture and select **Pause Notifications**.
+*   Click your prorecord picture and select **Pause Notifications**.
 *   Choose a duration (e.g., 1 hour, until tomorrow).
 
 ## Troubleshooting

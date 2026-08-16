@@ -17,8 +17,8 @@ In manufacturing, efficiency is everything. TaskWhite helps production teams, pl
 
 ## How TaskWhite Can Help
 
-*   **Visual Production Boards:** Use Kanban boards to track batches or specific orders as they move through different stages of production.
-*   **Quality Assurance Checklists:** Create standardized tasks for QA inspections, ensuring every step is followed and documented.
+*   **Visual Production Boards:** Use Project Boards to track batches or specific orders as they move through different stages of production.
+*   **Quality Assurance Checklists:** Create standardized tasks for QA inspections, ensuring every step is followed and recorded.
 *   **Preventative Maintenance Scheduling:** Set recurring tasks for equipment checks, assigning them to the maintenance team to prevent downtime.
 *   **Centralized Communication:** Coordinate with procurement, engineering, and production teams within a single platform.
 
@@ -39,5 +39,4 @@ In manufacturing, efficiency is everything. TaskWhite helps production teams, pl
 **Q: Can TaskWhite handle inventory management?**
 A: While TaskWhite is not a dedicated ERP or inventory system, it is excellent for managing the *tasks* associated with inventory, such as scheduling counts, managing vendor communications, and tracking supply orders.
 
-**Q: How do we track issues reported on the factory floor?**
-A: You can create a centralized board where team members can log issues as tasks, attach photos, and assign them to the appropriate maintenance or engineering personnel for review.
+**Q: How do we track issues reported on the factory floor?*

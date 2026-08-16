@@ -23,11 +23,11 @@ The logistics industry faces complex, fast-moving operational hurdles:
 
 TaskWhite provides the central command center necessary for complex logistics operations:
 
-*   **Real-Time Status Boards:** Use visual Kanban boards to track shipments through various stages (e.g., Received, In Transit, Customs, Delivered).
+*   **Real-Time Status Boards:** Use visual Project Boards to track shipments through various stages (e.g., Received, In Transit, Customs, Delivered).
 *   **Automated Exception Handling:** Set up triggers to automatically notify managers or customer service when a shipment task is flagged as delayed or damaged.
 *   **Fleet Maintenance Tracking:** Schedule and track preventative maintenance tasks for vehicles, ensuring safety and reducing downtime.
-*   **Mobile Workforce Connectivity:** Allow drivers and warehouse staff to update task statuses, report issues, and access documents via mobile devices.
-*   **Centralized Documentation:** Store Bills of Lading, customs paperwork, and delivery receipts securely within specific shipment tasks.
+*   **Mobile Workforce Connectivity:** Allow drivers and warehouse staff to update task statuses, report issues, and access records via mobile devices.
+*   **Centralized Information:** Store Bills of Lading, customs paperwork, and delivery receipts securely within specific shipment tasks.
 
 ## Example Logistics Workflows in TaskWhite
 
@@ -45,11 +45,8 @@ Improve your operational efficiency with these logistics templates:
 
 ## Frequently Asked Questions (FAQs)
 
-**Q: Can TaskWhite integrate with our existing ERP or Warehouse Management System (WMS)?**
-A: TaskWhite offers a robust API and various integration options, allowing you to connect it with your core operational software to reduce duplicate data entry.
-
-**Q: How can drivers update their status while on the road?**
-A: Drivers can use the TaskWhite mobile app to quickly change task statuses, add comments regarding delays.
+*Q: How can drivers update their status while on the road?**
+A: Drivers can use the TaskWhite mobile app to quickly change task statuses, add updates regarding delays.
 
 **Q: Can we track key performance indicators (KPIs) like on-time delivery rates?**
-A: Yes, by utilizing custom fields and dashboard reporting, you can track specific metrics related to task completion times and workflow efficiency.
+A: Yes, by utilizing custom tags and dashboard reporting, you can track specific metrics related to task completion times and workflow efficiency.

@@ -25,9 +25,9 @@ TaskWhite modernizes public sector operations with robust, secure features:
 
 *   **Inter-Departmental Workspaces:** Break down silos by collaborating in shared workspaces while maintaining appropriate access controls.
 *   **Structured Workflows & Approvals:** Standardize processes for policy reviews, procurement, and public initiatives to ensure nothing is missed.
-*   **Comprehensive Audit Trails:** Track task history, document revisions, and decision-making processes for compliance and accountability.
+*   **Comprehensive Audit Trails:** Track task history, history tracking, and decision-making processes for compliance and accountability.
 *   **High-Level Security:** Benefit from enterprise-grade security protocols, data encryption, and robust user access management.
-*   **Centralized Documentation:** Store policies, meeting minutes, and project files securely alongside the work being done.
+*   **Centralized Information:** Store policies, meeting minutes, and project records securely alongside the work being done.
 
 ## Example Government Workflows in TaskWhite
 
@@ -49,7 +49,7 @@ Deploy standardized processes quickly with these templates:
 A: TaskWhite employs stringent security measures, including data encryption and regular audits. For specific compliance requirements (like FedRAMP), please contact our enterprise sales team.
 
 **Q: Can we restrict access to sensitive information within our agency?**
-A: Yes, TaskWhite offers granular permission settings, allowing administrators to control exactly who can view, edit, or manage specific workspaces, projects, and documents.
+A: Yes, TaskWhite offers granular permission settings, allowing administrators to control exactly who can view or manage specific workspaces and projects.
 
 **Q: How can TaskWhite improve our reporting to leadership?**
 A: TaskWhite features customizable dashboards that provide real-time overviews of project statuses, resource allocation, and departmental performance, making reporting seamless.

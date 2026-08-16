@@ -28,7 +28,7 @@ Healthcare facilities require meticulous organization to ensure smooth operation
 
 1.  **Facility Maintenance:** A ticketing system for staff to report broken equipment and track the status of repairs.
 2.  **Administrative Onboarding:** A checklist for new administrative staff covering IT setup, policy reviews, and facility tours.
-3.  **Compliance Audit Preparation:** Organize tasks and documentation required for upcoming health and safety inspections.
+3.  **Compliance Audit Preparation:** Organize tasks and information required for upcoming health and safety inspections.
 
 ## Recommended Templates
 

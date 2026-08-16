@@ -1,15 +1,4 @@
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light py-2 py-sm-3 border-bottom sticky-top" style="background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);">
-  <div class="container px-3">
-    <a class="navbar-brand d-flex align-items-center fw-bold me-auto" href="/">
-      <img src="/images/logo.svg" alt="TaskWhite" width="28" height="28" class="me-2 shadow-sm" style="border-radius: 8px;">
-      <span class="brand-text fs-6 fs-sm-5">Task<span class="white-part">White</span></span>
-    </a>
-    <div class="d-flex align-items-center gap-2">
-      <a href="/login" class="btn btn-dark shadow-sm px-3 py-2" style="background: linear-gradient(135deg, #4f46e5, #ec4899); border: none; font-size: 0.85rem; border-radius: 6px;">Get Started</a>
-    </div>
-  </div>
-</nav>
+<%- include('../partials/public_header') %>
 
 <div class="container py-5 max-w-lg mx-auto" style="max-width: 800px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
   <h1 class="fw-bold mb-4">Terms and Conditions</h1>
@@ -102,6 +91,6 @@
       <a href="/terms" class="text-muted text-decoration-none small me-3">Terms & Conditions</a>
       <a href="/privacy" class="text-muted text-decoration-none small">Privacy Policy</a>
     </div>
-    <small style="font-size: 0.75rem;">&copy; <%= new Date().getFullYear() %> TaskWhite. Made for Indian SMBs.</small>
+    <small style="font-size: 0.75rem;">&copy; <%= new Date().getFullYear() %> TaskWhite. regain control over your business.</small>
   </div>
 </footer>

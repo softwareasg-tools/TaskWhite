@@ -23,10 +23,10 @@ Real estate professionals juggle numerous moving parts daily:
 
 TaskWhite is designed to bring order to the fast-paced real estate environment:
 
-*   **Visual Pipeline Management:** Use Kanban boards to track properties as they move from 'Lead' to 'Listed', 'Under Contract', and 'Closed'.
+*   **Visual Pipeline Management:** Use Project Boards to track properties as they move from 'Lead' to 'Listed', 'Under Contract', and 'Closed'.
 *   **Task Checklists:** Ensure compliance and consistency with detailed checklists for listing procedures, closing tasks, and property inspections.
 *   **Mobile Accessibility:** Access crucial property details, update task statuses, and communicate with the team while on the go or at a property.
-*   **Centralized Documentation:** Store property disclosures, inspection reports, and contracts directly within the related task cards.
+*   **Centralized Information:** Store property disclosures, inspection reports, and contracts directly within the related task cards.
 *   **Automated Workflows:** Automate repetitive tasks, such as assigning a marketing coordinator when a new listing is signed.
 
 ## Example Real Estate Workflows in TaskWhite
@@ -49,7 +49,7 @@ Hit the ground running with templates designed for real estate:
 A: Yes, TaskWhite's flexible workspaces and customizable fields make it ideal for managing any type of real estate transaction or development project.
 
 **Q: Can I access TaskWhite from my phone during showings?**
-A: Absolutely. TaskWhite is fully responsive and accessible via mobile devices, allowing you to update tasks and access documents from anywhere.
+A: Absolutely. TaskWhite is fully responsive and accessible via mobile devices, allowing you to update tasks and access records from anywhere.
 
 **Q: How does TaskWhite help with client communication?**
 A: While TaskWhite is primarily for internal team coordination, you can use it to track client follow-ups, store communication history, and ensure agents are prompted to provide timely updates.

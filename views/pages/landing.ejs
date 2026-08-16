@@ -1,506 +1,199 @@
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light py-2 py-sm-3 border-bottom sticky-top" style="background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);">
-  <div class="container px-3">
-    <a class="navbar-brand d-flex align-items-center fw-bold me-auto" href="/">
-      <img src="/images/logo.svg" alt="TaskWhite" width="28" height="28" class="me-2 shadow-sm" style="border-radius: 8px;">
-      <span class="brand-text fs-6 fs-sm-5">Task<span class="white-part">White</span></span>
-    </a>
-    <div class="d-flex align-items-center gap-2">
-      <a href="/login" class="btn btn-link text-decoration-none fw-bold px-2 text-body d-none d-sm-inline-block" style="font-size: 0.9rem;">Log In</a>
-      <a href="/login" class="btn btn-dark shadow-sm px-3 py-2" style="background: linear-gradient(135deg, #4f46e5, #ec4899); border: none; font-size: 0.85rem; border-radius: 6px;">Get Started</a>
-    </div>
-  </div>
-</nav>
+<%- include('../partials/public_header') %>
 
 <!-- Hero Section -->
-<section class="py-5 text-center position-relative" style="padding-top: 80px !important; padding-bottom: 60px !important;">
-  <div class="container px-3">
+<section class="position-relative" style="background-color: #ffffff; padding-top: 140px; padding-bottom: 120px;">
+  <div class="container px-4 text-center">
     <div class="row justify-content-center">
-      <div class="col-lg-9 col-xl-8">
-        <div class="mb-3">
-          <span class="badge rounded-pill bg-dark py-2 px-3 fw-medium" style="font-size: 0.85rem; letter-spacing: 0.5px;">Regain control of your business</span>
-        </div>
-        <h1 class="display-4 fw-bold mb-4" style="letter-spacing: -1.5px; line-height: 1.1;">
-          Stop losing work in <br class="d-none d-md-block">
-          <span class="text-gradient" style="background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">WhatsApp, emails, and spreadsheets.</span>
+      <div class="col-lg-10">
+        <h1 class="fw-bold mb-4" style="color: #232323; font-size: clamp(3rem, 8vw, 117px); letter-spacing: -3px; line-height: 1;">
+          stop losing work.
         </h1>
-        <p class="lead text-muted mb-4 mx-auto" style="max-width: 650px; font-size: 1.15rem;">
-          The India-first task management platform built for recurring delegation, strict deadlines, and flawless accountability. Get enterprise-grade features without the enterprise complexity.
+        <p class="lead mx-auto mb-5" style="color: #232323; max-width: 600px; font-size: 24px; line-height: 1.4; opacity: 0.7;">
+          get out of whatsapp, emails, and spreadsheets. enforce accountability and hit strict deadlines.
         </p>
-        <div class="mb-4 small text-muted fw-bold">
-          <i class="bi bi-star-fill text-warning"></i> Trusted by hundreds of Indian Professional Firms, Agencies, and SMBs.
-        </div>
-        <div class="d-flex justify-content-center mb-4">
-          <a href="/login" class="btn btn-dark btn-lg px-4 px-sm-5 shadow-lg w-auto" style="background: linear-gradient(135deg, #4f46e5, #ec4899); border: none; font-weight: 600; height: 54px; line-height: 38px; white-space: nowrap;">Start Free (Up to 3 Users)</a>
+        <div class="d-flex flex-column align-items-center gap-3">
+          <a href="/login" class="btn btn-lg px-5 fw-bold" style="background-color: #c4b5fd; color: #232323; border-radius: 4px; height: 64px; line-height: 48px; font-size: 20px;">start your workspace</a>
+          <span class="fw-bold mt-2" style="color: #232323; font-size: 18px; letter-spacing: -0.5px;">
+            regain control over your business.
+          </span>
+          <span class="small fw-medium mt-1" style="color: #232323; opacity: 0.5;">free up to 3 users. no credit card required.</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Mobile Sticky Bottom CTA -->
-<div class="d-block d-md-none position-fixed bottom-0 start-0 w-100 p-3 shadow-lg border-top bg-white z-3" style="background: var(--bg-color);">
-  <a href="/login" class="btn btn-dark w-100 shadow-sm" style="background: linear-gradient(135deg, #4f46e5, #ec4899); border: none; font-weight: bold; height: 48px; line-height: 34px;">Start Free Now</a>
-</div>
+<!-- Dashboard Image -->
+<section class="py-5" style="background-color: #fcfcfc;">
+  <div class="container px-4 py-5">
+    <div class="row justify-content-center mb-5">
+      <div class="col-lg-8 text-center">
+        <h2 class="fw-bold mb-3" style="color: #232323; font-size: 40px; letter-spacing: -1px;">clarity. ownership. deadlines.</h2>
+        <p class="fs-5 m-0" style="color: #232323; opacity: 0.7; line-height: 1.6;">taskwhite brings all your recurring tasks into one unshakeable system. know exactly who is doing what, and by when, without asking for a status update.</p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-11 text-center">
+        <!-- Desktop Image -->
+        <div class="shadow-lg d-none d-md-inline-block" style="border-radius: 12px; overflow: hidden; border: 1px solid #ededed; box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;">
+          <img src="/images/dashboard-preview.png" alt="taskwhite dashboard" class="img-fluid" style="max-width: 100%; height: auto; display: block;">
+        </div>
+        <!-- Mobile Image -->
+        <div class="shadow-lg d-inline-block d-md-none" style="border-radius: 12px; overflow: hidden; border: 1px solid #ededed; box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important; max-width: 320px;">
+          <img src="/images/dashboard-mobile.png" alt="taskwhite mobile dashboard" class="img-fluid w-100" style="display: block;">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<!-- Problem Section -->
-<section class="py-5 bg-surface border-top border-bottom">
-  <div class="container px-3 text-center">
-    <h2 class="fw-bold mb-3">Your business is growing. Your workflow is breaking.</h2>
-    <p class="text-muted mb-5 mx-auto" style="max-width: 600px;">If you are managing a business today, you already know the pain of scattered work.</p>
+<!-- Minimal Problem / Solution -->
+<section style="background-color: #ffffff; padding-top: 120px; padding-bottom: 120px;">
+  <div class="container px-4">
+    <div class="row mb-5 pb-4">
+      <div class="col-12 text-center">
+        <h2 class="fw-bold m-0" style="color: #232323; letter-spacing: -2px; font-size: 80px;">why taskwhite.</h2>
+      </div>
+    </div>
     
-    <div class="row g-4 justify-content-center">
+    <div class="row justify-content-center g-5">
       <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-start">
-          <div class="text-success mb-3"><i class="bi bi-whatsapp fs-1"></i></div>
-          <h5 class="fw-bold">The WhatsApp Black Hole</h5>
-          <p class="text-muted small mb-0">Tasks assigned in group chats get buried. Follow-ups are forgotten.</p>
-        </div>
+        <h4 class="fw-bold mb-3" style="color: #232323; font-size: 24px; letter-spacing: -0.5px;">1. no more whatsapp.</h4>
+        <p style="color: #232323; opacity: 0.7; font-size: 16px; line-height: 1.6;">tasks in group chats get buried. taskwhite creates a dedicated audit trail and status for every assignment.</p>
       </div>
       <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-start">
-          <div class="text-success mb-3"><i class="bi bi-file-earmark-spreadsheet fs-1 text-primary"></i></div>
-          <h5 class="fw-bold">Spreadsheet Chaos</h5>
-          <p class="text-muted small mb-0">Version control issues, broken formulas, and zero real-time accountability.</p>
-        </div>
+        <h4 class="fw-bold mb-3" style="color: #232323; font-size: 24px; letter-spacing: -0.5px;">2. rigid deadlines.</h4>
+        <p style="color: #232323; opacity: 0.7; font-size: 16px; line-height: 1.6;">spreadsheets have zero real-time accountability. taskwhite builds the daily habit of clear, focused execution.</p>
       </div>
       <div class="col-md-4">
-        <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-start">
-          <div class="text-success mb-3"><i class="bi bi-envelope fs-1 text-danger"></i></div>
-          <h5 class="fw-bold">Email Overload</h5>
-          <p class="text-muted small mb-0">Important client approvals are lost in endless CC chains.</p>
-        </div>
-      </div>
-    </div>
-    
-    <div class="mt-5 p-3 rounded-3 border fw-bold text-muted mx-auto" style="background: rgba(0,0,0,0.02); max-width: 700px; font-size: 0.95rem;">
-      When work is scattered across three different apps, critical tasks slip through the cracks, compliance deadlines are missed, and business owners spend hours chasing updates.
-    </div>
-  </div>
-</section>
-
-<!-- Solution Section -->
-<section class="py-5 my-md-5">
-  <div class="container px-3">
-    <div class="row align-items-center flex-column-reverse flex-lg-row g-4 g-lg-5">
-      <div class="col-lg-4 text-center text-lg-start">
-        <h2 class="fw-bold mb-3" style="font-size: 2.2rem; letter-spacing: -0.5px;">Clarity. Ownership. Deadlines.</h2>
-        <p class="text-muted mb-4" style="font-size: 1.1rem; line-height: 1.6;">TaskWhite brings all your recurring tasks, client follow-ups, and team delegations into one unshakeable system.</p>
-        <p class="text-muted mb-0 small" style="line-height: 1.6;">We don't just track tasks; we enforce accountability. Know exactly who is doing what, and by when, without asking for a status update.</p>
-      </div>
-      <div class="col-lg-8">
-        <div class="screenshot-container shadow-lg rounded-4 overflow-hidden border">
-          <img src="/images/dashboard-preview.png" alt="TaskWhite Dashboard" class="img-fluid w-100">
-        </div>
+        <h4 class="fw-bold mb-3" style="color: #232323; font-size: 24px; letter-spacing: -0.5px;">3. complete context.</h4>
+        <p style="color: #232323; opacity: 0.7; font-size: 16px; line-height: 1.6;">emails scatter vital project files and decisions. assign owners and discuss work where it happens so nothing gets lost.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- How It Works (Vertical Timeline) -->
-<section class="py-5 bg-surface border-top border-bottom">
-  <div class="container px-3 max-w-lg mx-auto" style="max-width: 600px;">
-    <h2 class="fw-bold text-center mb-5">From chaos to control in 4 simple steps.</h2>
-    
-    <div class="d-flex flex-column gap-4">
-      <!-- Step 1 -->
-      <div class="d-flex align-items-start gap-3">
-        <div class="bg-dark text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0 mt-1 shadow-sm" style="width: 32px; height: 32px; font-weight: bold;">1</div>
-        <div>
-          <h5 class="fw-bold mb-1">Delegate in seconds</h5>
-          <p class="text-muted small mb-0">Create a task, assign an owner, and set a hard deadline.</p>
-        </div>
-      </div>
-      <!-- Step 2 -->
-      <div class="d-flex align-items-start gap-3">
-        <div class="bg-dark text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0 mt-1 shadow-sm" style="width: 32px; height: 32px; font-weight: bold;">2</div>
-        <div>
-          <h5 class="fw-bold mb-1">Automate the follow-up</h5>
-          <p class="text-muted small mb-0">TaskWhite automatically nudges assignees before the deadline hits.</p>
-        </div>
-      </div>
-      <!-- Step 3 -->
-      <div class="d-flex align-items-start gap-3">
-        <div class="bg-dark text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0 mt-1 shadow-sm" style="width: 32px; height: 32px; font-weight: bold;">3</div>
-        <div>
-          <h5 class="fw-bold mb-1">Track the status</h5>
-          <p class="text-muted small mb-0">See real-time progress on clean, intuitive dashboards—no status meetings required.</p>
-        </div>
-      </div>
-      <!-- Step 4 -->
-      <div class="d-flex align-items-start gap-3">
-        <div class="bg-dark text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0 mt-1 shadow-sm" style="width: 32px; height: 32px; font-weight: bold;">4</div>
-        <div>
-          <h5 class="fw-bold mb-1">Close with accountability</h5>
-          <p class="text-muted small mb-0">Full audit trails ensure every approval and comment is logged permanently.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Use Cases (Horizontal Swipe on Mobile) -->
-<section class="py-5 my-md-4">
-  <div class="container px-3">
-    <div class="text-center mb-4">
-      <h2 class="fw-bold mb-2">Built for strict deadlines.</h2>
-      <p class="text-muted">Trusted by organizations where compliance and timelines are non-negotiable.</p>
-    </div>
-    
-    <div class="d-flex overflow-auto pb-3 gap-3 snap-x" style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
-      <!-- Card 1 -->
-      <div class="card border border-0 shadow-sm flex-shrink-0 rounded-4" style="width: 280px; scroll-snap-align: start; background: var(--card-bg);">
-        <div class="card-body p-4">
-          <i class="bi bi-briefcase text-primary fs-3 mb-2 d-block"></i>
-          <h5 class="fw-bold">Professional Firms</h5>
-          <p class="text-muted small mb-0">Whether you are a Chartered Accountant, Company Secretary, or Advocate, automate compliance tracking, document follow-ups, and hearing dates without rigid lock-in.</p>
-        </div>
-      </div>
-      <!-- Card 2 -->
-      <div class="card border border-0 shadow-sm flex-shrink-0 rounded-4" style="width: 280px; scroll-snap-align: start; background: var(--card-bg);">
-        <div class="card-body p-4">
-          <i class="bi bi-megaphone text-danger fs-3 mb-2 d-block"></i>
-          <h5 class="fw-bold">Digital Agencies</h5>
-          <p class="text-muted small mb-0">Coordinate campaigns, client approvals, and content deliverables effortlessly across teams and clients.</p>
-        </div>
-      </div>
-      <!-- Card 3 -->
-      <div class="card border border-0 shadow-sm flex-shrink-0 rounded-4" style="width: 280px; scroll-snap-align: start; background: var(--card-bg);">
-        <div class="card-body p-4">
-          <i class="bi bi-lightbulb text-warning fs-3 mb-2 d-block"></i>
-          <h5 class="fw-bold">Consulting Firms</h5>
-          <p class="text-muted small mb-0">Manage project milestones, timesheets, and client reporting with full accountability and audit trails.</p>
-        </div>
-      </div>
-      <!-- Card 4 -->
-      <div class="card border border-0 shadow-sm flex-shrink-0 rounded-4" style="width: 280px; scroll-snap-align: start; background: var(--card-bg);">
-        <div class="card-body p-4">
-          <i class="bi bi-buildings text-info fs-3 mb-2 d-block"></i>
-          <h5 class="fw-bold">Construction</h5>
-          <p class="text-muted small mb-0">Track site updates, vendor follow-ups, and procurement deadlines reliably.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Features Grid -->
-<section class="py-5 bg-surface border-top border-bottom">
-  <div class="container px-3">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold mb-2">Everything you need. Nothing you don't.</h2>
-    </div>
-    
-    <div class="row g-4">
-      <div class="col-12 col-md-4">
-        <div class="d-flex gap-3">
-          <i class="bi bi-arrow-repeat text-primary fs-3"></i>
-          <div>
-            <h5 class="fw-bold mb-1">Recurring Tasks</h5>
-            <p class="text-muted small">Set it once. Let TaskWhite generate the task every day, week, or month.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <div class="d-flex gap-3">
-          <i class="bi bi-check2-all text-success fs-3"></i>
-          <div>
-            <h5 class="fw-bold mb-1">Approvals & Dependencies</h5>
-            <p class="text-muted small">Work doesn't move forward until the right manager signs off.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <div class="d-flex gap-3">
-          <i class="bi bi-layout-text-window text-info fs-3"></i>
-          <div>
-            <h5 class="fw-bold mb-1">Smart Dashboards</h5>
-            <p class="text-muted small">The "My View" keeps teams focused, while the "Org View" gives leaders total oversight.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <div class="d-flex gap-3">
-          <i class="bi bi-clock-history text-secondary fs-3"></i>
-          <div>
-            <h5 class="fw-bold mb-1">Audit Trails & Comments</h5>
-            <p class="text-muted small">Keep all task-related communication contextualized in one place.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <div class="d-flex gap-3">
-          <i class="bi bi-file-earmark-excel text-success fs-3"></i>
-          <div>
-            <h5 class="fw-bold mb-1">1-Click Excel Export</h5>
-            <p class="text-muted small">Never feel locked in. Export any view, list, or dashboard to Excel instantly for external tracking.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-4">
-        <div class="d-flex gap-3">
-          <i class="bi bi-bell text-danger fs-3"></i>
-          <div>
-            <h5 class="fw-bold mb-1">Automated Reminders</h5>
-            <p class="text-muted small">TaskWhite chases your team and clients so you don't have to.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Pricing Section -->
-<section class="py-5 my-md-4" id="pricing">
-  <div class="container px-3 text-center">
-    <h2 class="fw-bold mb-3">One powerful product. Pay as you grow.</h2>
-    <p class="text-muted mb-4 mx-auto" style="max-width: 650px;">
-      Unlike other tools, we don't hold essential features hostage. Every tier gets 100% of TaskWhite's capabilities. The only difference is your team size.
+<!-- Pricing -->
+<section style="background-color: #fcfcfc; padding-top: 120px; padding-bottom: 120px;" id="pricing">
+  <div class="container px-4 text-center">
+    <h2 class="fw-bold mb-4" style="color: #232323; font-size: 80px; letter-spacing: -2px;">flat pricing.</h2>
+    <p class="mb-5 mx-auto" style="color: #232323; opacity: 0.7; max-width: 500px; font-size: 24px; line-height: 1.4;">
+      we don't gate features. pay based on your team size.
     </p>
 
-    <!-- Pricing Toggle -->
-    <div class="d-flex justify-content-center align-items-center gap-3 mb-5">
-      <span class="fw-bold" id="monthlyLabel">Monthly</span>
-      <div class="form-check form-switch fs-4 m-0 p-0 d-flex align-items-center">
-        <input class="form-check-input m-0 cursor-pointer" type="checkbox" role="switch" id="pricingToggle" checked style="height: 24px; width: 48px;">
+    <!-- Pricing Toggles -->
+    <div class="row align-items-center mb-5 w-100" style="max-width: 800px; margin: 0 auto;">
+      <div class="col-md-3 d-none d-md-block"></div>
+      
+      <div class="col-12 col-md-6 d-flex justify-content-center align-items-center gap-3">
+        <span class="fw-bold" id="monthlyLabel" style="color: #232323;">monthly</span>
+        <div class="form-check form-switch fs-4 m-0 p-0 d-flex align-items-center">
+          <input class="form-check-input m-0 cursor-pointer" type="checkbox" role="switch" id="pricingToggle" checked style="height: 24px; width: 48px;">
+        </div>
+        <span class="fw-bold" id="annualLabel" style="color: #232323; opacity: 0.5;">annually <span class="badge ms-1" style="font-size: 10px; background-color: #c4b5fd; color: #232323;">2 months free!</span></span>
       </div>
-      <span class="fw-bold text-muted" id="annualLabel">Annually <span class="badge bg-success ms-1" style="font-size: 0.65rem;">2 Months Free!</span></span>
+      
+      <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-end align-items-center gap-3 mt-4 mt-md-0">
+        <span class="fs-4 fw-bold" id="inrLabel" style="color: #232323; cursor: pointer; transition: all 0.2s;">₹</span>
+        <span class="fs-4" id="usdLabel" style="color: #232323; opacity: 0.5; cursor: pointer; transition: all 0.2s;">$</span>
+      </div>
     </div>
     
-    <div class="row g-4 justify-content-center">
-      <!-- Free -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card h-100 border shadow-sm rounded-4 p-4 text-center bg-surface">
-          <h5 class="fw-bold text-muted mb-1">Free</h5>
-          <div class="display-5 fw-bold mb-0">₹0</div>
-          <div class="text-transparent small fw-bold mb-2 annual-savings" style="font-size: 0.75rem; user-select: none; color: transparent !important;">(placeholder)</div>
+    <div class="row justify-content-center g-4">
+      <div class="col-md-4">
+        <div class="card h-100 p-5 text-start shadow-sm border-0 d-flex flex-column" style="background-color: #ffffff; border-radius: 8px;">
+          <h5 class="fw-bold mb-2" style="color: #232323; font-size: 24px;">free</h5>
+          <div class="display-4 fw-bold mb-2" style="color: #232323; letter-spacing: -1px;"><span class="currency-symbol">₹</span>0</div>
+          <div class="text-transparent small fw-bold mb-4 annual-savings" style="font-size: 12px; user-select: none; color: transparent !important;">(placeholder)</div>
           
-          <div class="text-muted small mb-4">Up to 3 users</div>
-          <hr class="">
-          <ul class="list-unstyled text-start small text-muted mb-4">
-            <li class="mb-2"><i class="bi bi-check text-success fs-5 align-middle me-1"></i> All premium features</li>
-            <li class="mb-2"><i class="bi bi-check text-success fs-5 align-middle me-1"></i> Unlimited tasks</li>
-            <li class="mb-2"><i class="bi bi-check text-success fs-5 align-middle me-1"></i> Approvals & Workflows</li>
+          <p class="fw-bold mb-4" style="color: #232323; opacity: 0.7; font-size: 16px;">up to 3 users.</p>
+          <ul class="list-unstyled mb-5" style="color: #232323; opacity: 0.7; font-size: 14px;">
+            <li class="mb-2">✓ all premium features</li>
+            <li class="mb-2">✓ unlimited tasks</li>
+            <li class="mb-2">✓ approvals & workflows</li>
           </ul>
-          <a href="/login" class="btn btn-outline-dark w-100 mt-auto fw-bold">Start Free</a>
+          <a href="/login" class="btn w-100 mt-auto fw-bold" style="background-color: #ededed; color: #232323; border-radius: 4px; height: 48px; line-height: 34px;">start free</a>
         </div>
       </div>
-      
-      <!-- Starter -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card h-100 border shadow-sm rounded-4 p-4 text-center border-dark position-relative" style="background: var(--card-bg);">
-          <div class="position-absolute top-0 start-50 translate-middle badge rounded bg-dark">Popular</div>
-          <h5 class="fw-bold text-muted mb-1 mt-2">Starter</h5>
-          <div class="display-5 fw-bold mb-0">₹<span class="price-val" data-monthly="499" data-annual="416">416</span><span class="fs-6 text-muted price-suffix">/mo</span></div>
-          <div class="text-success small fw-bold mb-2 annual-savings" style="font-size: 0.75rem;">(save ₹998)</div>
+      <div class="col-md-4">
+        <div class="card h-100 p-5 text-start shadow-sm position-relative d-flex flex-column" style="background-color: #ffffff; border: 2px solid #c4b5fd; border-radius: 8px;">
+          <h5 class="fw-bold mb-2" style="color: #232323; font-size: 24px;">starter</h5>
+          <div class="display-4 fw-bold mb-2" style="color: #232323; letter-spacing: -1px;"><span class="currency-symbol">₹</span><span class="price-val" data-monthly="499" data-annual="416" data-monthly-usd="4.99" data-annual-usd="4.16">416</span><span class="fs-6 price-suffix" style="opacity: 0.5;">/mo</span></div>
+          <div class="small fw-bold mb-4 annual-savings" style="font-size: 12px; color: #8b5cf6;">(save <span class="currency-symbol">₹</span><span class="savings-val" data-inr="998" data-usd="9.98">998</span>)</div>
           
-          <div class="text-muted small mb-4">Up to 5 users</div>
-          <hr class="">
-          <ul class="list-unstyled text-start small text-muted mb-4">
-            <li class="mb-2"><i class="bi bi-check text-success fs-5 align-middle me-1"></i> All premium features</li>
-            <li class="mb-2"><i class="bi bi-check text-success fs-5 align-middle me-1"></i> Perfect for small teams</li>
+          <p class="fw-bold mb-4" style="color: #232323; opacity: 0.7; font-size: 16px;">up to 5 users.</p>
+          <ul class="list-unstyled mb-5" style="color: #232323; opacity: 0.7; font-size: 14px;">
+            <li class="mb-2">✓ all premium features</li>
+            <li class="mb-2">✓ perfect for small teams</li>
           </ul>
-          <a href="/login" class="btn btn-dark w-100 mt-auto fw-bold">Choose Starter</a>
+          <a href="/login" class="btn w-100 mt-auto fw-bold" style="background-color: #c4b5fd; color: #232323; border-radius: 4px; height: 48px; line-height: 34px;">choose starter</a>
         </div>
       </div>
-      
-      <!-- Growth -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card h-100 border shadow-sm rounded-4 p-4 text-center bg-surface">
-          <h5 class="fw-bold text-muted mb-1">Growth</h5>
-          <div class="display-5 fw-bold mb-0">₹<span class="price-val" data-monthly="1,499" data-annual="1,249">1,249</span><span class="fs-6 text-muted price-suffix">/mo</span></div>
-          <div class="text-success small fw-bold mb-2 annual-savings" style="font-size: 0.75rem;">(save ₹2,998)</div>
+      <div class="col-md-4">
+        <div class="card h-100 p-5 text-start shadow-sm border-0 d-flex flex-column" style="background-color: #ffffff; border-radius: 8px;">
+          <h5 class="fw-bold mb-2" style="color: #232323; font-size: 24px;">growth</h5>
+          <div class="display-4 fw-bold mb-2" style="color: #232323; letter-spacing: -1px;"><span class="currency-symbol">₹</span><span class="price-val" data-monthly="1,499" data-annual="1,249" data-monthly-usd="14.99" data-annual-usd="12.49">1,249</span><span class="fs-6 price-suffix" style="opacity: 0.5;">/mo</span></div>
+          <div class="small fw-bold mb-4 annual-savings" style="font-size: 12px; color: #232323; opacity: 0.5;">(save <span class="currency-symbol">₹</span><span class="savings-val" data-inr="2,998" data-usd="29.98">2,998</span>)</div>
           
-          <div class="text-muted small mb-4">Up to 15 users</div>
-          <hr class="">
-          <ul class="list-unstyled text-start small text-muted mb-4">
-            <li class="mb-2"><i class="bi bi-check text-success fs-5 align-middle me-1"></i> All premium features</li>
-            <li class="mb-2"><i class="bi bi-check text-success fs-5 align-middle me-1"></i> Built for growing firms</li>
+          <p class="fw-bold mb-4" style="color: #232323; opacity: 0.7; font-size: 16px;">up to 15 users.</p>
+          <ul class="list-unstyled mb-5" style="color: #232323; opacity: 0.7; font-size: 14px;">
+            <li class="mb-2">✓ all premium features</li>
+            <li class="mb-2">✓ built for growing firms</li>
           </ul>
-          <a href="/login" class="btn btn-outline-dark w-100 mt-auto fw-bold">Choose Growth</a>
-        </div>
-      </div>
-      
-      <!-- Pro -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card h-100 border shadow-sm rounded-4 p-4 text-center bg-surface">
-          <h5 class="fw-bold text-muted mb-1">Pro</h5>
-          <div class="display-5 fw-bold mb-0">₹<span class="price-val" data-monthly="3,999" data-annual="3,333">3,333</span><span class="fs-6 text-muted price-suffix">/mo</span></div>
-          <div class="text-success small fw-bold mb-2 annual-savings" style="font-size: 0.75rem;">(save ₹7,998)</div>
-          
-          <div class="text-muted small mb-4">Up to 50 users</div>
-          <hr class="">
-          <ul class="list-unstyled text-start small text-muted mb-4">
-            <li class="mb-2"><i class="bi bi-check text-success fs-5 align-middle me-1"></i> All premium features</li>
-            <li class="mb-2"><i class="bi bi-check text-success fs-5 align-middle me-1"></i> Built for scale</li>
-          </ul>
-          <a href="/login" class="btn btn-outline-dark w-100 mt-auto fw-bold">Choose Pro</a>
+          <a href="/login" class="btn w-100 mt-auto fw-bold" style="background-color: #ededed; color: #232323; border-radius: 4px; height: 48px; line-height: 34px;">choose growth</a>
         </div>
       </div>
     </div>
-    <div class="mt-4 text-muted small fw-bold">
-      Scale / Custom (50+ users) available. Contact sales for pricing.
-    </div>
-  </div>
-</section>
-
-<!-- Comparison -->
-<section class="py-5 bg-surface border-top border-bottom">
-  <div class="container px-3">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold mb-2">Why Indian SMBs switch to TaskWhite</h2>
-      <p class="text-muted">Stop compromising on workflow management tools that weren't built for your needs.</p>
-    </div>
-    
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card h-100 border shadow-sm rounded-4 p-4 text-start">
-          <h5 class="fw-bold border-bottom pb-2 mb-3">TaskWhite vs. Asana / ClickUp</h5>
-          <p class="text-muted small"><strong>The Problem:</strong> They charge per-user and lock crucial features (like approvals and timelines) behind expensive enterprise tiers.</p>
-          <p class="text-muted small mb-0"><strong>The TaskWhite Edge:</strong> We give you everything for a flat organization rate based on your tier size. Zero feature gating.</p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100 border shadow-sm rounded-4 p-4 text-start">
-          <h5 class="fw-bold border-bottom pb-2 mb-3">TaskWhite vs. Trello</h5>
-          <p class="text-muted small"><strong>The Problem:</strong> Kanban boards get messy and lack rigid deadlines. It's too easy for cards to get lost in the shuffle.</p>
-          <p class="text-muted small mb-0"><strong>The TaskWhite Edge:</strong> Structured lists, robust recurring task engines, and automated follow-ups built for serious operations, not just sticky notes.</p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100 border shadow-sm rounded-4 p-4 text-start">
-          <h5 class="fw-bold border-bottom pb-2 mb-3">TaskWhite vs. WhatsApp</h5>
-          <p class="text-muted small"><strong>The Problem:</strong> No accountability, no audit trails, and messages get buried rapidly.</p>
-          <p class="text-muted small mb-0"><strong>The TaskWhite Edge:</strong> Dedicated audit trails, searchable history, status tracking, and automated reminders that chat apps simply cannot provide.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Testimonials Section -->
-<section class="py-5 my-md-4">
-  <div class="container px-3 text-center">
-    <h2 class="fw-bold mb-5">Trusted by leaders who value accountability.</h2>
-    <div class="row g-4 justify-content-center">
-      <div class="col-md-4">
-        <div class="card border-0 shadow-sm rounded-4 p-4 text-start h-100" style="background: var(--card-bg);">
-          <div class="d-flex text-warning mb-3">
-            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          </div>
-          <p class="text-muted small flex-grow-1">"Before TaskWhite, we tracked our client deliverables across WhatsApp and three Excel sheets. Now, everything is in one place. The automated reminders alone have saved us 10+ hours a week."</p>
-          <div class="d-flex align-items-center gap-3 mt-3">
-            <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center fw-bold" style="width: 40px; height: 40px;">RK</div>
-            <div>
-              <h6 class="fw-bold mb-0">Rajesh K.</h6>
-              <div class="text-muted small" style="font-size: 0.75rem;">Managing Partner, Professional Services</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card border-0 shadow-sm rounded-4 p-4 text-start h-100" style="background: var(--card-bg);">
-          <div class="d-flex text-warning mb-3">
-            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          </div>
-          <p class="text-muted small flex-grow-1">"The fact that they don't hold features back based on price is exactly what Indian SMBs need. We have approvals, audit trails, and reporting, all within the Starter tier."</p>
-          <div class="d-flex align-items-center gap-3 mt-3">
-            <div class="bg-success text-white rounded-circle d-flex justify-content-center align-items-center fw-bold" style="width: 40px; height: 40px;">AS</div>
-            <div>
-              <h6 class="fw-bold mb-0">Ananya S.</h6>
-              <div class="text-muted small" style="font-size: 0.75rem;">Founder, Digital Agency</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card border-0 shadow-sm rounded-4 p-4 text-start h-100" style="background: var(--card-bg);">
-          <div class="d-flex text-warning mb-3">
-            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-          </div>
-          <p class="text-muted small flex-grow-1">"The transition was incredibly fast. My team picked it up in a day. The 'My View' vs 'Org View' makes it so easy for me to oversee the firm without micromanaging."</p>
-          <div class="d-flex align-items-center gap-3 mt-3">
-            <div class="bg-info text-white rounded-circle d-flex justify-content-center align-items-center fw-bold" style="width: 40px; height: 40px;">MN</div>
-            <div>
-              <h6 class="fw-bold mb-0">Manish N.</h6>
-              <div class="text-muted small" style="font-size: 0.75rem;">Director, Consulting Firm</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FAQs -->
-<section class="py-5 my-md-4 bg-surface border-top">
-  <div class="container px-3 max-w-lg mx-auto" style="max-width: 700px;">
-    <h2 class="fw-bold text-center mb-4">Frequently Asked Questions</h2>
-    <div class="accordion" id="faqAccordion">
-      <!-- FAQ 1 -->
-      <div class="accordion-item border-0 border-bottom bg-transparent rounded-0">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed bg-transparent fw-bold shadow-none px-0" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-            Does TaskWhite replace Excel and WhatsApp?
-          </button>
-        </h2>
-        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-          <div class="accordion-body px-0 text-muted small pt-0 pb-3">
-            Yes. TaskWhite handles all internal delegation, status tracking, and file sharing, entirely eliminating the need for internal WhatsApp groups and tracker spreadsheets. (And you can always export to Excel with one click if needed).
-          </div>
-        </div>
-      </div>
-      <!-- FAQ 2 -->
-      <div class="accordion-item border-0 border-bottom bg-transparent rounded-0">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed bg-transparent fw-bold shadow-none px-0" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-            Are there hidden feature limits on the Free tier?
-          </button>
-        </h2>
-        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-          <div class="accordion-body px-0 text-muted small pt-0 pb-3">
-            Absolutely not. The Free tier includes every single feature TaskWhite offers. We only cap the user count at 3.
-          </div>
-        </div>
-      </div>
-      <!-- FAQ 3 -->
-      <div class="accordion-item border-0 bg-transparent rounded-0">
-        <h2 class="accordion-header">
-          <button class="accordion-button collapsed bg-transparent fw-bold shadow-none px-0" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-            Is it suitable for non-technical team members?
-          </button>
-        </h2>
-        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-          <div class="accordion-body px-0 text-muted small pt-0 pb-3">
-            Yes. TaskWhite is designed to be as intuitive as a consumer app. If your team can use email, they can use TaskWhite.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Final CTA -->
-<section class="py-5 text-white text-center" style="background: #0f172a;">
-  <div class="container px-3 py-4 position-relative z-1">
-    <h2 class="fw-bold mb-3 display-6">Ready to stop micromanaging your workflow?</h2>
-    <p class="text-white-50 mb-5 mx-auto" style="max-width: 500px;">Join the platform that enforces accountability.</p>
-    <a href="/login" class="btn btn-light btn-lg px-5 shadow fw-bold rounded mb-4" style="height: 54px; line-height: 38px;">Start Free Workspace</a>
   </div>
 </section>
 
 <!-- Footer -->
-<footer class="py-4 text-center text-muted bg-surface border-top" style="padding-bottom: 90px !important;">
-  <div class="container">
-    <div class="d-flex align-items-center justify-content-center mb-2">
-      <img src="/images/logo.svg" alt="TaskWhite" width="20" height="20" class="me-2 " style="border-radius: 4px;">
-      <span class="fw-bold text-muted small">TaskWhite</span>
+<footer class="py-5" style="background-color: #1e1e24; color: #ffffff;">
+  <div class="container px-4">
+    <!-- Links Columns -->
+    <div class="row g-4 mb-5 pt-3 justify-content-center">
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6 class="fw-bold mb-3" style="color: #ffffff;">Compare</h6>
+        <ul class="list-unstyled" style="font-size: 14px; opacity: 0.7;">
+          <li class="mb-2"><a href="/compare/asana" class="text-decoration-none" style="color: inherit;">vs Asana</a></li>
+          <li class="mb-2"><a href="/compare/jira" class="text-decoration-none" style="color: inherit;">vs Jira</a></li>
+          <li class="mb-2"><a href="/compare/monday" class="text-decoration-none" style="color: inherit;">vs Monday.com</a></li>
+          <li class="mb-2"><a href="/compare/clickup" class="text-decoration-none" style="color: inherit;">vs ClickUp</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6 class="fw-bold mb-3" style="color: #ffffff;">Industries</h6>
+        <ul class="list-unstyled" style="font-size: 14px; opacity: 0.7;">
+          <li class="mb-2"><a href="/industry/marketing" class="text-decoration-none" style="color: inherit;">Marketing</a></li>
+          <li class="mb-2"><a href="/industry/software" class="text-decoration-none" style="color: inherit;">Software</a></li>
+          <li class="mb-2"><a href="/industry/agencies" class="text-decoration-none" style="color: inherit;">Agencies</a></li>
+          <li class="mb-2"><a href="/industry/healthcare" class="text-decoration-none" style="color: inherit;">Healthcare</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6 class="fw-bold mb-3" style="color: #ffffff;">Roles & Features</h6>
+        <ul class="list-unstyled" style="font-size: 14px; opacity: 0.7;">
+          <li class="mb-2"><a href="/role/project-managers" class="text-decoration-none" style="color: inherit;">Project Managers</a></li>
+          <li class="mb-2"><a href="/role/ceos" class="text-decoration-none" style="color: inherit;">CEOs & Founders</a></li>
+          <li class="mb-2"><a href="/features/task-management" class="text-decoration-none" style="color: inherit;">Task Management</a></li>
+          <li class="mb-2"><a href="/features/team-collaboration" class="text-decoration-none" style="color: inherit;">Collaboration</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6 class="fw-bold mb-3" style="color: #ffffff;">Resources</h6>
+        <ul class="list-unstyled" style="font-size: 14px; opacity: 0.7;">
+          <li class="mb-2"><a href="/help/getting-started" class="text-decoration-none" style="color: inherit;">Help Center</a></li>
+          <li class="mb-2"><a href="/help/billing" class="text-decoration-none" style="color: inherit;">Billing & Subscriptions</a></li>
+          <li class="mb-2"><a href="/terms" class="text-decoration-none" style="color: inherit;">Terms of Service</a></li>
+          <li class="mb-2"><a href="/privacy" class="text-decoration-none" style="color: inherit;">Privacy Policy</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="mb-2">
-      <a href="/terms" class="text-muted text-decoration-none small me-3">Terms & Conditions</a>
-      <a href="/privacy" class="text-muted text-decoration-none small">Privacy Policy</a>
+
+    <!-- Copyright -->
+    <div class="text-center" style="font-size: 12px; color: #ffffff; opacity: 0.5;">
+      &copy; <%= new Date().getFullYear() %> TaskWhite. regain control over your business.
     </div>
-    <small style="font-size: 0.75rem;">&copy; <%= new Date().getFullYear() %> TaskWhite. Made for Indian SMBs.</small>
   </div>
 </footer>
 
@@ -508,41 +201,81 @@
   document.addEventListener('DOMContentLoaded', () => {
     const pricingToggle = document.getElementById('pricingToggle');
     const priceVals = document.querySelectorAll('.price-val');
-    const priceSuffixes = document.querySelectorAll('.price-suffix');
+    const savingsVals = document.querySelectorAll('.savings-val');
+    const currencySymbols = document.querySelectorAll('.currency-symbol');
     const monthlyLabel = document.getElementById('monthlyLabel');
     const annualLabel = document.getElementById('annualLabel');
+    const usdLabel = document.getElementById('usdLabel');
+    const inrLabel = document.getElementById('inrLabel');
+    let isInr = true;
 
-    if (pricingToggle) {
-      pricingToggle.addEventListener('change', (e) => {
-        const isAnnual = e.target.checked;
-        
-        if (isAnnual) {
-          monthlyLabel.classList.replace('text-dark', 'text-muted');
-          monthlyLabel.classList.remove('fw-bold');
-          annualLabel.classList.replace('text-muted', 'text-dark');
-          annualLabel.classList.add('fw-bold');
-        } else {
-          annualLabel.classList.replace('text-dark', 'text-muted');
-          annualLabel.classList.remove('fw-bold');
-          monthlyLabel.classList.replace('text-muted', 'text-dark');
-          monthlyLabel.classList.add('fw-bold');
-        }
+    function updatePricing() {
+      const isAnnual = pricingToggle ? pricingToggle.checked : true;
 
-        priceVals.forEach(el => {
+      // Update Labels
+      if (isAnnual) {
+        monthlyLabel.style.opacity = '0.5';
+        annualLabel.style.opacity = '1';
+      } else {
+        annualLabel.style.opacity = '0.5';
+        monthlyLabel.style.opacity = '1';
+      }
+
+      if (isInr) {
+        usdLabel.style.opacity = '0.5';
+        usdLabel.classList.remove('fw-bold');
+        inrLabel.style.opacity = '1';
+        inrLabel.classList.add('fw-bold');
+        currencySymbols.forEach(el => el.innerText = '₹');
+      } else {
+        inrLabel.style.opacity = '0.5';
+        inrLabel.classList.remove('fw-bold');
+        usdLabel.style.opacity = '1';
+        usdLabel.classList.add('fw-bold');
+        currencySymbols.forEach(el => el.innerText = '$');
+      }
+
+      // Update Prices
+      priceVals.forEach(el => {
+        if (isInr) {
           el.innerText = isAnnual ? el.getAttribute('data-annual') : el.getAttribute('data-monthly');
-        });
-        
-        // Price suffix is always /mo now
-        priceSuffixes.forEach(el => {
-          el.innerText = '/mo';
-        });
-        
-        const annualSavings = document.querySelectorAll('.annual-savings');
-        annualSavings.forEach(el => {
-          el.style.display = isAnnual ? 'block' : 'none';
-        });
+        } else {
+          el.innerText = isAnnual ? el.getAttribute('data-annual-usd') : el.getAttribute('data-monthly-usd');
+        }
+      });
+      
+      // Update Savings
+      savingsVals.forEach(el => {
+        el.innerText = isInr ? el.getAttribute('data-inr') : el.getAttribute('data-usd');
+      });
+
+      // Toggle Savings Visibility
+      const annualSavings = document.querySelectorAll('.annual-savings');
+      annualSavings.forEach(el => {
+        el.style.visibility = isAnnual ? 'visible' : 'hidden';
       });
     }
+
+    if (pricingToggle) {
+      pricingToggle.addEventListener('change', updatePricing);
+    }
+    
+    if (inrLabel && usdLabel) {
+      inrLabel.addEventListener('click', () => {
+        if (!isInr) {
+          isInr = true;
+          updatePricing();
+        }
+      });
+      usdLabel.addEventListener('click', () => {
+        if (isInr) {
+          isInr = false;
+          updatePricing();
+        }
+      });
+    }
+    
+    // Initial call
+    updatePricing();
   });
 </script>
-

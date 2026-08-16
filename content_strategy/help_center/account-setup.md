@@ -1,11 +1,11 @@
 # Account Setup
 
-Customizing your TaskWhite account helps you work the way you want. Here’s how to configure your profile and preferences.
+Customizing your TaskWhite account helps you work the way you want. Here’s how to configure your prorecord and preferences.
 
-## Profile Settings
+## Prorecord Settings
 Update your personal information to help your team recognize you.
 1. Click your avatar in the top right corner.
-2. Select **My Profile**.
+2. Select **My Prorecord**.
 3. Add your job title, and update your bio.
 
 ## Notification Preferences
@@ -20,4 +20,4 @@ Keep your account secure.
 *   Enable Two-Factor Authentication (2FA) for added protection.
 
 ## Need more help?
-Check out our guide on [Managing Teams](/help-center/teams) or [Contact Support](/contact).
+Check out our guide on [Managing Teams](/help/teams) or [Contact Support](/contact).

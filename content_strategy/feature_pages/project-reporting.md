@@ -37,5 +37,5 @@ A: Yes, Enterprise plans allow for custom branding on exported reports.
 A: Yes, time tracking data automatically feeds into your reporting dashboards.
 
 ## Related Resources
-*   [Task Management Overview](/task-management)
-*   [Billing and Subscriptions](/help-center/billing)
+*   [Task Management Overview](/features/task-management)
+*   [Billing and Subscriptions](/help/billing)

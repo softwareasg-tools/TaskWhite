@@ -10,8 +10,8 @@ Accuracy and timing are non-negotiable for finance teams. TaskWhite helps you ma
 
 ## Common Workflow Challenges in Finance
 
-*   **Chaotic Month-End Close:** Missing documentation or delayed approvals can stall the closing process.
-*   **Lack of Audit Trails:** Difficulty tracking who approved an expense or when a specific financial document was updated.
+*   **Chaotic Month-End Close:** Missing information or delayed approvals can stall the closing process.
+*   **Lack of Audit Trails:** Difficulty tracking who completed a task or when a specific status was updated.
 *   **Siloed Spreadsheets:** Relying on disconnected spreadsheets for task tracking leads to version control issues and missed deadlines.
 *   **Routine Task Management:** Managing recurring weekly or monthly tasks across a distributed finance team is tedious.
 
@@ -19,14 +19,13 @@ Accuracy and timing are non-negotiable for finance teams. TaskWhite helps you ma
 
 *   **Recurring Tasks:** Set tasks to automatically repeat daily, weekly, or monthly so routine processes like payroll or reconciliations are never missed.
 *   **Clear Accountability:** Assign specific steps of the financial close process to individuals with strict due dates.
-*   **Document Management:** Attach receipts, invoices, and reports directly to the relevant tasks for easy access during audits.
-*   **Status Tracking:** Use custom fields to track the status of invoices or the priority level of financial requests.
+*   **Status Tracking:** Use custom tags to track the status of invoices or the priority level of financial requests.
 
 ## Example Workflows
 
 1.  **Month-End Close:** A detailed checklist ensuring all accounts are reconciled and reports are generated on time.
 2.  **Accounts Payable/Receivable:** Track the status of incoming and outgoing payments, managing approvals and follow-ups.
-3.  **Audit Preparation:** Organize all required documentation and assign data gathering tasks ahead of scheduled audits.
+3.  **Audit Preparation:** Organize all required information and assign data gathering tasks ahead of scheduled audits.
 
 ## Recommended Templates
 

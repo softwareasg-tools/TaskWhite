@@ -17,25 +17,23 @@ TaskWhite's Task Management feature allows you to capture, organize, and priorit
 *   **Marketing Campaigns:** Track deliverables, from copywriting to design and publishing.
 *   **Software Development:** Manage bug tracking, feature requests, and sprint planning.
 *   **Event Planning:** Coordinate vendor contracts, guest lists, and schedules.
+*   **Chartered Accountants/CPA:** Manage tax filings, audits, and client information.
+*   **Law Firms:** Track case progress, court dates, and legal research.
+*   **Architecture Firms:** Oversee design phases, permitting, and client milestones.
 
 ## Steps to Get Started
 1.  **Create a Task:** Click the "New Task" button in your project board.
 2.  **Assign and Schedule:** Add an assignee and set a due date.
-3.  **Add Details:** Include a description and subtasks.
-4.  **Track Progress:** Update the task status as work progresses.
+3.  **Track Progress:** Update the task status as work progresses.
 
 ## Best Practices
-*   **Break it down:** Keep tasks actionable by breaking large projects into smaller subtasks.
+*   **Break it down:** Keep tasks actionable by breaking large projects into smaller tasks.
 *   **Use tags:** Categorize tasks with custom tags for easy filtering.
-*   **Communicate in context:** Use task comments to keep discussions centralized.
 
 ## FAQs
-**Q: Can I assign a task to multiple people?**
-A: Yes, TaskWhite allows you to add multiple assignees or use subtasks for different contributors.
 
 **Q: Can I set recurring tasks?**
 A: Absolutely! Set tasks to repeat daily, weekly, monthly, or on a custom schedule.
 
 ## Related Resources
-*   [How to Manage Projects](/projects)
-*   [Team Collaboration Guide](/team-collaboration)
+*   [Team Collaboration Guide](/features/team-collaboration)

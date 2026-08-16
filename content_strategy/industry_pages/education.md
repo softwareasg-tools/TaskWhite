@@ -25,7 +25,6 @@ TaskWhite provides a centralized platform to streamline educational processes:
 
 *   **Centralized Task Boards:** Organize departmental initiatives, committee work, and daily administrative tasks on clear, visual boards.
 *   **Shared Calendars and Milestones:** Keep everyone aligned on academic calendars, exam schedules, and important deadlines.
-*   **Document Management:** Securely store and share curriculum guidelines, policy documents, and meeting minutes within relevant tasks.
 *   **Automated Reminders:** Ensure deadlines for grading, reporting, and administrative compliance are never missed.
 *   **Seamless Communication:** Reduce email clutter by discussing tasks and sharing updates directly within the context of the work.
 

@@ -25,7 +25,7 @@ TaskWhite brings clarity and accountability to retail operations:
 
 *   **Centralized Task Directives:** Send clear, actionable tasks from HQ to store managers, eliminating confusing email chains.
 *   **Visual Checklists & Approvals:** Require store managers to complete visual merchandising checklists for instant HQ approval.
-*   **Standardized Operating Procedures (SOPs):** Store manuals, opening/closing procedures, and policy documents directly in TaskWhite for easy reference.
+*   **Standardized Operating Procedures (SOPs):** Store manuals, opening/closing procedures, and policy records directly in TaskWhite for easy reference.
 *   **Real-time Campaign Tracking:** Monitor the progress of seasonal promotions or product launches across all regions simultaneously.
 *   **Feedback Loops:** Allow store managers to easily report localized issues or feedback back to the regional or corporate teams.
 
@@ -52,4 +52,4 @@ A: Yes, TaskWhite allows corporate teams to assign identical tasks to multiple s
 A: Absolutely. TaskWhite is fully accessible via mobile devices or store tablets, allowing managers to complete tasks directly from the floor.
 
 **Q: How do we handle different store formats or regions?**
-A: You can easily organize your TaskWhite instance using tags, custom fields, or separate workspaces to segment tasks by region, store tier, or format.
+A: You can easily organize your TaskWhite instance using tags, custom tags, or separate workspaces to segment tasks by region, store tier, or format.

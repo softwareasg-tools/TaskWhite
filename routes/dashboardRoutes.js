@@ -10,5 +10,6 @@ router.get('/', (req, res) => {
 });
 router.get('/terms', (req, res) => res.render('pages/terms', { layout: 'layout' }));
 router.get('/privacy', (req, res) => res.render('pages/privacy', { layout: 'layout' }));
+router.get('/contact', (req, res) => res.render('pages/contact', { layout: 'layout' }));
 
 module.exports = router;

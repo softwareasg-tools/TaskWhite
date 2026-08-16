@@ -17,9 +17,9 @@ Building great software requires alignment between product managers, designers, 
 
 ## How TaskWhite Can Help
 
-*   **Agile Boards:** Use Kanban boards to manage sprints, moving tasks from "To Do" to "In Progress" to "Code Review" and "Done."
+*   **Agile Boards:** Use Project Boards to manage sprints, moving tasks from "To Do" to "In Progress" to "Code Review" and "Done."
 *   **Product Roadmaps:** Visualize long-term epics and initiatives on a timeline to share with stakeholders.
-*   **Bug Tracking:** Create a dedicated project to log, triage, and assign bugs with custom fields for severity and environment.
+*   **Bug Tracking:** Create a dedicated project to log, triage, and assign bugs with custom tags for severity and environment.
 *   **Clear Specifications:** Use task descriptions to provide engineers with clear requirements, designs, and acceptance criteria.
 
 ## Example Workflows
@@ -37,7 +37,7 @@ Building great software requires alignment between product managers, designers, 
 ## FAQs
 
 **Q: Can TaskWhite support Agile methodologies?**
-A: Yes, TaskWhite's flexible boards and custom fields make it easy to implement Scrum or Kanban workflows, track story points, and manage backlogs.
+A: Yes, TaskWhite's flexible boards and custom tags make it easy to implement Scrum or List Views workflows, track story points, and manage backlogs.
 
 **Q: How does TaskWhite help bridge the gap between engineering and non-technical teams?**
 A: By keeping project management in an accessible, intuitive platform, teams like Marketing and Customer Success can easily view the product roadmap and monitor the status of bug fixes without needing to learn complex developer tools.

@@ -1,21 +1,17 @@
 # Managing Teams
 
-Teams in TaskWhite allow you to group people by department, function, or location for easier project management and communication.
+In TaskWhite, teams are managed dynamically through the use of tags, eliminating the need for complex, rigid team settings pages. This flat, tag-based structure keeps your workspace agile.
 
-## Creating a Team
-1. Navigate to the sidebar and click the **+** icon next to Teams.
-2. Enter a team name (e.g., "Marketing", "Design").
-3. Add a brief description.
+## Organizing by Tags
+Instead of creating rigid team structures, simply use tags to group tasks.
+1. Create tags for your departments (e.g., "Marketing", "Engineering", "Design").
+2. Assign these tags to relevant tasks.
+3. Filter your views by these tags to instantly see everything a specific team is working on.
 
-## Inviting Members
-1. Go to your Team page.
-2. Click **Invite Members**.
-3. Enter email addresses or select existing users from your workspace.
-4. Set their role (Admin, Member, or Guest).
-
-## Team Settings
-Team Admins can configure settings such as default project privacy, team logos, and integration preferences specific to that group.
+## Benefits of Virtual Teams
+* **Flexibility:** A task can belong to multiple teams simply by adding multiple tags (e.g., Marketing and Design).
+* **Zero Maintenance:** No need to manage user lists, team admins, or dedicated team settings.
+* **Transparency:** Anyone can filter by a team's tag to see cross-functional progress.
 
 ## Related Articles
-*   [Understanding Permissions](/help-center/permissions)
-*   [Project Basics](/help-center/projects)
+*   [Understanding Permissions](/help/permissions)

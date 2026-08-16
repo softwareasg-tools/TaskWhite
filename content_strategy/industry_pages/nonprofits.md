@@ -25,8 +25,8 @@ TaskWhite helps nonprofits operate more efficiently so they can focus on their c
 
 *   **Organized Workspaces:** Create distinct projects for fundraising, program delivery, marketing, and operations.
 *   **Clear Task Delegation:** Assign tasks clearly to staff and volunteers, ensuring everyone knows their responsibilities and deadlines.
-*   **Visual Campaign Tracking:** Use Kanban boards or Gantt charts to map out fundraising events and marketing initiatives.
-*   **Centralized Document Storage:** Keep grant proposals, marketing assets, and board reports organized and easily accessible to authorized team members.
+*   **Visual Campaign Tracking:** Use Project Boards or Gantt charts to map out fundraising events and marketing initiatives.
+*   **Centralized Information Storage:** Keep grant proposals, marketing assets, and board reports organized and easily accessible to authorized team members.
 *   **Collaboration Without Clutter:** Discuss strategies, share updates, and provide feedback within tasks, eliminating lengthy email threads.
 
 ## Example Nonprofit Workflows in TaskWhite
