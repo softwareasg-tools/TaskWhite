@@ -13,9 +13,6 @@ const authLimiter = rateLimit({
 // Middleware to check auth
 const requireAuth = (req, res, next) => {
   if (!req.session.user) {
-    if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json')) || req.path.startsWith('/api') || req.method !== 'GET') {
-      return res.status(401).json({ error: 'Session expired. Please refresh the page and log in again.' });
-    }
     return res.redirect('/login');
   }
   next();
