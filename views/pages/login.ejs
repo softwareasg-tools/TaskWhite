@@ -18,7 +18,7 @@
           <label for="email" class="form-label text-muted">Email address</label>
           <input type="email" class="form-control text-center" id="email" placeholder="name@company.com" required>
         </div>
-        <button type="button" class="btn btn-dark w-100 mb-3" onclick="requestMagicLink()" id="magicBtn">Send Magic Link</button>
+        <button type="button" class="btn btn-dark w-100 mb-3" id="magicBtn">Send Magic Link</button>
         <p class="text-muted" style="font-size: 0.75rem; line-height: 1.4;">
           By continuing, you agree to our <a href="/terms" class="text-decoration-none text-primary">Terms and Conditions</a> and <a href="/privacy" class="text-decoration-none text-primary">Privacy Policy</a>.
         </p>
@@ -27,12 +27,16 @@
   </div>
 </div>
 
-<script type="module">
+<script>
   // Allow Enter key to trigger the magic link
   document.getElementById('email').addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
       window.requestMagicLink();
     }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('magicBtn').addEventListener('click', window.requestMagicLink);
   });
 
   window.requestMagicLink = async function() {
