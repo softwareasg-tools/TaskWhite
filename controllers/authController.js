@@ -61,8 +61,12 @@ exports.sendMagicLink = async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email missing' });
 
+    let host = req.get('host');
+    if (host.startsWith('www.')) {
+      host = host.replace('www.', '');
+    }
     const actionCodeSettings = {
-      url: `${req.protocol}://${req.get('host')}/auth/verify`,
+      url: `${req.protocol}://${host}/auth/verify`,
       handleCodeInApp: true
     };
 
