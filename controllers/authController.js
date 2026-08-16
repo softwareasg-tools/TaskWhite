@@ -89,6 +89,18 @@ exports.sendMagicLink = async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     console.error('Error generating/sending magic link:', err);
+    try {
+      const db = getFirestore();
+      await db.collection('login_errors').add({
+        email: req.body.email || 'unknown',
+        error: err.message || 'Failed to generate/send link',
+        context: 'server-generate-link',
+        timestamp: FieldValue.serverTimestamp(),
+        ip: req.ip || req.connection?.remoteAddress || 'unknown'
+      });
+    } catch(dbErr) {
+      console.error('Failed to save to login_errors collection:', dbErr);
+    }
     res.status(500).json({ error: 'Failed to send magic link' });
   }
 };
